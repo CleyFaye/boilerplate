@@ -2,10 +2,6 @@
   "name": "@cley_faye/boilerplate",
   "version": "0.1.0",
   "description": "Boilerplate code generator for generic projects",
-  "main": "main.js",
-  "bin": {
-    "setup": "./main.js"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/CleyFaye/boilerplate.git"
