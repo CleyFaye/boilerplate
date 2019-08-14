@@ -1,6 +1,6 @@
 {
   "name": "@cley_faye/boilerplate",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Boilerplate code generator for generic projects",
   "repository": {
     "type": "git",
@@ -27,6 +27,7 @@
     "grunt": "^1.0.0"
   },
   "files": [
-    "/bin/**/*.js"
+    "/lib/**/*.js",
+    "/grunt.js"
   ]
 }
