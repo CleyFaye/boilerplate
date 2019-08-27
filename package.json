@@ -13,7 +13,7 @@
   },
   "homepage": "https://github.com/CleyFaye/boilerplate#readme",
   "devDependencies": {
-    "eslint": "^6.1.0"
+    "eslint": "^6.2.2"
   },
   "dependencies": {
     "esm": "^3.2.25",
