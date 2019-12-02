@@ -21,11 +21,11 @@
   },
   "peerDependencies": {
     "babel-loader": "^8.0.0",
-    "eslint-loader": "^2.0.0",
+    "eslint-loader": "^3.0.0",
     "@babel/core": "^7.0.0",
     "@babel/preset-env": "^7.0.0",
     "@babel/preset-react": "^7.0.0",
-    "core-js": "^2.0.0",
+    "core-js": "^3.0.0",
     "grunt-contrib-imagemin": "^3.0.0",
     "grunt-contrib-pug": "^2.0.0",
     "grunt-contrib-copy": "^1.0.0",
