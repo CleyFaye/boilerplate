@@ -25,6 +25,7 @@
     "@babel/core": "^7.0.0",
     "@babel/preset-env": "^7.0.0",
     "@babel/preset-react": "^7.0.0",
+    "babel-plugin-transform-define": "^2.0.0",
     "core-js": "^3.0.0",
     "grunt-contrib-imagemin": "^3.0.0",
     "grunt-contrib-pug": "^2.0.0",
