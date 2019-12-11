@@ -13,15 +13,14 @@
   },
   "homepage": "https://github.com/CleyFaye/boilerplate#readme",
   "devDependencies": {
-    "eslint": "^6.2.2"
+    "eslint": "^6.2.2",
+    "typescript": "^3.7.3"
   },
-  "dependencies": {
-    "esm": "^3.2.25",
-    "prompts": "^2.2.1"
-  },
+  "dependencies": {},
   "peerDependencies": {
     "babel-loader": "^8.0.0",
     "eslint-loader": "^3.0.0",
+    "express": "^4.17.1",
     "@babel/core": "^7.0.0",
     "@babel/preset-env": "^7.0.0",
     "@babel/preset-react": "^7.0.0",
