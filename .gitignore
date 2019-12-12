@@ -18,3 +18,5 @@
 
 # Output of 'npm pack'
 /*.tgz
+
+/.tsbuildinfo

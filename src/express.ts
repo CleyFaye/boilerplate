@@ -2,7 +2,10 @@ import {
   setRef,
   setSignalHandler,
 } from "./express/autoclose";
-import PipelineBuilder from "./express/pipelinebuilder";
+import PipelineBuilder, {PipelineSettings, LogFunction} from "./express/pipelinebuilder";
+import express from "express";
+import winston from "winston";
+import {Server, AddressInfo} from "net";
 
 /** Create the full processing pipeline for an Express server
    *
@@ -23,12 +26,12 @@ import PipelineBuilder from "./express/pipelinebuilder";
    * If the request accepts json, a json object with the error is returned.
    * Otherwise text is returned.
    *
-   * @param {object} settings
+   * @param settings
    *
-   * @param {Array<Router|object|function>} [settings.topLevels]
+   * @param [settings.topLevels]
    * List top-level middlewares. See routes.
    *
-   * @param {Array<Router|object|function>} [settings.routes]
+   * @param [settings.routes]
    * List routes and routers.
    * For each router and function, a simple "use()" call is used.
    * If an object is provided, it must have two properties:
@@ -38,7 +41,7 @@ import PipelineBuilder from "./express/pipelinebuilder";
    *  - method: the method ("get", "post", "put", "options"). If missing,
    *    default to "get".
    *
-   * @param {Array<string|object>} [settings.statics]
+   * @param [settings.statics]
    * List of directory to serve as static content.
    * Can be either a string (the path) or an object with the following
    * properties:
@@ -46,35 +49,41 @@ import PipelineBuilder from "./express/pipelinebuilder";
    *  - options: (optional) the options to pass to static()
    *  - route: (optional) the route where the static resources will be served
    *
-   * @param {Array<Router|object|function>} postStatics
+   * @param [settings.postStatics]
    * Register routes handled after statics. See routes.
    *
-   * @param {Array<function>} [settings.errorHandlers]
+   * @param [settings.errorHandlers]
    * Process errors. Must be function with four parameters.
    *
-   * @param {object} [settings.options]
-   * @param {object} [settings.options.log]
-   * @param {bool} [settings.options.log.route]
+   * @param [settings.options]
+   * @param [settings.options.log]
+   * @param [settings.options.log.route]
    * Log each route
    *
-   * @param {bool} [settings.options.log.error]
+   * @param [settings.options.log.error]
    * Log error content
+   * 
+   * @param [settings.options.log.logger]
+   * An existing winston logger to use
    *
-   * @param {object} [settings.options.middleware]
-   * @param {bool} [settings.options.middleware.json]
+   * @param [settings.options.middleware]
+   * @param [settings.options.middleware.json]
    * Parse JSON body requests
    *
-   * @param {bool} [settings.options.defaultErrorHandler]
+   * @param [settings.options.defaultErrorHandler]
    * Setup the default error handler. Defaults to false.
    *
-   * @param {function} [debugLog]
+   * @param [debugLog]
    * Function to log debug informations
    *
-   * @return {Router}
+   * @return
    * The returned object can be used
    */
 
-export const createPipeline = (settings, debugLog) => {
+export const createPipeline = (
+  settings: PipelineSettings,
+  debugLog: LogFunction
+): express.Router => {
   if (debugLog) {
     debugLog("Creating PipelineBuilder");
   }
@@ -82,25 +91,38 @@ export const createPipeline = (settings, debugLog) => {
   return builder.createPipeline(settings);
 };
 
+export interface StartDefinition {
+  app: express.Application;
+  allowNonLocal?: boolean;
+  port?: number;
+  shutdownFunction?: () => void;
+  logger?: winston.Logger;
+}
+
+export interface StartResult {
+  port: number;
+  server: Server;
+}
+
 /** Start the server and register signal for automatic closing.
  *
- * @param {Express} app
- * @param {bool} [allowNonLocal]
+ * @param app
+ * @param [allowNonLocal]
  * Allow requests from outside of localhost
  *
- * @param {number} [port]
+ * @param [port]
  * Port to listen from. Default to a random available port.
  *
- * @param {function} [shutdownFunction]
+ * @param [shutdownFunction]
  * Function to call after the server is shutdown (all connection closed)
  *
- * @param {winstonLogger} [logger]
+ * @param [logger]
  *
- * @return {Promise<object>}
- * @property {number} port
+ * @return
+ * @property port
  * The port the server is listening on
  *
- * @property {net.Server} server
+ * @property server
  */
 export const appStart = ({
   app,
@@ -108,10 +130,13 @@ export const appStart = ({
   port,
   shutdownFunction,
   logger
-}) => new Promise(resolve => {
-  let server;
-  const readyCallback = () => {
-    const port = server.address().port;
+}: StartDefinition): Promise<StartResult> => new Promise(resolve => {
+  let server: Server | null = null;
+  const readyCallback = (): void => {
+    if (server === null) {
+      throw new Error("Server reference can not be null");
+    }
+    const port = (server.address() as AddressInfo).port;
     if (logger) {
       logger.info(`Listening on port ${port} (PID: ${process.pid})`);
     }
@@ -123,8 +148,8 @@ export const appStart = ({
     });
   };
   server = allowNonLocal
-    ? app.listen(port, readyCallback)
-    : app.listen(port, "localhost", readyCallback);
+    ? app.listen(port || 0, readyCallback)
+    : app.listen(port || 0, "localhost", readyCallback);
   if (shutdownFunction) {
     server.on("close", shutdownFunction);
   }
