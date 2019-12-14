@@ -1,43 +1,55 @@
 import {join} from "path";
-import {insertTask} from "./util";
+import {insertTask, GruntConfig} from "./util";
 
 import {handledExtensions as imageExt} from "./image";
 import {handledExtensions as pugExt} from "./pug";
 import {handledExtensions as sassExt} from "./sass";
 import {handledExtensions as webpackExt} from "./webpack";
+import {BaseOptions} from "../util";
+
+export interface CopyOptions extends BaseOptions {
+  options?: object;
+  excludedExtensions?: Array<string>;
+  sourcePath?: string;
+  outputPath?: string;
+}
 
 /** Add the copy task for a reactApp recipe.
  * 
- * @param {Object} gruntConfig
+ * @param gruntConfig
  * The Grunt configuration to add tasks to.
  * 
- * @param {string} targetName
+ * @param targetName
  * Name of the target for the pug task.
  * 
- * @param {Object} copyOptions
+ * @param copyOptions
  * Configuration for the pug task.
  * 
- * @param {Object} [copyOptions.options]
+ * @param [copyOptions.options]
  * Valid options to pass directly to grunt-contrib-copy.
  * 
- * @param {string[]} [copyOptions.excludedExtensions]
+ * @param [copyOptions.excludedExtensions]
  * File extensions to not copy.
  * Defaults to [".pug", ".png", ".jpg", ".svg", ".js", ".sass", ".scss"] (file
  * formats handled by other tasks).
  * 
- * @param {string} [copyOptions.sourcePath]
+ * @param [copyOptions.sourcePath]
  * Path to take source files from.
  * Defaults to "webres/<targetName>"
  * 
- * @param {string} [copyOptions.outputPath]
+ * @param [copyOptions.outputPath]
  * Path to put the output files into. The source directory tree will be
  * preserved.
  * Defaults to "dist/<targetName>"
  * 
- * @return {string[]}
+ * @return
  * The name of the tasks added to the gruntConfig object.
  */
-export default (gruntConfig, targetName, copyOptions) => {
+export const handle = (
+  gruntConfig: GruntConfig,
+  targetName: string,
+  copyOptions: CopyOptions
+): Array<string> => {
   const srcList = ["**/*"].concat(
     (copyOptions.excludedExtensions || [
       ...imageExt,

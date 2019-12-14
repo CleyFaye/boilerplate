@@ -1,21 +1,28 @@
+export type GruntConfig = Record<string, Record<string, object>>;
+
 /** Insert a new task in a grunt config object.
  * 
- * @param {Object} gruntConfig
+ * @param gruntConfig
  * The grunt configuration, before sending it to initConfig()
  * 
- * @param {string} taskType
+ * @param taskType
  * The task type name (first level of grunt config object)
  * 
- * @param {string} taskName
+ * @param taskName
  * The task name under a givne type (second level of grunt config object)
  * 
- * @param {Object} taskDef
+ * @param taskDef
  * The task definition to insert
  * 
- * @return {string}
+ * @return
  * The task full name to reference in registerTask()
  */
-export const insertTask = (gruntConfig, taskType, taskName, taskDef) => {
+export const insertTask = (
+  gruntConfig: GruntConfig,
+  taskType: string,
+  taskName: string,
+  taskDef: object,
+): string => {
   gruntConfig[taskType] = gruntConfig[taskType] || {};
   const taskFullName = `${taskType}:${taskName}`;
   if (gruntConfig[taskType][taskName] !== undefined) {

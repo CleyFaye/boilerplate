@@ -1,39 +1,56 @@
 import {join} from "path";
-import {insertTask} from "./util";
+import {insertTask, GruntConfig} from "./util";
+import {BaseOptions} from "../util";
+
+/** File extensions handled by this task */
+export const handledExtensions = [".scss", ".sass"];
+
+export interface SassOptions extends BaseOptions {
+  options?: {
+    implementation?: object;
+  };
+  sourcePath?: string;
+  outputPath?: string;
+  fileSuffix?: string;
+}
 
 /** Add an sass processing task to the Grunt configuration
  * 
- * @param {Object} gruntConfig
+ * @param gruntConfig
  * Grunt configuration to add the task to
  * 
- * @param {string} targetName
+ * @param targetName
  * Name of the target for the image minification task.
  * 
- * @param {Object} sassOptions
+ * @param sassOptions
  * Options for the sass task configuration.
  * 
- * @param {Object} sassOptions.options
+ * @param sassOptions.options
  * Options to pass to grunt-sass.
  * 
- * @param {Object} [sassOptions.options.implementation]
+ * @param [sassOptions.options.implementation]
  * Implementation to use. Defaults to require("node-sass").
  * 
- * @param {string} [sassOptions.sourcePath]
+ * @param [sassOptions.sourcePath]
  * Path where the pug templates can be found. Subdirectories will be searched.
  * Default to "webres/<targetName>"
  * 
- * @param {string} [sassOptions.outputPath]
+ * @param [sassOptions.outputPath]
  * Path to put the output files into. The source directory tree will be
  * preserved.
  * Defaults to "dist/<targetName>"
  * 
- * @param {string} [sassOptions.fileSuffix]
+ * @param [sassOptions.fileSuffix]
  * Output files suffix. Defaults to ".css"
  * 
- * @return {string[]}
+ * @return
  * List of tasks added to the grunt configuration
  */
-export default (gruntConfig, targetName, sassOptions) => {
+export const handle = (
+  gruntConfig: GruntConfig,
+  targetName: string,
+  sassOptions: SassOptions
+): Array<string> => {
   const sassTask = {
     options: Object.assign({}, sassOptions.options),
     files: [{
@@ -52,6 +69,3 @@ export default (gruntConfig, targetName, sassOptions) => {
   }
   return [insertTask(gruntConfig, "sass", targetName, sassTask)];
 };
-
-/** File extensions handled by this task */
-export const handledExtensions = [".scss", ".sass"];

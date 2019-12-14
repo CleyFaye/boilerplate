@@ -1,9 +1,47 @@
-import {deepSet} from "./util";
-import handlePug from "./reactapp/pug";
-import handleImage from "./reactapp/image";
-import handleWebpack from "./reactapp/webpack";
-import handleSass from "./reactapp/sass";
-import handleCopy from "./reactapp/copy";
+import {deepSet, BaseOptions, GenericConfigObject} from "./util";
+import {
+  handle as handlePug,
+  PugOptions,
+} from "./reactapp/pug";
+import {
+  handle as handleImage,
+  ImageOptions,
+} from "./reactapp/image";
+import {
+  handle as handleWebpack,
+  WebpackOptions,
+} from "./reactapp/webpack";
+import {
+  handle as handleSass,
+  SassOptions,
+} from "./reactapp/sass";
+import {
+  handle as handleCopy,
+  CopyOptions,
+} from "./reactapp/copy";
+import {GruntConfig} from "./reactapp/util";
+
+export enum HandlerType {
+  PUG = "pug",
+  IMAGE = "image",
+  WEBPACK = "webpack",
+  SASS = "sass",
+  COPY = "copy",
+}
+
+export interface ReactAppOptions {
+  [HandlerType.PUG]?: PugOptions;
+  [HandlerType.IMAGE]?: ImageOptions;
+  [HandlerType.WEBPACK]?: WebpackOptions;
+  [HandlerType.SASS]?: SassOptions;
+  [HandlerType.COPY]?: CopyOptions;
+}
+
+export type HandlerFunction = (
+  gruntConfig: GruntConfig,
+  targetName: string,
+  options: BaseOptions
+) => Array<string>;
 
 /** Insert necessary build step for a React/Web app.
  * 
@@ -15,103 +53,106 @@ import handleCopy from "./reactapp/copy";
  * - "sass:<targetName>": compile sass/scss files
  * - "copy:<targetName>": copy files not handled in other tasks
  * 
- * @param {Object} gruntConfig
+ * @param gruntConfig
  * The Grunt configuration with other tasks, before it is passed to
  * grunt.initConfig()
  * 
- * @param {string} [targetName]
+ * @param [targetName]
  * Name for the various targets added to Grunt. Defaults to "reactApp"
  * 
- * @param {Object} [options]
+ * @param [options]
  * Options to control the extra tasks
  * 
- * @param {Object} [options.pug]
+ * @param [options.pug]
  * Options for the pug task. See pug.js for details.
  * 
- * @param {bool} [options.pug.disabled]
+ * @param [options.pug.disabled]
  * Do not generate pug task
  * 
- * @param {Object} [options.image]
+ * @param [options.image]
  * Options for the image task. See image.js for details.
  * 
- * @param {bool} [options.image.disabled]
+ * @param [options.image.disabled]
  * Do not generate image task
  * 
- * @param {Object} [options.webpack]
+ * @param [options.webpack]
  * Options for the webpack task. See webpack.js for details.
  * 
- * @param {bool} [options.webpack.disabled]
+ * @param [options.webpack.disabled]
  * Do not generate webpack task
  * 
- * @param {Object} [options.sass]
+ * @param [options.sass]
  * Options for the sass task. See sass.js for details.
  * 
- * @param {bool} [options.sass.disabled]
+ * @param [options.sass.disabled]
  * Do not generate sass task
  * 
- * @param {Object} [options.copy]
+ * @param [options.copy]
  * Optiosn for the copy task. See copy.js for details.
  * 
- * @param {bool} [options.copy.disabled]
+ * @param [options.copy.disabled]
  * Do not generate copy task
  * 
- * @return {string[]}
+ * @return
  * List of tasks to build the application
  */
 export const reactApp = (
-  gruntConfig,
+  gruntConfig: GruntConfig,
   targetName = "reactApp",
-  options = null
-) => {
-  if (options === null) {
-    options = {};
-  }
-  const handlers = {
-    pug: handlePug,
-    image: handleImage,
-    webpack: handleWebpack,
-    sass: handleSass,
-    copy: handleCopy,
+  options?: ReactAppOptions
+): Array<string> => {
+  const handlers: Record<string, HandlerFunction> = {
+    [HandlerType.PUG]: handlePug,
+    [HandlerType.IMAGE]: handleImage,
+    [HandlerType.WEBPACK]: handleWebpack,
+    [HandlerType.SASS]: handleSass,
+    [HandlerType.COPY]: handleCopy,
   };
-  const addedTasks = Object.keys(handlers)
-    .reduce(
+  const addedTasks = (Object.keys(handlers) as Array<HandlerType>)
+    .reduce<Array<string>>(
       (acc, cur) => acc.concat(
-        (options[cur] && options[cur].disabled)
+        (options && options[cur] && (options[cur] || {}).disabled)
           ? []
           : handlers[cur](
             gruntConfig,
             targetName,
-            options[cur] || {}
-          )
-      ),
+            options && options[cur] || {}
+          )),
       []
     );
   return addedTasks;
 };
 
+export interface HelperOptions {
+  production?: boolean;
+}
+
 /** Helper for common options shared across multiple tasks.
  * 
- * @param {Object} [helperOptions]
+ * @param [helperOptions]
  * Options shared by multiple tasks
  * 
- * @param {bool} [helperOptions.production]
+ * @param [helperOptions.production]
  * Make a production build.
  * - set outputStyle and sourceMap for sass
  * - set pretty for pug
  * - add a "productionBuild" property in pug data
  * - set mode for webpack
  * 
- * @param {Object} [options]
+ * @param [options]
  * Initial options for reactApp().
  * This object will be copied and required parameters will be added by this
  * function.
  * Modified object are also duplicated, so no original data is modified.
  * 
- * @return {Object}
+ * @return
  * A configuration object for reactApp().
  */
-export const reactAppOptionsHelper = (helperOptions, options) => {
-  let result = deepSet(options, "sass.options.outputStyle",
+export const reactAppOptionsHelper = (
+  helperOptions: HelperOptions,
+  options: ReactAppOptions
+): ReactAppOptions => {
+  let result = deepSet((options as GenericConfigObject), "sass.options.outputStyle",
     helperOptions.production ? "compressed" : "nested");
   result = deepSet(result, "sass.options.sourceMap",
     helperOptions.production ? false : true);

@@ -1,33 +1,47 @@
 import {join} from "path";
-import {insertTask} from "./util";
+import {insertTask, GruntConfig} from "./util";
+import {BaseOptions} from "../util";
+
+export interface ImageOptions extends BaseOptions {
+  options?: object;
+  sourcePath?: string;
+  outputPath?: string;
+}
+
+/** File extensions handled by this task */
+export const handledExtensions = [".jpg", ".png", ".svg"];
 
 /** Add an image minification task to the Grunt configuration
  * 
- * @param {Object} gruntConfig
+ * @param gruntConfig
  * Grunt configuration to add the task to
  * 
- * @param {string} targetName
+ * @param targetName
  * Name of the target for the image minification task.
  * 
- * @param {Object} imageOptions
+ * @param imageOptions
  * Options for the image task configuration.
  * 
- * @param {Object} imageOptions.options
+ * @param imageOptions.options
  * Options to pass to grunt-contrib-imagemin.
  * 
- * @param {string} [imageOptions.sourcePath]
+ * @param [imageOptions.sourcePath]
  * Path where the pug templates can be found. Subdirectories will be searched.
  * Default to "webres/<targetName>"
  * 
- * @param {string} [imageOptions.outputPath]
+ * @param [imageOptions.outputPath]
  * Path to put the output files into. The source directory tree will be
  * preserved.
  * Defaults to "dist/<targetName>"
  * 
- * @return {string[]}
+ * @return
  * List of tasks added to the grunt configuration
  */
-export default (gruntConfig, targetName, imageOptions) => {
+export const handle = (
+  gruntConfig: GruntConfig,
+  targetName: string,
+  imageOptions: ImageOptions
+): Array<string> => {
   const newImageTask = {
     options: imageOptions.options,
     files: [{
@@ -39,6 +53,3 @@ export default (gruntConfig, targetName, imageOptions) => {
   };
   return [insertTask(gruntConfig, "imagemin", targetName, newImageTask)];
 };
-
-/** File extensions handled by this task */
-export const handledExtensions = [".jpg", ".png", ".svg"];

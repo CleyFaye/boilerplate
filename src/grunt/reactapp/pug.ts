@@ -1,37 +1,52 @@
 import {join} from "path";
-import {insertTask} from "./util";
+import {insertTask, GruntConfig} from "./util";
+import {BaseOptions} from "../util";
+
+export interface PugOptions extends BaseOptions {
+  options?: object;
+  sourcePath?: string;
+  outputPath?: string;
+  fileSuffix?: string;
+}
+
+/** File extensions handled by this task */
+export const handledExtensions = [".pug"];
 
 /** Add the pug task for a reactApp recipe.
  * 
- * @param {Object} gruntConfig
+ * @param gruntConfig
  * The Grunt configuration to add tasks to.
  * 
- * @param {string} targetName
+ * @param targetName
  * Name of the target for the pug task.
  * 
- * @param {Object} pugOptions
+ * @param pugOptions
  * Configuration for the pug task.
  * 
- * @param {Object} [pugOptions.options]
+ * @param [pugOptions.options]
  * Valid options to pass directly to grunt-contrib-pug.
  * Most notably, pugOptions.options.data can be set here.
  * 
- * @param {string} [pugOptions.sourcePath]
+ * @param [pugOptions.sourcePath]
  * Path where the pug templates can be found. Subdirectories will be searched.
  * Default to "webres/<targetName>"
  * 
- * @param {string} [pugOptions.outputPath]
+ * @param [pugOptions.outputPath]
  * Path to put the output files into. The source directory tree will be
  * preserved.
  * Defaults to "dist/<targetName>"
  * 
- * @param {string} [pugOptions.fileSuffix]
+ * @param [pugOptions.fileSuffix]
  * Suffix for output files. Defaults to ".html"
  * 
- * @return {string[]}
+ * @return
  * The name of the tasks added to the gruntConfig object.
  */
-export default (gruntConfig, targetName, pugOptions) => {
+export const handle = (
+  gruntConfig: GruntConfig,
+  targetName: string,
+  pugOptions: PugOptions
+): Array<string> => {
   const newPugTask = {
     options: pugOptions.options,
     files: [{
@@ -44,6 +59,3 @@ export default (gruntConfig, targetName, pugOptions) => {
   };
   return [insertTask(gruntConfig, "pug", targetName, newPugTask)];
 };
-
-/** File extensions handled by this task */
-export const handledExtensions = [".pug"];

@@ -1,22 +1,33 @@
 import {resolve} from "path";
-import {insertTask} from "./util";
+import {insertTask, GruntConfig} from "./util";
+import {BaseOptions} from "../util";
+
+export interface WebpackLoadersOptions {
+  development?: boolean;
+  babel?: {
+    corejs: number;
+    targets?: string;
+  };
+}
 
 /** Build the default webpack loaders list.
  *
  * Uses babel and eslint. Some options can be customized here.
  *
- * @param {object} [options]
- * @param {bool} [options.development]
+ * @param [options]
+ * @param [options.development]
  * true for development-friendly options, false for production options
  *
- * @param {object} [options.babel]
- * @param {number} [options.babel.corejs]
+ * @param [options.babel]
+ * @param [options.babel.corejs]
  * Version of core-js to use (default to 3)
  * 
- * @param {string} [options.babel.targets]
+ * @param [options.babel.targets]
  * Browser targets (default to "last 1 version, > 2%, not dead")
  */
-export const webpackLoadersDefault = options => ([
+export const webpackLoadersDefault = (
+  options: WebpackLoadersOptions
+): Array<object> => ([
   {
     test: /.js$/,
     exclude: /node_modules/,
@@ -67,63 +78,80 @@ export const webpackLoadersDefault = options => ([
   },
 ]);
 
+/** File extensions handled by this task */
+export const handledExtensions = [".js"];
+
+export interface WebpackOptions extends BaseOptions {
+  mode?: "development" | "production" | "none";
+  options?: object;
+  entry?: Record<string, string>;
+  externals?: Record<string, string>;
+  output?: {
+    path?: string;
+    filename?: string;
+  };
+  loaders?: Array<object>;
+  plugins?: Array<object>;
+}
+
 /** Add a webpack task for the reactApp recipe
  * 
- * @param {Object} gruntConfig
+ * @param gruntConfig
  * Grunt configuration to add the task to
  * 
- * @param {string} targetName
+ * @param targetName
  * Name of the target for the image minification task.
  * 
- * @param {Object} webpackOptions
+ * @param webpackOptions
  * Options for the webpack task configuration.
  * 
- * @param {Object} [webpackOptions.options]
+ * @param [webpackOptions.options]
  * Options for both webpack and webpack-dev-server
  * 
- * @param {Object} [webpackOptions.entry]
+ * @param [webpackOptions.entry]
  * List of entrypoints.
  * Defaults to {targetName: "webres/<targetName>/js/loader.js"}
  *
- * @param {Object} [webpackOptions.externals]
+ * @param [webpackOptions.externals]
  * List of external libraries.
  * Defaults to {}.
  * 
- * @param {Object} [webpackOptions.output]
+ * @param [webpackOptions.output]
  * Configure webpack output location and name.
  * Defaults to {path: "dist/<targetName>/js", filename: "[name].js"}
  * 
- * @param {string} [webpackOptions.output.path]
+ * @param [webpackOptions.output.path]
  * Path to put the compiled files into.
  * It is possible to pass a completely different object as webpackOptions.output
  * than expected, it will be handed to webpack as-is.
  * 
- * @param {string} [webpackOptions.output.filename]
+ * @param [webpackOptions.output.filename]
  * Template for output filename.
  * It is possible to pass a completely different object as webpackOptions.output
  * than expected, it will be handed to webpack as-is.
  * 
- * @param {Object[]} [webpackOptions.loaders]
+ * @param [webpackOptions.loaders]
  * Configuration for webpack loaders. See webpack doc about module.rules.
  * Defaults to using babel with React configuration and eslint.
  * To customize the default behavior build an object with
  * webpackLoadersDefault().
  * 
- * @param {Object[]} [webpackOptions.plugins]
+ * @param [webpackOptions.plugins]
  * Configuration for webpack plugins. See webpack doc about plugins.
  * 
- * @param {string} [webpackOptions.mode]
+ * @param [webpackOptions.mode]
  * Build mode. "development", "production" or "none".
  * Defaults to "development"
  * 
- * @param {number} [webpackOptions.port]
- * Web server port.
- * 
- * @return {string[]}
+ * @return
  * List of tasks added.
  * This function add "webpack:<targetName>".
  */
-export default (gruntConfig, targetName, webpackOptions) => {
+export const handle = (
+  gruntConfig: GruntConfig,
+  targetName: string,
+  webpackOptions: WebpackOptions
+): Array<string> => {
   const webpackEntry = webpackOptions.entry || {
     [targetName]: resolve("webres", targetName, "js", "loader.js"),
   };
@@ -148,7 +176,9 @@ export default (gruntConfig, targetName, webpackOptions) => {
   };
   // Special case: I'm not sure I can move options in the task-specific part of
   // the configuration, so I add it at the toplevel of the "webpack" task.
-  insertTask(gruntConfig, "webpack", "options", webpackOptions.options);
+  if (webpackOptions.options) {
+    insertTask(gruntConfig, "webpack", "options", webpackOptions.options);
+  }
   const tasks = [];
   tasks.push(
     insertTask(
@@ -160,6 +190,3 @@ export default (gruntConfig, targetName, webpackOptions) => {
   );
   return tasks;
 };
-
-/** File extensions handled by this task */
-export const handledExtensions = [".js"];
