@@ -22,7 +22,7 @@ export const handledExtensions = [".jpg", ".png", ".svg"];
  * @param imageOptions
  * Options for the image task configuration.
  * 
- * @param imageOptions.options
+ * @param [imageOptions.options]
  * Options to pass to grunt-contrib-imagemin.
  * 
  * @param [imageOptions.sourcePath]
