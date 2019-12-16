@@ -10,6 +10,7 @@ import {BaseOptions} from "../util";
 export interface CopyOptions extends BaseOptions {
   options?: object;
   excludedExtensions?: Array<string>;
+  extraFiles?: Array<string>;
   sourcePath?: string;
   outputPath?: string;
 }
@@ -32,6 +33,9 @@ export interface CopyOptions extends BaseOptions {
  * File extensions to not copy.
  * Defaults to [".pug", ".png", ".jpg", ".svg", ".js", ".sass", ".scss"] (file
  * formats handled by other tasks).
+ * 
+ * @param [copyOptions.extraFiles]
+ * Add extra files to copy (to bypass excluded extensions)
  * 
  * @param [copyOptions.sourcePath]
  * Path to take source files from.
@@ -59,6 +63,8 @@ export const handle = (
     ]).map(
       ext => `!**/*${ext}`
     )
+  ).concat(
+    copyOptions.extraFiles || []
   );
   const copyTask = {
     options: copyOptions.options,

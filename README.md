@@ -32,6 +32,7 @@ For webapp building:
 - grunt-contrib-pug
 - grunt-contrib-copy
 - grunt-sass
+- node-sass
 - grunt-webpack
 - grunt
 
@@ -155,6 +156,11 @@ All `.sass` and `.scss` files in the webapp directory will be processed as
 It is possible to move other file types into the output directory using the
 copy task. Any file not handled by the other tasks will be copied as-is into
 the output directory.
+
+JavaScript files are expected to be handled by webpack; if you have a
+JavaScript file you want to copy as-is (or any other file excluded by the
+default filters), you can provide them as a list in the `extraFiles` property
+for that task options.
 
 ### Shared settings
 
