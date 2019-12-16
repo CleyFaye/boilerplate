@@ -106,7 +106,7 @@ export interface WebpackOptions extends BaseOptions {
  * Options for the webpack task configuration.
  * 
  * @param [webpackOptions.options]
- * Options for both webpack and webpack-dev-server
+ * Options for webpack
  * 
  * @param [webpackOptions.entry]
  * List of entrypoints.
