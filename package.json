@@ -6,6 +6,9 @@
     "type": "git",
     "url": "git+https://github.com/CleyFaye/boilerplate.git"
   },
+  "scripts": {
+    "prepack": "npx tsc"
+  },
   "author": "Gabriel Paul \"Cley Faye\" Risterucci",
   "license": "MIT",
   "bugs": {
@@ -44,6 +47,7 @@
   },
   "files": [
     "/lib/**/*.js",
+    "/lib/**/*.d.ts",
     "/grunt.js"
   ]
 }
