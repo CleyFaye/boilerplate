@@ -75,7 +75,7 @@ export interface PipelineSettings {
   routes?: Array<express.Router | RouteDefinition>;
   statics?: Array<StaticDefinition>;
   postStatics?: Array<express.Router | RouteDefinition>;
-  errorHandlers?: Array<RouteDefinition>;
+  errorHandlers?: Array<express.ErrorRequestHandler>;
   options?: {
     log?: LogOptions;
     middleware?: MiddlewareOptions;
@@ -174,6 +174,20 @@ export default class PipelineBuilder {
         this.log("Adding middleware");
         this.addMiddlewareToRouter(router, asRequestHandler);
       }
+    });
+  }
+
+  /** Register error handlers
+   *
+   * @param router
+   * @param errorHandlers
+   */
+  setErrorHandlers(
+    router: express.Router,
+    errorHandlers?: Array<express.ErrorRequestHandler>
+  ): void {
+    (errorHandlers || []).forEach(errorHandler => {
+      router.use(errorHandler);
     });
   }
 
@@ -293,7 +307,7 @@ export default class PipelineBuilder {
     this.log("add logger (errors)");
     this.setErrorLogger(router, log);
     this.log("add error handlers");
-    this.setRoutes(router, errorHandlers);
+    this.setErrorHandlers(router, errorHandlers);
     this.log("add default error handlers");
     this.setDefaultErrorHandler(router, defaultErrorHandler);
     return router;
