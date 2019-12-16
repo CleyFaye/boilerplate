@@ -27,24 +27,6 @@
     "winston": "^3.2.1"
   },
   "dependencies": {},
-  "peerDependencies": {
-    "babel-loader": "^8.0.0",
-    "eslint-loader": "^3.0.0",
-    "express": "^4.17.1",
-    "@babel/core": "^7.0.0",
-    "@babel/preset-env": "^7.0.0",
-    "@babel/preset-react": "^7.0.0",
-    "babel-plugin-transform-define": "^2.0.0",
-    "core-js": "^3.0.0",
-    "express-winston": "^4.0.0",
-    "grunt-contrib-imagemin": "^3.0.0",
-    "grunt-contrib-pug": "^2.0.0",
-    "grunt-contrib-copy": "^1.0.0",
-    "grunt-sass": "^3.0.0",
-    "grunt-webpack": "^3.0.0",
-    "grunt": "^1.0.0",
-    "winston": "^3.2.1"
-  },
   "files": [
     "/lib/**/*.js",
     "/lib/**/*.d.ts",

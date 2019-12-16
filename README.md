@@ -9,6 +9,38 @@ provide Grunt tasks to transpile a webapp so it can work in most browsers.
 These tools allows some level of configuration, but most default options expects
 a specific directory layout for your project.
 
+## Managing dependencies
+
+This project does not "really" depend on anything, since all parts are
+optional. However, some dependencies are required for things to work.
+
+Instead of forcing all optional dependencies to come with, I decided to
+document here what is required, and for what. It's up to the calling project to
+have the proper dependencies.
+(this will also avoid dependency version nightmares).
+
+For webapp building:
+
+- babel-loader
+- eslint-loader
+- @babel/core
+- @babel/preset-env
+- @babel/preset-react
+- @babel-plugin-transform-define
+- core-js
+- grunt-contrib-imagemin
+- grunt-contrib-pug
+- grunt-contrib-copy
+- grunt-sass
+- grunt-webpack
+- grunt
+
+For express:
+
+- express
+- winston
+- express-winston
+
 ## Webapp side
 
 There's a set of functions that provide Grunt tasks for the following:
@@ -67,6 +99,8 @@ module.exports = grunt => {
 This would register a task names "myWebApp", process files in
 `webres/myAppName` and output in `dist/myAppName` using most defualt options.
 Each different tasks can have his own options, described below.
+Each task also have a `disabled` property that can be set to `true`, in which
+case it will not generate the corresponding task.
 
 ### Pug templates
 
