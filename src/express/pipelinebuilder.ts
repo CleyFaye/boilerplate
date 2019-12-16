@@ -47,7 +47,7 @@ export type ComplexRouteHandler =
 export interface ComplexRouteDefinition {
   route: string;
   handler: ComplexRouteHandler;
-  method: "get"|"post"|"put"|"options";
+  method?: "get"|"post"|"put"|"options";
 }
 
 export type RouteDefinition =
