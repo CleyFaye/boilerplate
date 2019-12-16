@@ -82,7 +82,7 @@ import {Server, AddressInfo} from "net";
 
 export const createPipeline = (
   settings: PipelineSettings,
-  debugLog: LogFunction
+  debugLog?: LogFunction
 ): express.Router => {
   if (debugLog) {
     debugLog("Creating PipelineBuilder");
