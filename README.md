@@ -35,6 +35,7 @@ For webapp building:
 - node-sass
 - grunt-webpack
 - grunt
+- esm
 
 For express:
 
