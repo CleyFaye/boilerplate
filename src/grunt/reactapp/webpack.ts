@@ -68,7 +68,7 @@ export const webpackLoadersDefault = (
   },
   {
     test: /\.js$/,
-    exclude: /node_modules|\\build\\/,
+    exclude: /node_modules|(\/|\\)build(\/|\\)/,
     use: {
       loader: "eslint-loader",
       options: {
