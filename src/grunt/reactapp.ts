@@ -228,7 +228,7 @@ export const reactAppOptionsHelper = (
   result = deepSet(result, "pug.options.pretty",
     helperOptions.production ? false : true);
   result = deepSet(result, "pug.options.data.productionBuild",
-    helperOptions.production ? "true" : "false");
+    helperOptions.production ? true : false);
   result = deepSet(result, "webpack.mode",
     helperOptions.production ? "production" : "development");
   return result;
