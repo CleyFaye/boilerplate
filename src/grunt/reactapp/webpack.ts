@@ -196,6 +196,18 @@ export const handle = (
       webpackConfig
     )
   );
+  insertTask(
+    gruntConfig,
+    "webpack",
+    `${targetName}_watch`,
+    Object.assign(
+      {},
+      webpackConfig,
+      {
+        watch: true,
+      }
+    )
+  );
   return {
     requiredTasks,
     handledFiles,

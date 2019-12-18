@@ -212,6 +212,9 @@ automatically trigger their task when needed.
 Simply run `npx grunt watch` to start the watcher.
 It is also configured to have a livereload server on port 35729.
 
+Webpack tasks can also be watched by manually running the
+`webpack:<target name>_watch` target in another terminal.
+
 ## Express application definition
 
 The express helper actually provide a single place to configure most of the
