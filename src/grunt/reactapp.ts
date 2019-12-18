@@ -19,7 +19,7 @@ import {
   handle as handleCopy,
   CopyOptions,
 } from "./reactapp/copy";
-import {GruntConfig} from "./reactapp/util";
+import {GruntConfig, insertTask} from "./reactapp/util";
 
 export enum HandlerType {
   PUG = "pug",
@@ -35,13 +35,25 @@ export interface ReactAppOptions {
   [HandlerType.WEBPACK]?: WebpackOptions;
   [HandlerType.SASS]?: SassOptions;
   [HandlerType.COPY]?: CopyOptions;
+  watch?: boolean;
+}
+
+export interface WatchTaskDef {
+  filesToWatch: Array<string>;
+  taskToRun: string;
+}
+
+export interface HandlerFunctionResult {
+  requiredTasks: Array<string>;
+  handledFiles: Array<string>;
+  watchTasks: Array<WatchTaskDef>;
 }
 
 export type HandlerFunction = (
   gruntConfig: GruntConfig,
   targetName: string,
   options: BaseOptions
-) => Array<string>;
+) => HandlerFunctionResult;
 
 /** Insert necessary build step for a React/Web app.
  * 
@@ -106,10 +118,9 @@ export const reactApp = (
     [HandlerType.IMAGE]: handleImage,
     [HandlerType.WEBPACK]: handleWebpack,
     [HandlerType.SASS]: handleSass,
-    [HandlerType.COPY]: handleCopy,
   };
-  const addedTasks = (Object.keys(handlers) as Array<HandlerType>)
-    .reduce<Array<string>>(
+  const tasksResults = (Object.keys(handlers) as Array<HandlerType>)
+    .reduce<Array<HandlerFunctionResult>>(
       (acc, cur) => acc.concat(
         (options && options[cur] && (options[cur] || {}).disabled)
           ? []
@@ -120,7 +131,65 @@ export const reactApp = (
           )),
       []
     );
-  return addedTasks;
+  const splitResult = tasksResults.reduce(
+    (acc, cur) => {
+      acc.requiredTasks = acc.requiredTasks.concat(cur.requiredTasks);
+      acc.handledFiles = acc.handledFiles.concat(cur.handledFiles);
+      acc.watchTasks = acc.watchTasks.concat(cur.watchTasks);
+      return acc;
+    },
+    {
+      requiredTasks: [],
+      handledFiles: [],
+      watchTasks: [],
+    }
+  );
+  // Copy remaining files
+  const copyOptions = options && options[HandlerType.COPY] || {};
+  copyOptions.skipFiles = splitResult.handledFiles;
+  const copyTask = handleCopy(
+    gruntConfig,
+    targetName,
+    options && options[HandlerType.COPY] || {}
+  );
+  splitResult.requiredTasks = splitResult.requiredTasks.concat(copyTask.requiredTasks);
+  splitResult.watchTasks = splitResult.watchTasks.concat(copyTask.watchTasks);
+  // Add grunt-contrib-watch task
+  if (splitResult.watchTasks.length > 0) {
+    insertTask(
+      gruntConfig,
+      "watch",
+      "options",
+      {
+        livereload: true,
+      }
+    );
+  }
+  splitResult.watchTasks.forEach(watchTask => {
+    insertTask(
+      gruntConfig,
+      "watch",
+      watchTask.taskToRun.split(":").join("_"),
+      {
+        options: {
+          livereload: true,
+        },
+        files: watchTask.filesToWatch.reduce<Array<string>>(
+          (acc, cur) => {
+            if (cur.startsWith("!")) {
+              acc.push(`!webres/${cur.substr(1)}`);
+            } else {
+              acc.push(`webres/${cur}`);
+            }
+            return acc;
+          },
+          []
+        ),
+        tasks: [watchTask.taskToRun],
+      }
+    );
+  });
+  return splitResult.requiredTasks;
 };
 
 export interface HelperOptions {

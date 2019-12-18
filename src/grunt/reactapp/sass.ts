@@ -1,9 +1,10 @@
 import {join} from "path";
 import {insertTask, GruntConfig} from "./util";
 import {BaseOptions} from "../util";
+import {HandlerFunctionResult} from "../reactapp";
 
 /** File extensions handled by this task */
-export const handledExtensions = [".scss", ".sass"];
+const handledExtensions = [".scss", ".sass"];
 
 export interface SassOptions extends BaseOptions {
   options?: {
@@ -50,16 +51,17 @@ export const handle = (
   gruntConfig: GruntConfig,
   targetName: string,
   sassOptions: SassOptions
-): Array<string> => {
+): HandlerFunctionResult => {
+  const handledFiles = [
+    ...handledExtensions.map(ext => `**/*${ext}`),
+    ...handledExtensions.map(ext => `!**/*.inc${ext}`),
+  ];
   const sassTask = {
     options: Object.assign({}, sassOptions.options),
     files: [{
       expand: true,
       cwd: sassOptions.sourcePath || join("webres", targetName),
-      src: [
-        ...handledExtensions.map(ext => `**/*${ext}`),
-        ...handledExtensions.map(ext => `!**/*.inc${ext}`),
-      ],
+      src: handledFiles,
       dest: sassOptions.outputPath || join("dist", targetName),
       ext: sassOptions.fileSuffix || ".css",
     }],
@@ -67,5 +69,16 @@ export const handle = (
   if (sassTask.options.implementation === undefined) {
     sassTask.options.implementation = require("node-sass");
   }
-  return [insertTask(gruntConfig, "sass", targetName, sassTask)];
+  const requiredTasks = [insertTask(gruntConfig, "sass", targetName, sassTask)];
+  const watchTasks = [{
+    filesToWatch: [
+      ...handledExtensions.map(ext => `**/*${ext}`),
+    ],
+    taskToRun: requiredTasks[0],
+  }];
+  return {
+    requiredTasks,
+    handledFiles,
+    watchTasks,
+  };
 };

@@ -1,16 +1,14 @@
 import {join} from "path";
 import {insertTask, GruntConfig} from "./util";
 
-import {handledExtensions as imageExt} from "./image";
-import {handledExtensions as pugExt} from "./pug";
-import {handledExtensions as sassExt} from "./sass";
-import {handledExtensions as webpackExt} from "./webpack";
 import {BaseOptions} from "../util";
+import {HandlerFunctionResult} from "../reactapp";
 
 export interface CopyOptions extends BaseOptions {
   options?: object;
   excludedExtensions?: Array<string>;
   extraFiles?: Array<string>;
+  skipFiles?: Array<string>;
   sourcePath?: string;
   outputPath?: string;
 }
@@ -31,8 +29,6 @@ export interface CopyOptions extends BaseOptions {
  * 
  * @param [copyOptions.excludedExtensions]
  * File extensions to not copy.
- * Defaults to [".pug", ".png", ".jpg", ".svg", ".js", ".sass", ".scss"] (file
- * formats handled by other tasks).
  * 
  * @param [copyOptions.extraFiles]
  * Add extra files to copy (to bypass excluded extensions)
@@ -53,18 +49,19 @@ export const handle = (
   gruntConfig: GruntConfig,
   targetName: string,
   copyOptions: CopyOptions
-): Array<string> => {
+): HandlerFunctionResult => {
   const srcList = ["**/*"].concat(
-    (copyOptions.excludedExtensions || [
-      ...imageExt,
-      ...pugExt,
-      ...sassExt,
-      ...webpackExt,
-    ]).map(
+    (copyOptions.excludedExtensions || []).map(
       ext => `!**/*${ext}`
     )
   ).concat(
     copyOptions.extraFiles || []
+  ).concat(
+    (copyOptions.skipFiles || []).map(
+      fileDef => fileDef.startsWith("!")
+        ? fileDef
+        : `!${fileDef}`
+    )
   );
   const copyTask = {
     options: copyOptions.options,
@@ -75,5 +72,14 @@ export const handle = (
       dest: copyOptions.outputPath || join("dist", targetName),
     }],
   };
-  return [insertTask(gruntConfig, "copy", targetName, copyTask)];
+  const requiredTasks = [insertTask(gruntConfig, "copy", targetName, copyTask)];
+  const watchTasks = [{
+    filesToWatch: srcList,
+    taskToRun: requiredTasks[0],
+  }];
+  return {
+    requiredTasks,
+    handledFiles: srcList,
+    watchTasks,
+  };
 };

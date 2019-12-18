@@ -31,6 +31,7 @@ For webapp building:
 - grunt-contrib-imagemin
 - grunt-contrib-pug
 - grunt-contrib-copy
+- grunt-contrib-watch
 - grunt-sass
 - node-sass
 - grunt-webpack
@@ -203,6 +204,13 @@ module.exports = grunt => {
   );
 };
 ```
+
+### Watcher
+
+All files except those parsed by webpack can be watched for updates and
+automatically trigger their task when needed.
+Simply run `npx grunt watch` to start the watcher.
+It is also configured to have a livereload server on port 35729.
 
 ## Express application definition
 

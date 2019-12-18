@@ -1,6 +1,7 @@
-import {resolve} from "path";
+import {join, resolve} from "path";
 import {insertTask, GruntConfig} from "./util";
 import {BaseOptions} from "../util";
+import {HandlerFunctionResult} from "../reactapp";
 
 export interface WebpackLoadersOptions {
   development?: boolean;
@@ -78,9 +79,6 @@ export const webpackLoadersDefault = (
   },
 ]);
 
-/** File extensions handled by this task */
-export const handledExtensions = [".js"];
-
 export interface WebpackOptions extends BaseOptions {
   mode?: "development" | "production" | "none";
   options?: object;
@@ -151,10 +149,20 @@ export const handle = (
   gruntConfig: GruntConfig,
   targetName: string,
   webpackOptions: WebpackOptions
-): Array<string> => {
+): HandlerFunctionResult => {
   const webpackEntry = webpackOptions.entry || {
-    [targetName]: resolve("webres", targetName, "js", "loader.js"),
+    [targetName]: join("webres", targetName, "js", "loader.js"),
   };
+  const handledFiles = Object.keys(webpackEntry).reduce<Array<string>>(
+    (acc, cur) => {
+      if (webpackEntry[cur].startsWith("webres")) {
+        acc.push(webpackEntry[cur].substr("webres/".length));
+      }
+      webpackEntry[cur] = resolve(webpackEntry[cur]);
+      return acc;
+    },
+    []
+  );
   const webpackOutput = webpackOptions.output || {
     path: resolve("dist", targetName, "js"),
     filename: "[name].js",
@@ -179,8 +187,8 @@ export const handle = (
   if (webpackOptions.options) {
     insertTask(gruntConfig, "webpack", "options", webpackOptions.options);
   }
-  const tasks = [];
-  tasks.push(
+  const requiredTasks = [];
+  requiredTasks.push(
     insertTask(
       gruntConfig,
       "webpack",
@@ -188,5 +196,9 @@ export const handle = (
       webpackConfig
     )
   );
-  return tasks;
+  return {
+    requiredTasks,
+    handledFiles,
+    watchTasks: [],
+  };
 };

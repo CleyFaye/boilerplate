@@ -1,6 +1,7 @@
 import {join} from "path";
 import {insertTask, GruntConfig} from "./util";
 import {BaseOptions} from "../util";
+import {HandlerFunctionResult} from "../reactapp";
 
 export interface PugOptions extends BaseOptions {
   options?: object;
@@ -10,7 +11,7 @@ export interface PugOptions extends BaseOptions {
 }
 
 /** File extensions handled by this task */
-export const handledExtensions = [".pug"];
+const handledExtensions = [".pug"];
 
 /** Add the pug task for a reactApp recipe.
  * 
@@ -46,16 +47,26 @@ export const handle = (
   gruntConfig: GruntConfig,
   targetName: string,
   pugOptions: PugOptions
-): Array<string> => {
+): HandlerFunctionResult => {
+  const handledFiles = handledExtensions.map(ext => `**/*${ext}`);
   const newPugTask = {
     options: pugOptions.options,
     files: [{
       expand: true,
       cwd: pugOptions.sourcePath || join("webres", targetName),
-      src: handledExtensions.map(ext => `**/*${ext}`),
+      src: handledFiles,
       dest: pugOptions.outputPath || join("dist", targetName),
       ext: pugOptions.fileSuffix || ".html",
     }],
   };
-  return [insertTask(gruntConfig, "pug", targetName, newPugTask)];
+  const requiredTasks = [insertTask(gruntConfig, "pug", targetName, newPugTask)];
+  const watchTasks = [{
+    filesToWatch: handledFiles,
+    taskToRun: requiredTasks[0],
+  }];
+  return {
+    requiredTasks,
+    handledFiles,
+    watchTasks,
+  };
 };
