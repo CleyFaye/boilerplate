@@ -167,6 +167,9 @@ export const handle = (
     path: resolve("dist", targetName, "js"),
     filename: "[name].js",
   };
+  const outputToWatch = webpackOptions.output
+    ? null
+    : join("dist", targetName, "js", `${targetName}.js`);
   const webpackLoaders = webpackOptions.loaders
     || webpackLoadersDefault({
       development: webpackOptions.mode === "development",
@@ -208,9 +211,17 @@ export const handle = (
       }
     )
   );
+  const watchTasks = outputToWatch
+    ? [{
+      filesToWatch: [
+        outputToWatch,
+      ],
+      fromRoot: true,
+    }]
+    : [];
   return {
     requiredTasks,
     handledFiles,
-    watchTasks: [],
+    watchTasks,
   };
 };

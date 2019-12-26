@@ -40,7 +40,8 @@ export interface ReactAppOptions {
 
 export interface WatchTaskDef {
   filesToWatch: Array<string>;
-  taskToRun: string;
+  taskToRun?: string;
+  fromRoot?: boolean;
 }
 
 export interface HandlerFunctionResult {
@@ -165,27 +166,35 @@ export const reactApp = (
       }
     );
   }
+  let unnamedIndex = 0;
   splitResult.watchTasks.forEach(watchTask => {
     insertTask(
       gruntConfig,
       "watch",
-      watchTask.taskToRun.split(":").join("_"),
+      watchTask.taskToRun
+        ? watchTask.taskToRun.split(":").join("_")
+        : `unnamed${unnamedIndex++}`,
       {
         options: {
           livereload: true,
         },
         files: watchTask.filesToWatch.reduce<Array<string>>(
           (acc, cur) => {
+            const prefix = watchTask.fromRoot
+              ? ""
+              : "webres/";
             if (cur.startsWith("!")) {
-              acc.push(`!webres/${cur.substr(1)}`);
+              acc.push(`!${prefix}${cur.substr(1)}`);
             } else {
-              acc.push(`webres/${cur}`);
+              acc.push(`${prefix}${cur}`);
             }
             return acc;
           },
           []
         ),
-        tasks: [watchTask.taskToRun],
+        tasks: watchTask.taskToRun
+          ? [watchTask.taskToRun]
+          : undefined,
       }
     );
   });
