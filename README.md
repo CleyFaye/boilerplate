@@ -139,7 +139,8 @@ The webpack options support a host of properties:
 - entry: list of entrypoints. Defaults to using a single entrypoint named
   `webres/<targetname>/js/loader.js`.
 - externals: record describing external dependencies (dependencies that will
-  not be bundled in the bundle). Key are the "require" name, value is the variable that will have to exist at runtime.
+  not be bundled in the bundle). Key are the "require" name, value is the
+  variable that will have to exist at runtime.
 - output: where to put the bundle. Defaults to
   `dist/<targetname>/js/<targetname>.js`
 - loaders: loaders that parse the input files before bundling. Defaults to
@@ -273,7 +274,8 @@ The `defaultErrorHandler` property enable a final error handler.
 It's behavior is to intercept errors/exceptions and return them as a reply.
 If the error is a proper error object (from `http-errors`), it will return the
 message (if expose is true) and the statusCode.
-If the request declares that it can accept json, the error is sent back as a json object with `statusCode` and `message`.
+If the request declares that it can accept json, the error is sent back as a
+json object with `statusCode` and `message`.
 Otherwise the message is sent as a plaintext reply.
 
 ### Defining routes
@@ -337,7 +339,8 @@ The settings are:
 The function returns a promise that resolve with the actual port used for
 listening when the server is started.
 
-The server is automatically registered using the `autoclose` part to stop when a SIGINT signal is received.
+The server is automatically registered using the `autoclose` part to stop when
+a SIGINT signal is received.
 It is also possible to trigger a stop by calling the `closeServer()` function
 on `@cley_faye/boilerplate/lib/express/autoclose`.
 This feature only supports one server at a time.
