@@ -351,3 +351,16 @@ import consoleLogger from "@cley_faye/boilerplate/lib/winston";
 
 consoleLogger.info("Log line");
 ```
+
+## Using TypeScript
+
+Typical use of TypeScript implies converting `.ts` file to `.js`.
+For a React app using webpack, there's two approach: either instruct webpack to
+accept `.ts` files (for example, using `ts-loader`) or have your entry point be
+a `.js` file that imports the generated output from TypeScript. Either way,
+watch mode will be capable of detecting change in the source material, as long
+as the TypeScript compiler is also running.
+
+For Express app, there is no particular things to take care, except that if you
+use a facility like `nodemon` you have to watch the TypeScript output instead
+of the actual source files.
