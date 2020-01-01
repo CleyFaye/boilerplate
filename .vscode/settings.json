@@ -1,6 +1,6 @@
 {
   "files.exclude": {
-    ".tsbuildinfo": true,
-    "**/lib": true
+    "**/lib": true,
+    "tsconfig.tsbuildinfo": true
   }
 }
