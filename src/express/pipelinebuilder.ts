@@ -1,5 +1,11 @@
 import express from "express";
 import {
+  OptionsJson,
+  OptionsUrlencoded,
+  OptionsText,
+  Options as OptionsRaw,
+} from "body-parser";
+import {
   registerRouteLogger,
   registerErrorLogger,
 } from "./logger";
@@ -36,7 +42,10 @@ const defaultErrorHandlerImplementation = (
 export type LogFunction = (...args: Array<string|number|object>) => void;
 
 export interface MiddlewareOptions {
-  json?: boolean;
+  urlencoded?: boolean | OptionsUrlencoded;
+  text?: boolean | OptionsText;
+  raw?: boolean | OptionsRaw;
+  json?: boolean | OptionsJson;
 }
 
 export type ComplexRouteHandler =
@@ -107,10 +116,39 @@ export default class PipelineBuilder {
     router: express.Router,
     middlewareOptions?: MiddlewareOptions
   ): void {
-    const {json} = middlewareOptions || {};
+    const {
+      urlencoded,
+      text,
+      raw,
+      json,
+    } = middlewareOptions || {};
+    if (urlencoded) {
+      this.log("express.urlencoded()");
+      const options = urlencoded === true
+        ? undefined
+        : urlencoded;
+      router.use(express.urlencoded(options));
+    }
+    if (text) {
+      this.log("express.text()");
+      const options = text === true
+        ? undefined
+        : text;
+      router.use(express.text(options));
+    }
+    if (raw) {
+      this.log("express.raw()");
+      const options = raw === true
+        ? undefined
+        : raw;
+      router.use(express.raw(options));
+    }
     if (json) {
       this.log("express.json()");
-      router.use(express.json());
+      const options = json === true
+        ? undefined
+        : json;
+      router.use(express.json(options));
     }
   }
 

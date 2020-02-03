@@ -67,9 +67,22 @@ import {Server, AddressInfo} from "net";
    * An existing winston logger to use
    *
    * @param [settings.options.middleware]
-   * @param [settings.options.middleware.json]
-   * Parse JSON body requests
+   * @param [settings.options.middleware.urlencoded]
+   * Parse URL encoded requests. Can be true or settings for urlencoded().
+   * Default to handling application/x-www-form-urlencoded.
    *
+   * @param [settings.options.middleware.text]
+   * Parse raw text body requests. Can be true or settings for text()
+   * Default to handling text/plain
+   * 
+   * @param [settings.options.middleware.raw]
+   * Parse raw body requests into an arraybuffer. Can be true or settings for raw()
+   * Default to handling application/octet-stream
+   * 
+   * @param [settings.options.middleware.json]
+   * Parse JSON body requests. Can be true or settings for json()
+   * Default to handling application/json
+   * 
    * @param [settings.options.defaultErrorHandler]
    * Setup the default error handler. Defaults to false.
    *
