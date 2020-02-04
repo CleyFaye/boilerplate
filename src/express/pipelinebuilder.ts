@@ -12,11 +12,11 @@ import {
 import winston from "winston";
 import createError from "http-errors";
 
-const defaultErrorHandlerImplementation = (
+const defaultErrorHandler = (
   err: createError.HttpError,
   req: express.Request,
   res: express.Response,
-  next: express.NextFunction
+  next: express.NextFunction,
 ): void => {
   if (!res.headersSent && err.statusCode) {
     const message = err.expose
@@ -25,7 +25,7 @@ const defaultErrorHandlerImplementation = (
     if (req.accepts("json") === "json") {
       res.status(err.statusCode).send({
         statusCode: err.statusCode,
-        message: message,
+        message,
       });
       return;
     }
@@ -114,7 +114,7 @@ export default class PipelineBuilder {
    */
   setGenericMiddlewares(
     router: express.Router,
-    middlewareOptions?: MiddlewareOptions
+    middlewareOptions?: MiddlewareOptions,
   ): void {
     const {
       urlencoded,
@@ -152,33 +152,33 @@ export default class PipelineBuilder {
     }
   }
 
-  addRouterToRouter(
+  static addRouterToRouter(
     baseRouter: express.Router,
-    newRouter: express.Router
+    newRouter: express.Router,
   ): void {
     baseRouter.use(newRouter);
   }
 
-  addMiddlewareToRouter(
+  static addMiddlewareToRouter(
     router: express.Router,
-    middleware: express.RequestHandler
+    middleware: express.RequestHandler,
   ): void {
     router.use(middleware);
   }
 
   addRouteToRouter(
     router: express.Router,
-    route: ComplexRouteDefinition
+    route: ComplexRouteDefinition,
   ): void {
     const method = route.method || "get";
     this.log(
-      `Adding route "${route.route}" [${method}]`
+      `Adding route "${route.route}" [${method}]`,
     );
     // Simple route definition
     if (Array.isArray(route.handler)) {
       // Multiple handlers for same route
       route.handler.forEach(
-        handler => router[method](route.route, handler)
+        (handler) => router[method](route.route, handler),
       );
     } else {
       // Simple handler
@@ -194,23 +194,23 @@ export default class PipelineBuilder {
    */
   setRoutes(
     router: express.Router,
-    routes?: Array<express.Router | RouteDefinition>
+    routes?: Array<express.Router | RouteDefinition>,
   ): void {
-    (routes || []).forEach(routeDef => {
+    (routes || []).forEach((routeDef) => {
       const asRouter = routeDef as express.Router;
       const asRouteDef = routeDef as ComplexRouteDefinition;
       const asRequestHandler = routeDef as express.RequestHandler;
       if (asRouter.name === "router") {
         // Raw router
         this.log("Adding raw router");
-        this.addRouterToRouter(router, asRouter);
+        PipelineBuilder.addRouterToRouter(router, asRouter);
       } else if (asRouteDef.route && asRouteDef.handler) {
         // Specific routes
         this.addRouteToRouter(router, asRouteDef);
       } else {
         // Middleware
         this.log("Adding middleware");
-        this.addMiddlewareToRouter(router, asRequestHandler);
+        PipelineBuilder.addMiddlewareToRouter(router, asRequestHandler);
       }
     });
   }
@@ -220,17 +220,19 @@ export default class PipelineBuilder {
    * @param router
    * @param errorHandlers
    */
-  setErrorHandlers(
+  static setErrorHandlers(
     router: express.Router,
-    errorHandlers?: Array<express.ErrorRequestHandler>
+    errorHandlers?: Array<express.ErrorRequestHandler>,
   ): void {
-    (errorHandlers || []).forEach(errorHandler => {
+    (errorHandlers || []).forEach((errorHandler) => {
       router.use(errorHandler);
     });
   }
 
   /** Appropriate call to express.static() */
-  buildStaticHandler(staticDef: StaticDefinition): express.RequestHandler {
+  static buildStaticHandler(
+    staticDef: StaticDefinition,
+  ): express.RequestHandler {
     return typeof staticDef === "string"
       ? express.static(staticDef)
       : express.static(staticDef.root, staticDef.options);
@@ -239,9 +241,9 @@ export default class PipelineBuilder {
   /** Use a static definition */
   useComplexStatic(
     router: express.Router,
-    staticDef: StaticDefinition
+    staticDef: StaticDefinition,
   ): void {
-    const staticHandler = this.buildStaticHandler(staticDef);
+    const staticHandler = PipelineBuilder.buildStaticHandler(staticDef);
     if (typeof staticDef === "string") {
       this.log("Adding statics");
       router.use(staticHandler);
@@ -263,10 +265,10 @@ export default class PipelineBuilder {
    */
   setStatics(
     router: express.Router,
-    statics?: Array<StaticDefinition>
+    statics?: Array<StaticDefinition>,
   ): void {
-    (statics || []).forEach(staticDef =>
-      this.useComplexStatic(router, staticDef)
+    (statics || []).forEach(
+      (staticDef) => this.useComplexStatic(router, staticDef),
     );
   }
 
@@ -280,9 +282,11 @@ export default class PipelineBuilder {
    */
   setRouteLogger(
     router: express.Router,
-    logOptions?: LogOptions
+    logOptions?: LogOptions,
   ): void {
-    const {route, logger} = logOptions || {};
+    const {
+      route, logger,
+    } = logOptions || {};
     if (route) {
       this.log("Adding route logger");
       registerRouteLogger(router, logger);
@@ -299,9 +303,11 @@ export default class PipelineBuilder {
    */
   setErrorLogger(
     router: express.Router,
-    logOptions?: LogOptions
+    logOptions?: LogOptions,
   ): void {
-    const {error, logger} = logOptions || {};
+    const {
+      error, logger,
+    } = logOptions || {};
     if (error) {
       this.log("Adding error logger");
       registerErrorLogger(router, logger);
@@ -310,11 +316,11 @@ export default class PipelineBuilder {
 
   setDefaultErrorHandler(
     router: express.Router,
-    enableDefaultErrorHandler?: boolean
+    enableDefaultErrorHandler?: boolean,
   ): void {
     if (enableDefaultErrorHandler) {
       this.log("Adding default error handler");
-      router.use(defaultErrorHandlerImplementation);
+      router.use(defaultErrorHandler);
     }
   }
 
@@ -327,7 +333,9 @@ export default class PipelineBuilder {
     errorHandlers,
     options,
   }: PipelineSettings): express.Router {
-    const {middleware, log, defaultErrorHandler} = options || {};
+    const {
+      middleware, log, defaultErrorHandler: useDefaultErrorHandler,
+    } = options || {};
     this.log("createPipeline()");
     const router = express.Router();
     this.log("setGenericMiddlewares()");
@@ -345,9 +353,9 @@ export default class PipelineBuilder {
     this.log("add logger (errors)");
     this.setErrorLogger(router, log);
     this.log("add error handlers");
-    this.setErrorHandlers(router, errorHandlers);
+    PipelineBuilder.setErrorHandlers(router, errorHandlers);
     this.log("add default error handlers");
-    this.setDefaultErrorHandler(router, defaultErrorHandler);
+    this.setDefaultErrorHandler(router, useDefaultErrorHandler);
     return router;
   }
 }

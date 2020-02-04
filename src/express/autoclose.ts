@@ -15,7 +15,7 @@ export const setRef = (ref: Server): void => {
 };
 
 /** Remove a server instance from the closing list.
- * 
+ *
  * @param {Object} ref
  * The server instance
  */
@@ -28,14 +28,14 @@ export const unsetRef = (ref: Server): void => {
 
 /** Close the stored server reference */
 export const closeServer = (): void => {
-  serverRefs.forEach(ref => ref.close());
+  serverRefs.forEach((ref) => ref.close());
   serverRefs.length = 0;
 };
 
 /** Stop the server on SIGINT */
 export const setSignalHandler = (): void => {
   if (process.platform === "win32") {
-    process.on("message", msg => {
+    process.on("message", (msg) => {
       if (msg === "shutdown") {
         closeServer();
       }

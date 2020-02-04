@@ -1,3 +1,6 @@
+const base = require("./.eslintrc.base");
+const ts = require("./.eslintrc.ts");
+
 module.exports = {
   "parser": "@typescript-eslint/parser",
   "env": {
@@ -5,9 +8,8 @@ module.exports = {
     "node": true
   },
   "extends": [
-    "eslint:recommended",
-    "plugin:@typescript-eslint/eslint-recommended",
-    "plugin:@typescript-eslint/recommended"
+    ...base.extendsBase,
+    ...ts.extendsBase,
   ],
   "parserOptions": {
     "ecmaVersion": 2018,
@@ -15,21 +17,7 @@ module.exports = {
     "project": "./tsconfig.json"
   },
   "rules": {
-    "indent": [
-      "error",
-      2
-    ],
-    "linebreak-style": [
-      "error",
-      "unix"
-    ],
-    "quotes": [
-      "error",
-      "double"
-    ],
-    "semi": [
-      "error",
-      "always"
-    ]
+    ...base.rules,
+    ...ts.rules,
   }
 };

@@ -3,11 +3,15 @@ import expressWinston from "express-winston";
 import {transports as baseTransports} from "../winston";
 import {Router} from "express";
 
-export const registerRouteLogger = (app: Router, logger?: winston.Logger): void => {
+export const registerRouteLogger = (
+  app: Router,
+  logger?: winston.Logger,
+): void => {
   if (logger) {
     app.use(expressWinston.logger({
       winstonInstance: logger,
       meta: false,
+      // eslint-disable-next-line max-len
       msg: "{{req.method}} {{req.url}} {{res.statusCode}} {{res.responseTime}}ms",
       expressFormat: false,
       colorize: true,
@@ -20,6 +24,7 @@ export const registerRouteLogger = (app: Router, logger?: winston.Logger): void 
         winston.format.simple(),
       ),
       meta: false,
+      // eslint-disable-next-line max-len
       msg: "{{req.method}} {{req.url}} {{res.statusCode}} {{res.responseTime}}ms",
       expressFormat: false,
       colorize: true,
@@ -27,7 +32,10 @@ export const registerRouteLogger = (app: Router, logger?: winston.Logger): void 
   }
 };
 
-export const registerErrorLogger = (app: Router, logger?: winston.Logger): void => {
+export const registerErrorLogger = (
+  app: Router,
+  logger?: winston.Logger,
+): void => {
   if (logger) {
     app.use(expressWinston.errorLogger({
       winstonInstance: logger,

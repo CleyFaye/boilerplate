@@ -1,5 +1,7 @@
-import {reactApp} from "./grunt/reactapp";
-import {reactAppOptionsHelper} from "./grunt/reactapp";
+import {
+  reactApp,
+  reactAppOptionsHelper,
+} from "./grunt/reactapp";
 
 export {
   reactApp,
