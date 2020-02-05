@@ -23,7 +23,9 @@ export const insertTask = (
   taskName: string,
   taskDef: object,
 ): string => {
-  gruntConfig[taskType] = gruntConfig[taskType] || {};
+  if (!(taskType in gruntConfig)) {
+    gruntConfig[taskType] = {};
+  }
   const taskFullName = `${taskType}:${taskName}`;
   if (gruntConfig[taskType][taskName] !== undefined) {
     throw new Error(`Grunt task ${taskFullName} already defined`);

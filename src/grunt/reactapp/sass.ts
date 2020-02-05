@@ -68,15 +68,16 @@ export const handle = (
     files: [
       {
         expand: true,
-        cwd: sassOptions.sourcePath || join("webres", targetName),
+        cwd: sassOptions.sourcePath ?? join("webres", targetName),
         src: handledFiles,
-        dest: sassOptions.outputPath || join("dist", targetName),
-        ext: sassOptions.fileSuffix || ".css",
+        dest: sassOptions.outputPath ?? join("dist", targetName),
+        ext: sassOptions.fileSuffix ?? ".css",
       },
     ],
   };
   if ((sassTask.options as SassOptionsOptions).implementation === undefined) {
-    // eslint-disable-next-line global-require
+    // eslint-disable-next-line max-len
+    // eslint-disable-next-line @typescript-eslint/no-require-imports, global-require
     (sassTask.options as SassOptionsOptions).implementation = require(
       "node-sass",
     );

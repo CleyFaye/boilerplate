@@ -48,24 +48,24 @@ export const webpackLoadersDefault = (
           [
             "@babel/preset-env",
             {
-              targets: (options && options.babel && options.babel.targets)
-                || "last 1 version, > 2%, not dead",
+              targets: (options?.babel?.targets)
+                ?? "last 1 version, > 2%, not dead",
               useBuiltIns: "usage",
-              corejs: (options && options.babel && options.babel.corejs)
-                || defaultCoreJS,
+              corejs: (options?.babel?.corejs)
+                ?? defaultCoreJS,
               modules: false,
             },
           ],
           [
             "@babel/preset-react",
-            {development: options && options.development},
+            {development: options?.development},
           ],
         ],
         plugins: [
           [
             "transform-define",
             {
-              "process.env.BUILD_TYPE": options && options.development
+              "process.env.BUILD_TYPE": options?.development
                 ? "development"
                 : "production",
             },
@@ -104,7 +104,7 @@ const computeWebpackOutput = (
 ): {
   path?: string;
   filename?: string;
-} => webpackOptions.output || {
+} => webpackOptions.output ?? {
   path: resolve("dist", targetName, "js"),
   filename: "[name].js",
 };
@@ -228,11 +228,11 @@ export const handle = (
   webpackOptions: WebpackOptions,
 ): HandlerFunctionResult => {
   const webpackEntry = webpackOptions.entry
-    || {[targetName]: join("webres", targetName, "js", "loader.js")};
+    ?? {[targetName]: join("webres", targetName, "js", "loader.js")};
   const handledFiles = getHandledFiles(webpackEntry);
   const webpackOutput = computeWebpackOutput(webpackOptions, targetName);
   const webpackLoaders = webpackOptions.loaders
-    || webpackLoadersDefault(
+    ?? webpackLoadersDefault(
       {development: webpackOptions.mode === "development"},
     );
   const webpackConfig = {

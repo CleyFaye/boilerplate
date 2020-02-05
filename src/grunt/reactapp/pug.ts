@@ -56,10 +56,10 @@ export const handle = (
     files: [
       {
         expand: true,
-        cwd: pugOptions.sourcePath || join("webres", targetName),
+        cwd: pugOptions.sourcePath ?? join("webres", targetName),
         src: handledFiles,
-        dest: pugOptions.outputPath || join("dist", targetName),
-        ext: pugOptions.fileSuffix || ".html",
+        dest: pugOptions.outputPath ?? join("dist", targetName),
+        ext: pugOptions.fileSuffix ?? ".html",
       },
     ],
   };

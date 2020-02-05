@@ -55,9 +55,9 @@ export const handle = (
     files: [
       {
         expand: true,
-        cwd: imageOptions.sourcePath || join("webres", targetName),
+        cwd: imageOptions.sourcePath ?? join("webres", targetName),
         src: handledFiles,
-        dest: imageOptions.outputPath || join("dist", targetName),
+        dest: imageOptions.outputPath ?? join("dist", targetName),
       },
     ],
   };

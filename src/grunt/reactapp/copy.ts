@@ -53,14 +53,14 @@ export const handle = (
   copyOptions: CopyOptions,
 ): HandlerFunctionResult => {
   const srcList = ["**/*"].concat(
-    (copyOptions.excludedExtensions || []).map(
+    (copyOptions.excludedExtensions ?? []).map(
       (ext) => `!**/*${ext}`,
     ),
   ).concat(
-    copyOptions.extraFiles || [],
+    copyOptions.extraFiles ?? [],
   )
     .concat(
-      (copyOptions.skipFiles || []).map(
+      (copyOptions.skipFiles ?? []).map(
         (fileDef) => fileDef.startsWith("!")
           ? fileDef
           : `!${fileDef}`,
@@ -71,9 +71,9 @@ export const handle = (
     files: [
       {
         expand: true,
-        cwd: copyOptions.sourcePath || join("webres", targetName),
+        cwd: copyOptions.sourcePath ?? join("webres", targetName),
         src: srcList,
-        dest: copyOptions.outputPath || join("dist", targetName),
+        dest: copyOptions.outputPath ?? join("dist", targetName),
       },
     ],
   };

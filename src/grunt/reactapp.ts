@@ -67,17 +67,17 @@ const gatherTasks = (
   options?: ReactAppOptions,
 ): Array<HandlerFunctionResult> => (Object.keys(handlers) as Array<HandlerType>)
   .reduce<Array<HandlerFunctionResult>>(
-    (acc, cur) => acc.concat(
-      (options && options[cur] && (options[cur] || {}).disabled)
-        ? []
-        : handlers[cur](
-          gruntConfig,
-          targetName,
-          (options && options[cur]) || {},
-        ),
-    ),
-    [],
-  );
+  (acc, cur) => acc.concat(
+    (options?.[cur] && (options[cur] ?? {}).disabled)
+      ? []
+      : handlers[cur](
+        gruntConfig,
+        targetName,
+        (options?.[cur]) ?? {},
+      ),
+  ),
+  [],
+);
 
 const mergeResults = (
   tasksResults: Array<HandlerFunctionResult>,
@@ -101,12 +101,12 @@ const createCopyTask = (
   mergedResults: HandlerFunctionResult,
   options?: ReactAppOptions,
 ): void => {
-  const copyOptions = (options && options[HandlerType.COPY]) || {};
+  const copyOptions = (options?.[HandlerType.COPY]) ?? {};
   copyOptions.skipFiles = mergedResults.handledFiles;
   const copyTask = handleCopy(
     gruntConfig,
     targetName,
-    (options && options[HandlerType.COPY]) || {},
+    (options?.[HandlerType.COPY]) ?? {},
   );
   mergedResults.requiredTasks = mergedResults.requiredTasks.concat(
     copyTask.requiredTasks,

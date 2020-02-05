@@ -95,11 +95,83 @@ export interface PipelineSettings {
 export default class PipelineBuilder {
   private _debugLog?: LogFunction;
 
-  constructor(debugLog?: LogFunction) {
+  public constructor(debugLog?: LogFunction) {
     this._debugLog = debugLog;
   }
 
-  log(...args: Array<string|number|object>): void {
+  private static _addRouterToRouter(
+    baseRouter: express.Router,
+    newRouter: express.Router,
+  ): void {
+    baseRouter.use(newRouter);
+  }
+
+  private static _addMiddlewareToRouter(
+    router: express.Router,
+    middleware: express.RequestHandler,
+  ): void {
+    router.use(middleware);
+  }
+
+  /** Register error handlers
+   *
+   * @param router
+   * @param errorHandlers
+   */
+  private static _setErrorHandlers(
+    router: express.Router,
+    errorHandlers?: Array<express.ErrorRequestHandler>,
+  ): void {
+    (errorHandlers ?? []).forEach((errorHandler) => {
+      router.use(errorHandler);
+    });
+  }
+
+  /** Appropriate call to express.static() */
+  private static _buildStaticHandler(
+    staticDef: StaticDefinition,
+  ): express.RequestHandler {
+    return typeof staticDef === "string"
+      ? express.static(staticDef)
+      : express.static(staticDef.root, staticDef.options);
+  }
+
+  /** See createPipeline() for more info */
+  public createPipeline({
+    topLevels,
+    routes,
+    statics,
+    postStatics,
+    errorHandlers,
+    options,
+  }: PipelineSettings): express.Router {
+    const {
+      middleware, log, defaultErrorHandler: useDefaultErrorHandler,
+    } = options ?? {};
+    this.__log("createPipeline()");
+    const router = express.Router();
+    this.__log("setGenericMiddlewares()");
+    this._setGenericMiddlewares(router, middleware);
+    this.__log("add top level routes/middleware");
+    this._setRoutes(router, topLevels);
+    this.__log("add logger (route call)");
+    this._setRouteLogger(router, log);
+    this.__log("add routes");
+    this._setRoutes(router, routes);
+    this.__log("add statics");
+    this._setStatics(router, statics);
+    this.__log("add post statics routes");
+    this._setRoutes(router, postStatics);
+    this.__log("add logger (errors)");
+    this._setErrorLogger(router, log);
+    this.__log("add error handlers");
+    PipelineBuilder._setErrorHandlers(router, errorHandlers);
+    this.__log("add default error handlers");
+    this._setDefaultErrorHandler(router, useDefaultErrorHandler);
+    return router;
+  }
+
+  protected __log(...args: Array<string|number|object>): void {
     if (this._debugLog) {
       this._debugLog(...args);
     }
@@ -112,7 +184,7 @@ export default class PipelineBuilder {
    * @param [middlewareOptions.json]
    * Process JSON body
    */
-  setGenericMiddlewares(
+  private _setGenericMiddlewares(
     router: express.Router,
     middlewareOptions?: MiddlewareOptions,
   ): void {
@@ -121,30 +193,30 @@ export default class PipelineBuilder {
       text,
       raw,
       json,
-    } = middlewareOptions || {};
+    } = middlewareOptions ?? {};
     if (urlencoded) {
-      this.log("express.urlencoded()");
+      this.__log("express.urlencoded()");
       const options = urlencoded === true
         ? undefined
         : urlencoded;
       router.use(express.urlencoded(options));
     }
     if (text) {
-      this.log("express.text()");
+      this.__log("express.text()");
       const options = text === true
         ? undefined
         : text;
       router.use(express.text(options));
     }
     if (raw) {
-      this.log("express.raw()");
+      this.__log("express.raw()");
       const options = raw === true
         ? undefined
         : raw;
       router.use(express.raw(options));
     }
     if (json) {
-      this.log("express.json()");
+      this.__log("express.json()");
       const options = json === true
         ? undefined
         : json;
@@ -152,26 +224,12 @@ export default class PipelineBuilder {
     }
   }
 
-  static addRouterToRouter(
-    baseRouter: express.Router,
-    newRouter: express.Router,
-  ): void {
-    baseRouter.use(newRouter);
-  }
-
-  static addMiddlewareToRouter(
-    router: express.Router,
-    middleware: express.RequestHandler,
-  ): void {
-    router.use(middleware);
-  }
-
-  addRouteToRouter(
+  private _addRouteToRouter(
     router: express.Router,
     route: ComplexRouteDefinition,
   ): void {
-    const method = route.method || "get";
-    this.log(
+    const method = route.method ?? "get";
+    this.__log(
       `Adding route "${route.route}" [${method}]`,
     );
     // Simple route definition
@@ -192,63 +250,40 @@ export default class PipelineBuilder {
    * @param routes
    * See routes in createPipeline()
    */
-  setRoutes(
+  private _setRoutes(
     router: express.Router,
     routes?: Array<express.Router | RouteDefinition>,
   ): void {
-    (routes || []).forEach((routeDef) => {
+    (routes ?? []).forEach((routeDef) => {
       const asRouter = routeDef as express.Router;
       const asRouteDef = routeDef as ComplexRouteDefinition;
       const asRequestHandler = routeDef as express.RequestHandler;
       if (asRouter.name === "router") {
         // Raw router
-        this.log("Adding raw router");
-        PipelineBuilder.addRouterToRouter(router, asRouter);
-      } else if (asRouteDef.route && asRouteDef.handler) {
+        this.__log("Adding raw router");
+        PipelineBuilder._addRouterToRouter(router, asRouter);
+      } else if (asRouteDef.route) {
         // Specific routes
-        this.addRouteToRouter(router, asRouteDef);
+        this._addRouteToRouter(router, asRouteDef);
       } else {
         // Middleware
-        this.log("Adding middleware");
-        PipelineBuilder.addMiddlewareToRouter(router, asRequestHandler);
+        this.__log("Adding middleware");
+        PipelineBuilder._addMiddlewareToRouter(router, asRequestHandler);
       }
     });
   }
 
-  /** Register error handlers
-   *
-   * @param router
-   * @param errorHandlers
-   */
-  static setErrorHandlers(
-    router: express.Router,
-    errorHandlers?: Array<express.ErrorRequestHandler>,
-  ): void {
-    (errorHandlers || []).forEach((errorHandler) => {
-      router.use(errorHandler);
-    });
-  }
-
-  /** Appropriate call to express.static() */
-  static buildStaticHandler(
-    staticDef: StaticDefinition,
-  ): express.RequestHandler {
-    return typeof staticDef === "string"
-      ? express.static(staticDef)
-      : express.static(staticDef.root, staticDef.options);
-  }
-
   /** Use a static definition */
-  useComplexStatic(
+  private _useComplexStatic(
     router: express.Router,
     staticDef: StaticDefinition,
   ): void {
-    const staticHandler = PipelineBuilder.buildStaticHandler(staticDef);
+    const staticHandler = PipelineBuilder._buildStaticHandler(staticDef);
     if (typeof staticDef === "string") {
-      this.log("Adding statics");
+      this.__log("Adding statics");
       router.use(staticHandler);
     } else {
-      this.log(`Adding statics for route "${staticDef.route}"`);
+      this.__log(`Adding statics for route "${staticDef.route}"`);
       if (staticDef.route) {
         router.use(staticDef.route, staticHandler);
       } else {
@@ -263,12 +298,12 @@ export default class PipelineBuilder {
    * @param statics
    * See createPipeline()
    */
-  setStatics(
+  private _setStatics(
     router: express.Router,
     statics?: Array<StaticDefinition>,
   ): void {
-    (statics || []).forEach(
-      (staticDef) => this.useComplexStatic(router, staticDef),
+    (statics ?? []).forEach(
+      (staticDef) => this._useComplexStatic(router, staticDef),
     );
   }
 
@@ -280,15 +315,15 @@ export default class PipelineBuilder {
    * Log each route call
    * @param [logOptions.logger]
    */
-  setRouteLogger(
+  private _setRouteLogger(
     router: express.Router,
     logOptions?: LogOptions,
   ): void {
     const {
       route, logger,
-    } = logOptions || {};
+    } = logOptions ?? {};
     if (route) {
-      this.log("Adding route logger");
+      this.__log("Adding route logger");
       registerRouteLogger(router, logger);
     }
   }
@@ -301,61 +336,26 @@ export default class PipelineBuilder {
    * Log each error
    * @param {winstonLogger} [logOptions.logger]
    */
-  setErrorLogger(
+  private _setErrorLogger(
     router: express.Router,
     logOptions?: LogOptions,
   ): void {
     const {
       error, logger,
-    } = logOptions || {};
+    } = logOptions ?? {};
     if (error) {
-      this.log("Adding error logger");
+      this.__log("Adding error logger");
       registerErrorLogger(router, logger);
     }
   }
 
-  setDefaultErrorHandler(
+  private _setDefaultErrorHandler(
     router: express.Router,
     enableDefaultErrorHandler?: boolean,
   ): void {
     if (enableDefaultErrorHandler) {
-      this.log("Adding default error handler");
+      this.__log("Adding default error handler");
       router.use(defaultErrorHandler);
     }
-  }
-
-  /** See createPipeline() for more info */
-  createPipeline({
-    topLevels,
-    routes,
-    statics,
-    postStatics,
-    errorHandlers,
-    options,
-  }: PipelineSettings): express.Router {
-    const {
-      middleware, log, defaultErrorHandler: useDefaultErrorHandler,
-    } = options || {};
-    this.log("createPipeline()");
-    const router = express.Router();
-    this.log("setGenericMiddlewares()");
-    this.setGenericMiddlewares(router, middleware);
-    this.log("add top level routes/middleware");
-    this.setRoutes(router, topLevels);
-    this.log("add logger (route call)");
-    this.setRouteLogger(router, log);
-    this.log("add routes");
-    this.setRoutes(router, routes);
-    this.log("add statics");
-    this.setStatics(router, statics);
-    this.log("add post statics routes");
-    this.setRoutes(router, postStatics);
-    this.log("add logger (errors)");
-    this.setErrorLogger(router, log);
-    this.log("add error handlers");
-    PipelineBuilder.setErrorHandlers(router, errorHandlers);
-    this.log("add default error handlers");
-    this.setDefaultErrorHandler(router, useDefaultErrorHandler);
-    return router;
   }
 }

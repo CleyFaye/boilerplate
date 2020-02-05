@@ -166,8 +166,8 @@ export const appStart = ({
     });
   };
   server = allowNonLocal
-    ? app.listen(port || 0, readyCallback)
-    : app.listen(port || 0, "localhost", readyCallback);
+    ? app.listen(port ?? 0, readyCallback)
+    : app.listen(port ?? 0, "localhost", readyCallback);
   if (shutdownFunction) {
     server.on("close", shutdownFunction);
   }
