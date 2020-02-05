@@ -326,7 +326,7 @@ appStart({
   port: 3000,
   shutdownFunction: () => {;},
   logger: consoleLogger,
-}).then((port, server) => {;});
+}).then(({port, server}) => {;});
 ```
 
 The settings are:
