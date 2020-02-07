@@ -263,7 +263,9 @@ that can be provided at this point.
 The log options can be used to control the express server logging behavior.
 It supports the following properties:
 
-- route: log all route called
+- route: log all route called. Can be either a boolean or an express-winston
+  configuration. In the later case, all properties are accepted except the
+  winston instance, which is set separately.
 - error: log all errors
 - logger: an instance of a winston logger.
 

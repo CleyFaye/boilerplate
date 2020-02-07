@@ -62,7 +62,8 @@ import {
  * @param [settings.options]
  * @param [settings.options.log]
  * @param [settings.options.log.route]
- * Log each route
+ * Log each route. Can be an object with all properties expected from
+ * winston-express.logger()
  *
  * @param [settings.options.log.error]
  * Log error content

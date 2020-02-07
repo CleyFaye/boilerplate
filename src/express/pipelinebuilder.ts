@@ -8,6 +8,7 @@ import {
 import {
   registerRouteLogger,
   registerErrorLogger,
+  LoggerOptions,
 } from "./logger";
 import winston from "winston";
 import createError from "http-errors";
@@ -74,7 +75,7 @@ export type StaticDefinition =
   | string;
 
 export interface LogOptions {
-  route?: boolean;
+  route?: LoggerOptions;
   error?: boolean;
   logger?: winston.Logger;
 }
@@ -324,7 +325,7 @@ export default class PipelineBuilder {
     } = logOptions ?? {};
     if (route) {
       this.__log("Adding route logger");
-      registerRouteLogger(router, logger);
+      registerRouteLogger(router, route, logger);
     }
   }
 
