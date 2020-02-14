@@ -216,6 +216,48 @@ It is also configured to have a livereload server on port 35729.
 Webpack tasks can also be watched by manually running the
 `webpack:<target name>_watch` target in another terminal.
 
+## Grunt configuration
+To unify the way extra options are taken from Grunt, a function named
+`getOpts()` is exported by `@cley_faye/boilerplate/lib/grunt`.
+It provide basic type checking and inline help display for arguments passed to
+Grunt.
+
+Usage:
+```JavaScript
+const {getOpts, OptType} = require
+module.exports = grunt => {
+  const opts = getOpts(
+    grunt,
+    {
+      "textOpt": {
+        description: "Some helpful description",
+        type: OptType.STRING,
+      },
+      "boolOpt": {
+        type: OptType.BOOLEAN,
+        defaultValue: true,
+      },
+    },
+  );
+  if (opts.boolOpt) {
+    // do something
+  }
+}
+```
+
+All described options are mandatory unless a default value is specified.
+Accepted value type are `OptType.STRING`, `OptType.NUMBER`, `OptType.BOOLEAN`.
+For string and numbers, the value must be passed using the syntax
+`--text-opt="some text"` (quotes are optional).
+For boolean value, the presence of the option is enough (`--bool-opt`).
+It can be prefixed with `no-` to disable it (`--no-bool-opt`).
+
+All names provided in the config are converted to kebab-case for the command
+line.
+
+If `--help` is passed to the command line, an additional help message will be
+displayed on the output, using the provided descriptions if available.
+
 ## Express application definition
 
 The express helper actually provide a single place to configure most of the
