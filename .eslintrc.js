@@ -1,23 +1,7 @@
-const base = require("./.eslintrc.base");
-const ts = require("./.eslintrc.ts");
+const eslintConfig = require("@cley_faye/eslint-config");
 
-module.exports = {
-  "parser": "@typescript-eslint/parser",
-  "env": {
-    "es6": true,
-    "node": true
+module.exports = eslintConfig(
+  {
+    typescript: "./tsconfig.json",
   },
-  "extends": [
-    ...base.extendsBase,
-    ...ts.extendsBase,
-  ],
-  "parserOptions": {
-    "ecmaVersion": 2018,
-    "sourceType": "module",
-    "project": "./tsconfig.json"
-  },
-  "rules": {
-    ...base.rules,
-    ...ts.rules,
-  }
-};
+);
