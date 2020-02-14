@@ -4,6 +4,7 @@
     "version": "2.0.0",
     "tasks": [
         {
+            "label": "Watch build boilerplate",
             "type": "typescript",
             "tsconfig": "tsconfig.json",
             "option": "watch",
@@ -15,16 +16,5 @@
                 "isDefault": true
             }
         },
-        {
-            "type": "typescript",
-            "tsconfig": "tsconfig.json",
-            "problemMatcher": [
-                "$tsc"
-            ],
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            }
-        }
     ]
 }
