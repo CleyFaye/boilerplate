@@ -26,7 +26,7 @@ For webapp building:
 - @babel/core
 - @babel/preset-env
 - @babel/preset-react
-- @babel-plugin-transform-define
+- babelplugin-transform-define
 - core-js
 - grunt-contrib-imagemin
 - grunt-contrib-pug
@@ -205,6 +205,11 @@ module.exports = grunt => {
   );
 };
 ```
+
+By using the helper, in addition to setting options for various build steps,
+some variables are defined:
+- for pug, `productionBuild` is available in the template and is a boolean
+- for Babel/Webpack: `process.env.BUILD_TYPE` will be set to either `development` or `production`
 
 ### Watcher
 
