@@ -224,7 +224,7 @@ Grunt.
 
 Usage:
 ```JavaScript
-const {getOpts, OptType} = require
+const {getOpts, OptType} = require("@cley_faye/boilerplate/grunt");
 module.exports = grunt => {
   const opts = getOpts(
     grunt,
