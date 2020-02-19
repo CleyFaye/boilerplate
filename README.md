@@ -317,7 +317,13 @@ It supports the following properties:
 - logger: an instance of a winston logger.
 
 The middleware options allow enabling/disabling common middlewares.
-Currently only support one option: `json`, to enable auto-parsing of json body.
+Currently only support a few builtin middlewares from express:
+- `json`, to enable auto-parsing of json body.
+- `urlencoded`, to parse parameters from the query string
+- `text`, to populate body with the raw request as a string
+- `raw`, to populate body with the raw request content
+
+Each of these options accept either `true` (to use their default behavior) or an object with their configuration as specified in the ExpressJS manual.
 
 The `defaultErrorHandler` property enable a final error handler.
 It's behavior is to intercept errors/exceptions and return them as a reply.
@@ -358,7 +364,19 @@ properties:
 - options: The options to pass to express static handler
 - route: The route under which the static files will be served
 
-## Express application running
+### Configuring global aspects of an Express App
+
+#### Configuring the template engine
+```JavaScript
+import {setViewEngine} from "@cley_faye/boilerplate/lib/express";
+
+const app = express();
+setViewEngine(app, "pug", "webres/views", {});
+```
+The last parameter is optional; if provided it will define values available to
+the template engine.
+
+## Running Express application
 
 Once the express application is defined, it need to be started to serve files
 and resources.

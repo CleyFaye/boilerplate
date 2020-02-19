@@ -110,6 +110,25 @@ export const createPipeline = (
   return builder.createPipeline(settings);
 };
 
+/**
+ * Configure the views rendering engine for an ExpressJS App
+ */
+export const setViewEngine = (
+  app: express.Express,
+  viewEngine: string,
+  viewsDirectory: string,
+  extraLocals?: Record<string, string | number>,
+): void => {
+  app.set("views", viewsDirectory);
+  app.set("view engine", viewEngine);
+  if (extraLocals) {
+    app.locals = {
+      ...app.locals,
+      ...extraLocals,
+    };
+  }
+};
+
 export interface StartDefinition {
   app: express.Application;
   allowNonLocal?: boolean;
