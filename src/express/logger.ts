@@ -53,7 +53,7 @@ export const registerErrorLogger = (
 ): void => {
   if (logger) {
     app.use(expressWinston.errorLogger({
-      winstonInstance: logger,
+      transports: logger.transports,
       meta: false,
       msg: "{{req.method}} {{req.url}}",
     }));
@@ -64,7 +64,6 @@ export const registerErrorLogger = (
         winston.format.colorize(),
         winston.format.simple(),
       ),
-      winstonInstance: logger,
       meta: false,
       msg: "{{req.method}} {{req.url}}",
     }));
