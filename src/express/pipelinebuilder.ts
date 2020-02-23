@@ -23,7 +23,14 @@ const defaultErrorHandler = (
     const message = err.expose
       ? err.message
       : undefined;
-    if (req.accepts("json") === "json") {
+    const accepted = req.accepts(
+      [
+        "text",
+        "html",
+        "json",
+      ],
+    );
+    if (accepted === "json") {
       res.status(err.statusCode).send({
         statusCode: err.statusCode,
         message,
