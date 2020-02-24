@@ -66,10 +66,15 @@ import {
  * winston-express.logger()
  *
  * @param [settings.options.log.error]
- * Log error content
+ * Log error content. Can be either a boolean or an object with the
+ * "collapseNodeModules" property. The error log will then display a truncated
+ * stacktrace where lines containing node_modules are removed.
+ *
+ * @param [settings.options.log.timestamp]
+ * Log timestamps on each lines
  *
  * @param [settings.options.log.logger]
- * An existing winston logger to use
+ * An existing winston logger to use. Only the transport will be used.
  *
  * @param [settings.options.middleware]
  * @param [settings.options.middleware.urlencoded]

@@ -313,8 +313,10 @@ It supports the following properties:
 - route: log all route called. Can be either a boolean or an express-winston
   configuration. In the later case, all properties are accepted except the
   winston instance, which is set separately.
-- error: log all errors
+- error: log all errors. Accept a boolean, or an object with the 
+  "collapseNodeModules" boolean property.
 - logger: an instance of a winston logger.
+- timestamp: set to true to prepend a timestamp to each log line
 
 The middleware options allow enabling/disabling common middlewares.
 Currently only support a few builtin middlewares from express:
