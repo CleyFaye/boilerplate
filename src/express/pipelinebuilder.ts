@@ -205,7 +205,7 @@ export default class PipelineBuilder {
     if (urlencoded) {
       this.__log("express.urlencoded()");
       const options = urlencoded === true
-        ? undefined
+        ? {extended: true}
         : urlencoded;
       router.use(express.urlencoded(options));
     }
