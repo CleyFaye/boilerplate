@@ -23,7 +23,7 @@ export type ErrorLoggerOptions =
 /**
  * Collapse all lines containing /node_modules/ into an ellipsis
  */
-const filterNodeModules = function *(message: string): Generator<string> {
+const filterNodeModules = function* (message: string): Generator<string> {
   let inNodeModules = false;
   const lines = message.split("\n");
   for (const line of lines) {
