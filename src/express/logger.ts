@@ -73,7 +73,14 @@ const customRouteFormat = (
     if (info.meta?.responseTime) {
       delete info.meta.responseTime;
     }
-    const finalMessage = `${info.message} ${info.meta}`;
+    if (info.meta?.req) {
+      if (Object.keys(info.meta.req).length === 0) {
+        delete info.meta.req;
+      }
+    }
+    const metaString = JSON.stringify(info.meta);
+    const finalMessage
+     = `${info.message} ${metaString === "{}" ? "" : metaString}`;
     return prefixOutput(info.level, finalMessage, outputTimestamp);
   },
 );
@@ -96,7 +103,7 @@ export const registerRouteLogger = (
   }
   const baseConfig = {
     meta: true,
-    requestWhitelist: [],
+    requestWhitelist: ["body"],
     bodyWhitelist: [],
     expressFormat: false,
     format: winston.format.combine(
