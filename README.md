@@ -26,7 +26,7 @@ For webapp building:
 - @babel/core
 - @babel/preset-env
 - @babel/preset-react
-- babelplugin-transform-define
+- babel-plugin-transform-define
 - core-js
 - grunt-contrib-imagemin
 - grunt-contrib-pug
