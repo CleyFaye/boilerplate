@@ -1,16 +1,11 @@
-import {
-  join, resolve,
-} from "path";
-import {
-  insertTask, GruntConfig,
-} from "./util";
+import {join, resolve} from "path";
+import {insertTask, GruntConfig} from "./util";
 import {BaseOptions} from "../util";
-import {
-  HandlerFunctionResult, WatchTaskDef,
-} from "../reactapp";
+import {HandlerFunctionResult, WatchTaskDef} from "../reactapp";
 
 export interface WebpackLoadersOptions {
   development?: boolean;
+  defines?: Record<string, string>;
   babel?: {
     corejs: number;
     targets?: string;
@@ -26,6 +21,9 @@ const defaultCoreJS = 3;
  * @param [options]
  * @param [options.development]
  * true for development-friendly options, false for production options
+ *
+ * @param [options.defines]
+ * List of defines to set using Babel transform-define
  *
  * @param [options.babel]
  * @param [options.babel.corejs]
@@ -51,8 +49,7 @@ export const webpackLoadersDefault = (
               targets: (options?.babel?.targets)
                 ?? "last 1 version, > 2%, not dead",
               useBuiltIns: "usage",
-              corejs: (options?.babel?.corejs)
-                ?? defaultCoreJS,
+              corejs: (options?.babel?.corejs) ?? defaultCoreJS,
               modules: false,
             },
           ],
@@ -68,6 +65,7 @@ export const webpackLoadersDefault = (
               "process.env.BUILD_TYPE": options?.development
                 ? "development"
                 : "production",
+              ...options.defines,
             },
           ],
         ],
@@ -96,6 +94,7 @@ export interface WebpackOptions extends BaseOptions {
   };
   loaders?: Array<object>;
   plugins?: Array<object>;
+  defines?: Record<string, string>;
 }
 
 const computeWebpackOutput = (
@@ -233,7 +232,10 @@ export const handle = (
   const webpackOutput = computeWebpackOutput(webpackOptions, targetName);
   const webpackLoaders = webpackOptions.loaders
     ?? webpackLoadersDefault(
-      {development: webpackOptions.mode === "development"},
+      {
+        development: webpackOptions.mode === "development",
+        defines: webpackOptions.defines,
+      },
     );
   const webpackConfig = {
     mode: webpackOptions.mode,

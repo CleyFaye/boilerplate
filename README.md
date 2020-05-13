@@ -148,6 +148,7 @@ The webpack options support a host of properties:
   customizations by using `webpackLoadersDefault()`.
 - plugins: webpack plugins to use
 - mode: The build mode. "development", "production" or "none"
+- defines: a record of value to define using Babel transform-define
 
 ### SASS
 
