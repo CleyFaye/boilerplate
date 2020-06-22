@@ -91,7 +91,7 @@ module.exports = grunt => {
     reactAppConfig
   );
   grunt.initConfig(baseGruntConfig);
-  grunt.register(
+  grunt.registerTask(
     "myWebApp",
     "Build the webapp",
     requiredTasks
