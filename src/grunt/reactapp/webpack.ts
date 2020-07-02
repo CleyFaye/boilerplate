@@ -7,8 +7,9 @@ export interface WebpackLoadersOptions {
   development?: boolean;
   defines?: Record<string, string>;
   babel?: {
-    corejs: number;
+    corejs?: number;
     targets?: string;
+    plugins?: Array<object>;
   };
 }
 
@@ -31,6 +32,9 @@ const defaultCoreJS = 3;
  *
  * @param [options.babel.targets]
  * Browser targets (default to "last 1 version, > 2%, not dead")
+ *
+ * @param [options.babel.plugins]
+ * Plugins to add to babel
  */
 export const webpackLoadersDefault = (
   options: WebpackLoadersOptions,
@@ -68,6 +72,7 @@ export const webpackLoadersDefault = (
               ...options.defines,
             },
           ],
+          ...(options?.babel?.plugins || []),
         ],
       },
     },
@@ -94,6 +99,7 @@ export interface WebpackOptions extends BaseOptions {
   };
   loaders?: Array<object>;
   plugins?: Array<object>;
+  babelPlugins?: Array<object>;
   defines?: Record<string, string>;
 }
 
@@ -213,6 +219,9 @@ const registerTasks = (
  * @param [webpackOptions.plugins]
  * Configuration for webpack plugins. See webpack doc about plugins.
  *
+ * @param [webpackOptions.babelPlugins]
+ * List of extra babel plugins.
+ *
  * @param [webpackOptions.mode]
  * Build mode. "development", "production" or "none".
  * Defaults to "development"
@@ -235,6 +244,9 @@ export const handle = (
       {
         development: webpackOptions.mode === "development",
         defines: webpackOptions.defines,
+        babel: {
+          plugins: webpackOptions.babelPlugins,
+        },
       },
     );
   const webpackConfig = {

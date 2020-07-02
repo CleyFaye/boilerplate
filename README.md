@@ -147,6 +147,7 @@ The webpack options support a host of properties:
   using Babel and eslint. It is possible to keep using these defaults with some
   customizations by using `webpackLoadersDefault()`.
 - plugins: webpack plugins to use
+- babelPlugins: array of plugins for Babel
 - mode: The build mode. "development", "production" or "none"
 - defines: a record of value to define using Babel transform-define
 
