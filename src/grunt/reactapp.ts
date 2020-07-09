@@ -106,7 +106,7 @@ const createCopyTask = (
   const copyTask = handleCopy(
     gruntConfig,
     targetName,
-    (options?.[HandlerType.COPY]) ?? {},
+    copyOptions,
   );
   mergedResults.requiredTasks = mergedResults.requiredTasks.concat(
     copyTask.requiredTasks,

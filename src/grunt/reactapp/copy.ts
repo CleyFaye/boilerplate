@@ -13,6 +13,7 @@ export interface CopyOptions extends BaseOptions {
   skipFiles?: Array<string>;
   sourcePath?: string;
   outputPath?: string;
+  dot?: boolean;
 }
 
 /** Add the copy task for a reactApp recipe.
@@ -44,6 +45,11 @@ export interface CopyOptions extends BaseOptions {
  * preserved.
  * Defaults to "dist/<targetName>"
  *
+ * @param [copyOptions.dot]
+ * When expanding the globing pattern, includes files / directory starting with
+ * a dot.
+ * Defaults to false
+ *
  * @return
  * The name of the tasks added to the gruntConfig object.
  */
@@ -70,6 +76,7 @@ export const handle = (
     options: copyOptions.options,
     files: [
       {
+        dot: copyOptions.dot,
         expand: true,
         cwd: copyOptions.sourcePath ?? join("webres", targetName),
         src: srcList,
