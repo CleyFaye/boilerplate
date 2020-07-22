@@ -119,7 +119,8 @@ const getHandledFiles = (
 ): Array<string> => Object.keys(webpackEntry).reduce<Array<string>>(
   (acc, cur) => {
     if (webpackEntry[cur].startsWith("webres")) {
-      acc.push(webpackEntry[cur].substr("webres/".length));
+      const split = webpackEntry[cur].split("/");
+      acc.push(split.slice(2).join("/"));
     }
     webpackEntry[cur] = resolve(webpackEntry[cur]);
     return acc;
