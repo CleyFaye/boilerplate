@@ -5,7 +5,7 @@ import {BaseOptions} from "../util";
 import {HandlerFunctionResult} from "../reactapp";
 
 export interface CopyOptions extends BaseOptions {
-  options?: object;
+  options?: Record<string, unknown>;
   excludedExtensions?: Array<string>;
   extraFiles?: Array<string>;
   skipFiles?: Array<string>;

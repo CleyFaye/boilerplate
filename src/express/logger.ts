@@ -2,7 +2,10 @@ import winston from "winston";
 import expressWinston from "express-winston";
 import {transports as baseTransports} from "../winston";
 import {Router} from "express";
-import {Format} from "logform";
+import {
+  Format,
+  TransformableInfo,
+} from "logform";
 import {LogOptions} from "./pipelinebuilder";
 
 // High value because of colorize()
@@ -57,25 +60,35 @@ const prefixOutput = (
     .join("\n");
 };
 
+interface InfoMeta {
+  res?: {
+    statusCode?: number
+  };
+  responseTime?: number;
+  req?: Record<string, string>;
+  message: string;
+}
+
 const customRouteFormat = (
   outputTimestamp: boolean | undefined,
 ): Format => winston.format.printf(
-  info => {
+  (info: TransformableInfo) => {
+    const meta: InfoMeta | undefined = info.meta as InfoMeta;
     // Clean the meta object from stuff displayed in the regular message
-    if (info.meta?.res?.statusCode) {
-      delete info.meta.res.statusCode;
+    if (meta.res?.statusCode) {
+      delete meta.res.statusCode;
     }
-    if (info.meta?.res) {
-      if (Object.keys(info.meta.res).length === 0) {
-        delete info.meta.res;
+    if (meta.res) {
+      if (Object.keys(meta.res).length === 0) {
+        delete meta.res;
       }
     }
-    if (info.meta?.responseTime) {
-      delete info.meta.responseTime;
+    if (meta.responseTime) {
+      delete meta.responseTime;
     }
-    if (info.meta?.req) {
-      if (Object.keys(info.meta.req).length === 0) {
-        delete info.meta.req;
+    if (meta.req) {
+      if (Object.keys(meta.req).length === 0) {
+        delete meta.req;
       }
     }
     const metaString = JSON.stringify(info.meta);
@@ -132,10 +145,11 @@ const customErrorFormat = (
 ): Format => {
   const {collapseNodeModules} = config;
   return winston.format.printf(
-    info => {
+    (info: TransformableInfo) => {
+      const meta: InfoMeta | undefined = info.meta as InfoMeta;
       const finalMessage = collapseNodeModules
-        ? [...filterNodeModules(info.meta.message)].join("\n")
-        : info.meta.message;
+        ? [...filterNodeModules(meta.message)].join("\n")
+        : meta.message;
       return prefixOutput(info.level, finalMessage, outputTimestamp);
     },
   );

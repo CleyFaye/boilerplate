@@ -4,7 +4,7 @@ import {BaseOptions} from "../util";
 import {HandlerFunctionResult} from "../reactapp";
 
 export interface PugOptions extends BaseOptions {
-  options?: object;
+  options?: Record<string, unknown>;
   sourcePath?: string;
   outputPath?: string;
   fileSuffix?: string;

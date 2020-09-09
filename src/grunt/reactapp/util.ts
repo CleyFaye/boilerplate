@@ -1,4 +1,4 @@
-export type GruntConfig = Record<string, Record<string, object>>;
+export type GruntConfig = Record<string, Record<string, Record<string, unknown> | undefined>>;
 
 /** Insert a new task in a grunt config object.
  *
@@ -21,7 +21,7 @@ export const insertTask = (
   gruntConfig: GruntConfig,
   taskType: string,
   taskName: string,
-  taskDef: object,
+  taskDef: Record<string, unknown>,
 ): string => {
   if (!(taskType in gruntConfig)) {
     gruntConfig[taskType] = {};

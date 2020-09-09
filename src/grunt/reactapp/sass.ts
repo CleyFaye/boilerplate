@@ -10,7 +10,7 @@ const handledExtensions = [
 ];
 
 interface SassOptionsOptions {
-  implementation?: object;
+  implementation?: Record<string, unknown>;
 }
 
 export interface SassOptions extends BaseOptions {
@@ -74,11 +74,10 @@ export const handle = (
     ],
   };
   if ((sassTask.options as SassOptionsOptions).implementation === undefined) {
-    // eslint-disable-next-line max-len
-    // eslint-disable-next-line @typescript-eslint/no-require-imports, global-require
+    // eslint-disable-next-line @typescript-eslint/no-require-imports, global-require, @typescript-eslint/no-var-requires
     (sassTask.options as SassOptionsOptions).implementation = require(
       "node-sass",
-    );
+    ) as Record<string, unknown>;
   }
   const requiredTasks = [insertTask(gruntConfig, "sass", targetName, sassTask)];
   const watchTasks = [

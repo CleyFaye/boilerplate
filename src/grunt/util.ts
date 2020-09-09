@@ -2,7 +2,7 @@ export interface BaseOptions {
   disabled?: boolean;
 }
 
-export type ConfigValue = string | number | boolean | object | null;
+export type ConfigValue = string | number | boolean | Record<string, unknown> | null;
 export type GenericConfigObject = Record<string, ConfigValue>;
 
 /** Set a value in a nested object
@@ -25,13 +25,13 @@ export type GenericConfigObject = Record<string, ConfigValue>;
 export const deepSet = (
   sourceObject: GenericConfigObject,
   path: string,
-  value: string | number | boolean | object | null,
+  value: string | number | boolean | Record<string, unknown> | null,
 ): GenericConfigObject => {
   const result = {...sourceObject};
   const pathElements = path.split(".");
   let cursor = result;
   pathElements.slice(0, -1).forEach(pathElement => {
-    cursor[pathElement] = {...(cursor[pathElement] as object)};
+    cursor[pathElement] = {...(cursor[pathElement] as Record<string, unknown>)};
     cursor = cursor[pathElement] as GenericConfigObject;
   });
   cursor[pathElements[pathElements.length - 1]] = value;

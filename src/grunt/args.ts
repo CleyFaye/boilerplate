@@ -1,8 +1,12 @@
 import {camelToKebab} from "../util";
 
+// eslint-disable-next-line no-shadow
 export enum OptType {
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   STRING = "string",
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   NUMBER = "number",
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   BOOLEAN = "boolean",
 }
 
@@ -178,7 +182,7 @@ const displayHelpForConfigKey = (
   const kebabName = camelToKebab(keyName);
   const mandatoryString = isMandatory
     ? ""
-    : ` (optional, default value:${optionDef.defaultValue})`;
+    : ` (optional, default value:${optionDef.defaultValue as string})`;
   const typeInfo = getTypeInfoString(optionDef.type, kebabName);
   outputHelp(` --${kebabName}${typeInfo}${mandatoryString}`);
   if (optionDef.description) {
@@ -222,7 +226,7 @@ export const getOptionsFromGruntCLI = (
           getFromOptionProvider(keyName, optionProvider),
         );
       } catch (error) {
-        throw new Error(`CLI Argument "${camelToKebab(keyName)}": ${error}`);
+        throw new Error(`CLI Argument "${camelToKebab(keyName)}": ${error as string}`);
       }
     },
   );

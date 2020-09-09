@@ -4,7 +4,7 @@ import {BaseOptions} from "../util";
 import {HandlerFunctionResult} from "../reactapp";
 
 export interface ImageOptions extends BaseOptions {
-  options?: object;
+  options?: Record<string, unknown>;
   sourcePath?: string;
   outputPath?: string;
 }

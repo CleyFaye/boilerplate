@@ -21,11 +21,17 @@ import {
 } from "./reactapp/copy";
 import {GruntConfig, insertTask} from "./reactapp/util";
 
+// eslint-disable-next-line no-shadow
 export enum HandlerType {
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   PUG = "pug",
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   IMAGE = "image",
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   WEBPACK = "webpack",
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   SASS = "sass",
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   COPY = "copy",
 }
 

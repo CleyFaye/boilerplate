@@ -9,11 +9,47 @@ export interface WebpackLoadersOptions {
   babel?: {
     corejs?: number;
     targets?: string;
-    plugins?: Array<object>;
+    plugins?: Array<Record<string, unknown>>;
   };
 }
 
 const defaultCoreJS = 3;
+
+const defaultLoadersEslint = {
+  test: /\.js$/u,
+  // eslint-disable-next-line prefer-named-capture-group
+  exclude: /node_modules|(\/|\\)build(\/|\\)/u,
+  use: {
+    loader: "eslint-loader",
+    options: {cache: true},
+  },
+};
+
+const defaultLoadersDefine = (options: WebpackLoadersOptions) => [
+  "transform-define",
+  {
+    // eslint-disable-next-line @typescript-eslint/naming-convention
+    "process.env.BUILD_TYPE": options.development
+      ? "development"
+      : "production",
+    ...options.defines,
+  },
+];
+
+const defaultLoadersPresetEnv = (options: WebpackLoadersOptions) => [
+  "@babel/preset-env",
+  {
+    targets: (options.babel?.targets) ?? "last 1 version, > 2%, not dead",
+    useBuiltIns: "usage",
+    corejs: (options.babel?.corejs) ?? defaultCoreJS,
+    modules: false,
+  },
+];
+
+const defaultLoadersReact = (options: WebpackLoadersOptions) => [
+  "@babel/preset-react",
+  {development: options.development},
+];
 
 /** Build the default webpack loaders list.
  *
@@ -38,7 +74,7 @@ const defaultCoreJS = 3;
  */
 export const webpackLoadersDefault = (
   options: WebpackLoadersOptions,
-): Array<object> => [
+): Array<Record<string, unknown>> => [
   {
     test: /.js$/u,
     exclude: /node_modules/u,
@@ -47,58 +83,31 @@ export const webpackLoadersDefault = (
       options: {
         cacheDirectory: true,
         presets: [
-          [
-            "@babel/preset-env",
-            {
-              targets: (options?.babel?.targets) ?? "last 1 version, > 2%, not dead",
-              useBuiltIns: "usage",
-              corejs: (options?.babel?.corejs) ?? defaultCoreJS,
-              modules: false,
-            },
-          ],
-          [
-            "@babel/preset-react",
-            {development: options?.development},
-          ],
+          defaultLoadersPresetEnv(options),
+          defaultLoadersReact(options),
         ],
         plugins: [
-          [
-            "transform-define",
-            {
-              "process.env.BUILD_TYPE": options?.development
-                ? "development"
-                : "production",
-              ...options.defines,
-            },
-          ],
-          ...(options?.babel?.plugins ?? []),
+          defaultLoadersDefine(options),
+          ...(options.babel?.plugins ?? []),
         ],
       },
     },
   },
-  {
-    test: /\.js$/u,
-    // eslint-disable-next-line prefer-named-capture-group
-    exclude: /node_modules|(\/|\\)build(\/|\\)/u,
-    use: {
-      loader: "eslint-loader",
-      options: {cache: true},
-    },
-  },
+  defaultLoadersEslint,
 ];
 
 export interface WebpackOptions extends BaseOptions {
   mode?: "development" | "production" | "none";
-  options?: object;
+  options?: Record<string, unknown>;
   entry?: Record<string, string>;
   externals?: Record<string, string>;
   output?: {
     path?: string;
     filename?: string;
   };
-  loaders?: Array<object>;
-  plugins?: Array<object>;
-  babelPlugins?: Array<object>;
+  loaders?: Array<Record<string, unknown>>;
+  plugins?: Array<Record<string, unknown>>;
+  babelPlugins?: Array<Record<string, unknown>>;
   defines?: Record<string, string>;
 }
 
@@ -163,7 +172,7 @@ const getWatchTasks = (
 const registerTasks = (
   gruntConfig: GruntConfig,
   targetName: string,
-  webpackConfig: object,
+  webpackConfig: Record<string, unknown>,
 ): Array<string> => {
   insertTask(
     gruntConfig,
