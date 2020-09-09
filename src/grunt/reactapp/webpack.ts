@@ -131,9 +131,17 @@ const getHandledFiles = (
 const getOutputToWatch = (
   webpackOptions: WebpackOptions,
   targetName: string,
-): string | null => webpackOptions.output
-  ? null
-  : join("dist", targetName, "js", `${targetName}.js`);
+): Array<string> | null => {
+  if (webpackOptions.output) {
+    return null;
+  }
+  const entries = webpackOptions.entry
+    ? Object.keys(webpackOptions.entry)
+    : [targetName];
+  return entries.map(
+    entryName => join("dist", targetName, "js", `${entryName}.js`),
+  );
+};
 
 const getWatchTasks = (
   webpackOptions: WebpackOptions,
@@ -143,7 +151,7 @@ const getWatchTasks = (
   if (outputToWatch) {
     return [
       {
-        filesToWatch: [outputToWatch],
+        filesToWatch: outputToWatch,
         fromRoot: true,
       },
     ];
