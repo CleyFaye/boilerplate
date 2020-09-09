@@ -2,14 +2,10 @@ import {
   setRef,
   setSignalHandler,
 } from "./express/autoclose";
-import PipelineBuilder, {
-  PipelineSettings, LogFunction,
-} from "./express/pipelinebuilder";
+import PipelineBuilder, {PipelineSettings, LogFunction} from "./express/pipelinebuilder";
 import express from "express";
 import winston from "winston";
-import {
-  Server, AddressInfo,
-} from "net";
+import {Server, AddressInfo} from "net";
 
 /** Create the full processing pipeline for an Express server
  *
@@ -173,7 +169,7 @@ export const appStart = ({
   port,
   shutdownFunction,
   logger,
-}: StartDefinition): Promise<StartResult> => new Promise((resolve) => {
+}: StartDefinition): Promise<StartResult> => new Promise(resolve => {
   let server: Server | null = null;
   const readyCallback = (): void => {
     if (server === null) {

@@ -132,7 +132,7 @@ export default class PipelineBuilder {
     router: express.Router,
     errorHandlers?: Array<express.ErrorRequestHandler>,
   ): void {
-    (errorHandlers ?? []).forEach((errorHandler) => {
+    (errorHandlers ?? []).forEach(errorHandler => {
       router.use(errorHandler);
     });
   }
@@ -155,9 +155,7 @@ export default class PipelineBuilder {
     errorHandlers,
     options,
   }: PipelineSettings): express.Router {
-    const {
-      middleware, log, defaultErrorHandler: useDefaultErrorHandler,
-    } = options ?? {};
+    const {middleware, log, defaultErrorHandler: useDefaultErrorHandler} = options ?? {};
     this.__log("createPipeline()");
     const router = express.Router();
     this.__log("setGenericMiddlewares()");
@@ -246,7 +244,7 @@ export default class PipelineBuilder {
     if (Array.isArray(route.handler)) {
       // Multiple handlers for same route
       route.handler.forEach(
-        (handler) => router[method](route.route, handler),
+        handler => router[method](route.route, handler),
       );
     } else {
       // Simple handler
@@ -264,7 +262,7 @@ export default class PipelineBuilder {
     router: express.Router,
     routes?: Array<express.Router | RouteDefinition>,
   ): void {
-    (routes ?? []).forEach((routeDef) => {
+    (routes ?? []).forEach(routeDef => {
       const asRouter = routeDef as express.Router;
       const asRouteDef = routeDef as ComplexRouteDefinition;
       const asRequestHandler = routeDef as express.RequestHandler;
@@ -313,7 +311,7 @@ export default class PipelineBuilder {
     statics?: Array<StaticDefinition>,
   ): void {
     (statics ?? []).forEach(
-      (staticDef) => this._useComplexStatic(router, staticDef),
+      staticDef => this._useComplexStatic(router, staticDef),
     );
   }
 

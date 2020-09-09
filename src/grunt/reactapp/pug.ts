@@ -1,7 +1,5 @@
 import {join} from "path";
-import {
-  insertTask, GruntConfig,
-} from "./util";
+import {insertTask, GruntConfig} from "./util";
 import {BaseOptions} from "../util";
 import {HandlerFunctionResult} from "../reactapp";
 
@@ -50,7 +48,7 @@ export const handle = (
   targetName: string,
   pugOptions: PugOptions,
 ): HandlerFunctionResult => {
-  const handledFiles = handledExtensions.map((ext) => `**/*${ext}`);
+  const handledFiles = handledExtensions.map(ext => `**/*${ext}`);
   const newPugTask = {
     options: pugOptions.options,
     files: [

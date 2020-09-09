@@ -52,7 +52,7 @@ const prefixOutput = (
     : "";
   const levelPrefix = `${level.toString().padStart(LOG_LEVEL_PADDING_SIZE)}: `;
   return message.split("\n").map(
-    (line) => `${timestampPrefix}${levelPrefix}${line}`,
+    line => `${timestampPrefix}${levelPrefix}${line}`,
   )
     .join("\n");
 };
@@ -60,7 +60,7 @@ const prefixOutput = (
 const customRouteFormat = (
   outputTimestamp: boolean | undefined,
 ): Format => winston.format.printf(
-  (info) => {
+  info => {
     // Clean the meta object from stuff displayed in the regular message
     if (info.meta?.res?.statusCode) {
       delete info.meta.res.statusCode;
@@ -89,9 +89,7 @@ export const registerRouteLogger = (
   app: Router,
   logOptions?: LogOptions,
 ): void => {
-  const {
-    route, logger, timestamp,
-  } = logOptions ?? {};
+  const {route, logger, timestamp} = logOptions ?? {};
   let extraConfig;
   if (typeof route === "boolean") {
     extraConfig = {};
@@ -134,7 +132,7 @@ const customErrorFormat = (
 ): Format => {
   const {collapseNodeModules} = config;
   return winston.format.printf(
-    (info) => {
+    info => {
       const finalMessage = collapseNodeModules
         ? [...filterNodeModules(info.meta.message)].join("\n")
         : info.meta.message;
@@ -147,9 +145,7 @@ export const registerErrorLogger = (
   app: Router,
   logOptions?: LogOptions,
 ): void => {
-  const {
-    error, logger, timestamp,
-  } = logOptions ?? {};
+  const {error, logger, timestamp} = logOptions ?? {};
   const config = typeof error === "boolean"
     ? {}
     : error ?? {};

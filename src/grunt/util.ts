@@ -30,7 +30,7 @@ export const deepSet = (
   const result = {...sourceObject};
   const pathElements = path.split(".");
   let cursor = result;
-  pathElements.slice(0, -1).forEach((pathElement) => {
+  pathElements.slice(0, -1).forEach(pathElement => {
     cursor[pathElement] = {...(cursor[pathElement] as object)};
     cursor = cursor[pathElement] as GenericConfigObject;
   });

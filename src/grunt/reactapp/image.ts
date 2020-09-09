@@ -1,7 +1,5 @@
 import {join} from "path";
-import {
-  insertTask, GruntConfig,
-} from "./util";
+import {insertTask, GruntConfig} from "./util";
 import {BaseOptions} from "../util";
 import {HandlerFunctionResult} from "../reactapp";
 
@@ -49,7 +47,7 @@ export const handle = (
   targetName: string,
   imageOptions: ImageOptions,
 ): HandlerFunctionResult => {
-  const handledFiles = handledExtensions.map((ext) => `**/*${ext}`);
+  const handledFiles = handledExtensions.map(ext => `**/*${ext}`);
   const newImageTask = {
     options: imageOptions.options,
     files: [

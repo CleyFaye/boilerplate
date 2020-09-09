@@ -1,7 +1,5 @@
 import {join} from "path";
-import {
-  insertTask, GruntConfig,
-} from "./util";
+import {insertTask, GruntConfig} from "./util";
 import {BaseOptions} from "../util";
 import {HandlerFunctionResult} from "../reactapp";
 
@@ -60,8 +58,8 @@ export const handle = (
   sassOptions: SassOptions,
 ): HandlerFunctionResult => {
   const handledFiles = [
-    ...handledExtensions.map((ext) => `**/*${ext}`),
-    ...handledExtensions.map((ext) => `!**/*.inc${ext}`),
+    ...handledExtensions.map(ext => `**/*${ext}`),
+    ...handledExtensions.map(ext => `!**/*.inc${ext}`),
   ];
   const sassTask = {
     options: {...sassOptions.options},
@@ -85,7 +83,7 @@ export const handle = (
   const requiredTasks = [insertTask(gruntConfig, "sass", targetName, sassTask)];
   const watchTasks = [
     {
-      filesToWatch: [...handledExtensions.map((ext) => `**/*${ext}`)],
+      filesToWatch: [...handledExtensions.map(ext => `**/*${ext}`)],
       taskToRun: requiredTasks[0],
     },
   ];

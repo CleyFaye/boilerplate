@@ -50,8 +50,7 @@ export const webpackLoadersDefault = (
           [
             "@babel/preset-env",
             {
-              targets: (options?.babel?.targets)
-                ?? "last 1 version, > 2%, not dead",
+              targets: (options?.babel?.targets) ?? "last 1 version, > 2%, not dead",
               useBuiltIns: "usage",
               corejs: (options?.babel?.corejs) ?? defaultCoreJS,
               modules: false,
@@ -72,7 +71,7 @@ export const webpackLoadersDefault = (
               ...options.defines,
             },
           ],
-          ...(options?.babel?.plugins || []),
+          ...(options?.babel?.plugins ?? []),
         ],
       },
     },
@@ -114,13 +113,15 @@ const computeWebpackOutput = (
   filename: "[name].js",
 };
 
+const lastNamePosition = 2;
+
 const getHandledFiles = (
   webpackEntry: Record<string, string>,
 ): Array<string> => Object.keys(webpackEntry).reduce<Array<string>>(
   (acc, cur) => {
     if (webpackEntry[cur].startsWith("webres")) {
       const split = webpackEntry[cur].split("/");
-      acc.push(split.slice(2).join("/"));
+      acc.push(split.slice(lastNamePosition).join("/"));
     }
     webpackEntry[cur] = resolve(webpackEntry[cur]);
     return acc;
@@ -253,9 +254,7 @@ export const handle = (
       {
         development: webpackOptions.mode === "development",
         defines: webpackOptions.defines,
-        babel: {
-          plugins: webpackOptions.babelPlugins,
-        },
+        babel: {plugins: webpackOptions.babelPlugins},
       },
     );
   const webpackConfig = {

@@ -1,7 +1,5 @@
 import {join} from "path";
-import {
-  insertTask, GruntConfig,
-} from "./util";
+import {insertTask, GruntConfig} from "./util";
 
 import {BaseOptions} from "../util";
 import {HandlerFunctionResult} from "../reactapp";
@@ -60,14 +58,14 @@ export const handle = (
 ): HandlerFunctionResult => {
   const srcList = ["**/*"].concat(
     (copyOptions.excludedExtensions ?? []).map(
-      (ext) => `!**/*${ext}`,
+      ext => `!**/*${ext}`,
     ),
   ).concat(
     copyOptions.extraFiles ?? [],
   )
     .concat(
       (copyOptions.skipFiles ?? []).map(
-        (fileDef) => fileDef.startsWith("!")
+        fileDef => fileDef.startsWith("!")
           ? fileDef
           : `!${fileDef}`,
       ),

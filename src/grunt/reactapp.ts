@@ -1,6 +1,4 @@
-import {
-  deepSet, BaseOptions, GenericConfigObject,
-} from "./util";
+import {deepSet, BaseOptions, GenericConfigObject} from "./util";
 import {
   handle as handlePug,
   PugOptions,
@@ -21,9 +19,7 @@ import {
   handle as handleCopy,
   CopyOptions,
 } from "./reactapp/copy";
-import {
-  GruntConfig, insertTask,
-} from "./reactapp/util";
+import {GruntConfig, insertTask} from "./reactapp/util";
 
 export enum HandlerType {
   PUG = "pug",
@@ -129,7 +125,7 @@ const createWatchTasks = (
     );
   }
   let unnamedIndex = 0;
-  mergedResults.watchTasks.forEach((watchTask) => {
+  mergedResults.watchTasks.forEach(watchTask => {
     insertTask(
       gruntConfig,
       "watch",

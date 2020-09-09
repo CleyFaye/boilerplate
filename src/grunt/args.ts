@@ -182,7 +182,7 @@ const displayHelpForConfigKey = (
   const typeInfo = getTypeInfoString(optionDef.type, kebabName);
   outputHelp(` --${kebabName}${typeInfo}${mandatoryString}`);
   if (optionDef.description) {
-    optionDef.description.split("\n").forEach((line) => {
+    optionDef.description.split("\n").forEach(line => {
       outputHelp(`    ${line}`);
     });
   }
@@ -196,7 +196,7 @@ const displayHelp = (
 ): void => {
   outputHelp("Accepted command line arguments:");
   Object.keys(configDef).forEach(
-    (configKey) => displayHelpForConfigKey(configKey, configDef[configKey]),
+    configKey => displayHelpForConfigKey(configKey, configDef[configKey]),
   );
 };
 
@@ -215,7 +215,7 @@ export const getOptionsFromGruntCLI = (
   }
   const result: Opts = {};
   Object.keys(configDef).forEach(
-    (keyName) => {
+    keyName => {
       try {
         result[keyName] = handleOptionDef(
           configDef[keyName],
