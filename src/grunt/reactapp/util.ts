@@ -1,4 +1,13 @@
-export type GruntConfig = Record<string, Record<string, Record<string, unknown> | undefined>>;
+export type DynamicTaskFunc = () => Promise<void>;
+export type GruntConfig = Record<
+string,
+Record<
+string,
+Record<string, unknown>
+| (() => void)
+| undefined
+>
+>;
 
 /** Insert a new task in a grunt config object.
  *
@@ -31,5 +40,25 @@ export const insertTask = (
     throw new Error(`Grunt task ${taskFullName} already defined`);
   }
   gruntConfig[taskType][taskName] = taskDef;
+  return taskFullName;
+};
+
+export const dynamicKey = "_dynamic";
+
+export const insertDynamicTask = (
+  gruntConfig: GruntConfig,
+  taskType: string,
+  taskName: string,
+  task: DynamicTaskFunc,
+): string => {
+  if (!(dynamicKey in gruntConfig)) {
+    gruntConfig[dynamicKey] = {};
+  }
+  const taskFullName = `${taskType}_${taskName}`;
+  gruntConfig[dynamicKey][taskFullName] = function dynamicTask() {
+    const done = (this.async as () => ((error?: unknown) => void))();
+    task().then(() => done())
+      .catch(e => done(e));
+  };
   return taskFullName;
 };

@@ -19,7 +19,11 @@ import {
   handle as handleCopy,
   CopyOptions,
 } from "./reactapp/copy";
-import {GruntConfig, insertTask} from "./reactapp/util";
+import {
+  GruntConfig,
+  insertTask,
+  dynamicKey,
+} from "./reactapp/util";
 
 // eslint-disable-next-line no-shadow
 export enum HandlerType {
@@ -294,4 +298,25 @@ export const reactAppOptionsHelper = (
     helperOptions.production ? "production" : "development",
   );
   return result;
+};
+
+/**
+ * Register optional dynamic tasks generated in grunt config.
+ *
+ * Must be called before any other `grunt.registerTask()`
+ */
+export const reactAppDynamicTasks = (
+  grunt: grunt.task.CommonTaskModule,
+  gruntConfig: GruntConfig,
+): void => {
+  if (!(dynamicKey in gruntConfig)) {
+    return;
+  }
+  Object.keys(gruntConfig[dynamicKey]).forEach(dynamicTaskName => {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+    grunt.registerTask(
+      dynamicTaskName,
+      gruntConfig[dynamicKey][dynamicTaskName] as (() => void),
+    );
+  });
 };

@@ -75,7 +75,10 @@ Example in a minimal Gruntfile (meaning, I keep all the task loading and extra
 cruft out of this example):
 
 ```JavaScript
-const {reactApp} = require("@cley_faye/boilerplate/grunt");
+const {
+  reactApp,
+  reactAppDynamicTasks,
+} = require("@cley_faye/boilerplate/grunt");
 
 module.exports = grunt => {
   const baseGruntConfig = {};
@@ -92,6 +95,7 @@ module.exports = grunt => {
     reactAppConfig
   );
   grunt.initConfig(baseGruntConfig);
+  reactAppDynamicTasks(grunt, baseGruntConfig);
   grunt.registerTask(
     "myWebApp",
     "Build the webapp",
@@ -106,6 +110,9 @@ Each different tasks can have his own options, described below.
 Each task also have a `disabled` property that can be set to `true`, in which
 case it will not generate the corresponding task.
 
+The `reactAppDynamicTasks()` call is required to implement some asynchronous
+features. Currently this is used to provide dynamic data to pug templates.
+
 ### Pug templates
 
 Any file with the `.pug` suffix in the webapp directory will be processed and
@@ -115,6 +122,11 @@ The pug options support a `fileSuffix` property, which will affect the output
 file names. Defaults to `.html`.
 It also supports an `options` property passed as-is to grunt-contrib-pug.
 Most notably, `options.data` can be set here to provide data to the templates.
+
+It is possible to setup a property named `dynamicData` on the pug config object.
+This property must be a function that returns a promise.
+The result of that promise will be merged into the data object passed to pug,
+allowing data to be updated with asynchronous sources at build time.
 
 ### Image files
 

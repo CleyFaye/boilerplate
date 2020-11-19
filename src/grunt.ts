@@ -1,6 +1,7 @@
 import {
   reactApp,
   reactAppOptionsHelper,
+  reactAppDynamicTasks,
 } from "./grunt/reactapp";
 
 import {
@@ -11,6 +12,7 @@ import {
 export {
   reactApp,
   reactAppOptionsHelper,
+  reactAppDynamicTasks,
   getOpts,
   OptType,
 };
