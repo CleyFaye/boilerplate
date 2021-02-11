@@ -90,10 +90,10 @@ export interface LogOptions {
 }
 
 export interface PipelineSettings {
-  topLevels?: Array<express.Router | RouteDefinition>;
-  routes?: Array<express.Router | RouteDefinition>;
+  topLevels?: Array<express.Router | RouteDefinition | null>;
+  routes?: Array<express.Router | RouteDefinition | null>;
   statics?: Array<StaticDefinition>;
-  postStatics?: Array<express.Router | RouteDefinition>;
+  postStatics?: Array<express.Router | RouteDefinition | null>;
   errorHandlers?: Array<express.ErrorRequestHandler>;
   options?: {
     log?: LogOptions;
@@ -260,9 +260,9 @@ export default class PipelineBuilder {
    */
   private _setRoutes(
     router: express.Router,
-    routes?: Array<express.Router | RouteDefinition>,
+    routes?: Array<express.Router | RouteDefinition | null>,
   ): void {
-    (routes ?? []).forEach(routeDef => {
+    (routes ?? []).filter(e => e).forEach(routeDef => {
       const asRouter = routeDef as express.Router;
       const asRouteDef = routeDef as ComplexRouteDefinition;
       const asRequestHandler = routeDef as express.RequestHandler;
