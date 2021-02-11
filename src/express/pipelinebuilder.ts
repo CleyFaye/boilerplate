@@ -72,6 +72,12 @@ export type RouteDefinition =
   ComplexRouteDefinition
   | express.RequestHandler;
 
+export type RouterDefinition =
+  express.Router
+  | RouteDefinition;
+
+export type RouterWithNullDef = RouterDefinition | null | undefined;
+
 export interface ComplexStaticDefinition {
   root: string;
   options?: Record<string, unknown>;
@@ -90,10 +96,10 @@ export interface LogOptions {
 }
 
 export interface PipelineSettings {
-  topLevels?: Array<express.Router | RouteDefinition>;
-  routes?: Array<express.Router | RouteDefinition>;
+  topLevels?: Array<RouterWithNullDef>;
+  routes?: Array<RouterWithNullDef>;
   statics?: Array<StaticDefinition>;
-  postStatics?: Array<express.Router | RouteDefinition>;
+  postStatics?: Array<RouterWithNullDef>;
   errorHandlers?: Array<express.ErrorRequestHandler>;
   options?: {
     log?: LogOptions;
@@ -260,9 +266,11 @@ export default class PipelineBuilder {
    */
   private _setRoutes(
     router: express.Router,
-    routes?: Array<express.Router | RouteDefinition>,
+    routes?: Array<RouterWithNullDef>,
   ): void {
-    (routes ?? []).forEach(routeDef => {
+    (routes ?? []).filter<RouterDefinition>(
+      (e): e is RouterDefinition => Boolean(e),
+    ).forEach(routeDef => {
       const asRouter = routeDef as express.Router;
       const asRouteDef = routeDef as ComplexRouteDefinition;
       const asRequestHandler = routeDef as express.RequestHandler;
