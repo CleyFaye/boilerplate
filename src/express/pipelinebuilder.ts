@@ -72,6 +72,10 @@ export type RouteDefinition =
   ComplexRouteDefinition
   | express.RequestHandler;
 
+export type RouterDefinition =
+  express.Router
+  | RouteDefinition;
+
 export interface ComplexStaticDefinition {
   root: string;
   options?: Record<string, unknown>;
@@ -260,9 +264,11 @@ export default class PipelineBuilder {
    */
   private _setRoutes(
     router: express.Router,
-    routes?: Array<express.Router | RouteDefinition | null>,
+    routes?: Array<RouterDefinition | null>,
   ): void {
-    (routes ?? []).filter(e => e).forEach(routeDef => {
+    (routes ?? []).filter<RouterDefinition>(
+      (e): e is RouterDefinition => Boolean(e),
+    ).forEach(routeDef => {
       const asRouter = routeDef as express.Router;
       const asRouteDef = routeDef as ComplexRouteDefinition;
       const asRequestHandler = routeDef as express.RequestHandler;
