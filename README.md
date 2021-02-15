@@ -1,5 +1,5 @@
-# Some Express/Webapp boilerplate
-
+Some Express/Webapp boilerplate
+===============================
 This repository is a small set of functions to help setting up simple
 webapps/Express services.
 
@@ -9,8 +9,8 @@ provide Grunt tasks to transpile a webapp so it can work in most browsers.
 These tools allows some level of configuration, but most default options expects
 a specific directory layout for your project.
 
-## Managing dependencies
-
+Managing dependencies
+---------------------
 This project does not "really" depend on anything, since all parts are
 optional. However, some dependencies are required for things to work.
 
@@ -45,8 +45,8 @@ For express:
 - winston
 - express-winston
 
-## Webapp side
-
+Webapp side
+-----------
 There's a set of functions that provide Grunt tasks for the following:
 
 - Parsing pug templates
@@ -66,8 +66,8 @@ This will be called the "output" directory in the following sections.
 This file shows the basic features; for more advanced control you can inspect
 options objects in each files from `src/grunt/reactapp`.
 
-## Basic usage
-
+Basic usage
+-----------
 You can call the `reactApp()` function to populate a Grunt configuration with
 tasks required for the webapp.
 
@@ -114,7 +114,6 @@ The `reactAppDynamicTasks()` call is required to implement some asynchronous
 features. Currently this is used to provide dynamic data to pug templates.
 
 ### Pug templates
-
 Any file with the `.pug` suffix in the webapp directory will be processed and
 put in the output directory, reproducing the directory structure from the
 webapp directory.
@@ -129,7 +128,6 @@ The result of that promise will be merged into the data object passed to pug,
 allowing data to be updated with asynchronous sources at build time.
 
 ### Image files
-
 All `.jpg`, `.png` and `.svg` files in the webapp directory will be compressed
 as best as possible and put in the output directory.
 
@@ -139,7 +137,6 @@ resolution files around and still produce optimal files for web distribution.
 ```
 
 ### Webpack
-
 Take the provided entries (there's a sensible default) and create a bundle for
 web distribution.
 The default settings apply a set of features: eslint parsing, babel with some
@@ -165,12 +162,10 @@ The webpack options support a host of properties:
 - defines: a record of value to define using Babel transform-define
 
 ### SASS
-
 All `.sass` and `.scss` files in the webapp directory will be processed as
 `.css` files in the output directory, except for files named `.inc.*`.
 
 ### Copy task
-
 It is possible to move other file types into the output directory using the
 copy task. Any file not handled by the other tasks will be copied as-is into
 the output directory.
@@ -181,7 +176,6 @@ default filters), you can provide them as a list in the `extraFiles` property
 for that task options.
 
 ### Shared settings
-
 The "production" mode setting requires changes among multiple tasks. It is
 possible to configure them in one call using `reactAppOptionsHelper()`.
 
@@ -223,11 +217,11 @@ module.exports = grunt => {
 
 By using the helper, in addition to setting options for various build steps,
 some variables are defined:
+
 - for pug, `productionBuild` is available in the template and is a boolean
 - for Babel/Webpack: `process.env.BUILD_TYPE` will be set to either `development` or `production`
 
 ### Watcher
-
 All files except those parsed by webpack can be watched for updates and
 automatically trigger their task when needed.
 Simply run `npx grunt watch` to start the watcher.
@@ -238,13 +232,15 @@ to the helper options (first argument of `reactAppOptionsHelper()`).
 Webpack tasks can also be watched by manually running the
 `webpack:<target name>_watch` target in another terminal.
 
-## Grunt configuration
+Grunt configuration
+-------------------
 To unify the way extra options are taken from Grunt, a function named
 `getOpts()` is exported by `@cley_faye/boilerplate/lib/grunt`.
 It provide basic type checking and inline help display for arguments passed to
 Grunt.
 
 Usage:
+
 ```JavaScript
 const {getOpts, OptType} = require("@cley_faye/boilerplate/grunt");
 module.exports = grunt => {
@@ -280,8 +276,8 @@ line.
 If `--help` is passed to the command line, an additional help message will be
 displayed on the output, using the provided descriptions if available.
 
-## Express application definition
-
+Express application definition
+------------------------------
 The express helper actually provide a single place to configure most of the
 express pipeline with some generic options and generic-ish way to provide
 routes.
@@ -323,20 +319,20 @@ This will not serve anything by default, but display most top-level options
 that can be provided at this point.
 
 ### Options
-
 The log options can be used to control the express server logging behavior.
 It supports the following properties:
 
 - route: log all route called. Can be either a boolean or an express-winston
   configuration. In the later case, all properties are accepted except the
   winston instance, which is set separately.
-- error: log all errors. Accept a boolean, or an object with the 
+- error: log all errors. Accept a boolean, or an object with the
   "collapseNodeModules" boolean property.
 - logger: an instance of a winston logger.
 - timestamp: set to true to prepend a timestamp to each log line
 
 The middleware options allow enabling/disabling common middlewares.
 Currently only support a few builtin middlewares from express:
+
 - `json`, to enable auto-parsing of json body.
 - `urlencoded`, to parse parameters from the query string
 - `text`, to populate body with the raw request as a string
@@ -353,7 +349,6 @@ json object with `statusCode` and `message`.
 Otherwise the message is sent as a plaintext reply.
 
 ### Defining routes
-
 `topLevels`, `routes` and `postStatics` are arrays of handlers.
 Each handler can be either another Router (for route composition), a simple
 handler without route specification (a simple `req, res, next` function), or a
@@ -365,7 +360,6 @@ properties:
 - method: the method this route should handle. Defaults to "get".
 
 ### Defining error handlers
-
 The `errorHandlers` property accept an array of functions that follow the
 express "error handler" kind of functions (four parameters: `err`, `req`,
 `res` and `next`).
@@ -373,7 +367,6 @@ If provided, and if the default error handler is set, they will be called
 before it.
 
 ### Providing statics
-
 To serve static files, the `statics` property can be used.
 It's an array of either directly the path to a directory, in which case it will
 be served at the root of the service, or an object with the following
@@ -386,17 +379,19 @@ properties:
 ### Configuring global aspects of an Express App
 
 #### Configuring the template engine
+
 ```JavaScript
 import {setViewEngine} from "@cley_faye/boilerplate/lib/express";
 
 const app = express();
 setViewEngine(app, "pug", "webres/views", {});
 ```
+
 The last parameter is optional; if provided it will define values available to
 the template engine.
 
-## Running Express application
-
+Running Express application
+---------------------------
 Once the express application is defined, it need to be started to serve files
 and resources.
 A helper is provided to do so, using the `appStart()` function.
@@ -431,8 +426,8 @@ It is also possible to trigger a stop by calling the `closeServer()` function
 on `@cley_faye/boilerplate/lib/express/autoclose`.
 This feature only supports one server at a time.
 
-## Console logging
-
+Console logging
+---------------
 For convenience, a winston logger using console as output is provided:
 
 ```JavaScript
@@ -441,8 +436,8 @@ import consoleLogger from "@cley_faye/boilerplate/lib/winston";
 consoleLogger.info("Log line");
 ```
 
-## Using TypeScript
-
+Using TypeScript
+-----------------
 Typical use of TypeScript implies converting `.ts` file to `.js`.
 For a React app using webpack, there's two approach: either instruct webpack to
 accept `.ts` files (for example, using `ts-loader`) or have your entry point be
