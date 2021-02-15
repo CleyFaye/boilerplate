@@ -232,6 +232,8 @@ All files except those parsed by webpack can be watched for updates and
 automatically trigger their task when needed.
 Simply run `npx grunt watch` to start the watcher.
 It is also configured to have a livereload server on port 35729.
+To change the default port, pass a `watch` property in `options` (third argument of `reactApp()`) or
+to the helper options (first argument of `reactAppOptionsHelper()`).
 
 Webpack tasks can also be watched by manually running the
 `webpack:<target name>_watch` target in another terminal.

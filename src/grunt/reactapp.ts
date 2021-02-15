@@ -45,7 +45,7 @@ export interface ReactAppOptions {
   [HandlerType.WEBPACK]?: WebpackOptions;
   [HandlerType.SASS]?: SassOptions;
   [HandlerType.COPY]?: CopyOptions;
-  watch?: boolean;
+  watch?: number | boolean;
 }
 
 export interface WatchTaskDef {
@@ -122,16 +122,27 @@ const createCopyTask = (
   );
 };
 
+const getWatcherOptions = (watchMode?: boolean | number): Record<string, unknown> => {
+  if (watchMode === undefined) {
+    return {livereload: true};
+  }
+  return {livereload: watchMode};
+};
+
 const createWatchTasks = (
   gruntConfig: GruntConfig,
   mergedResults: HandlerFunctionResult,
+  watchMode?: boolean | number,
 ): void => {
+  if (watchMode === false) {
+    return;
+  }
   if (mergedResults.watchTasks.length > 0) {
     insertTask(
       gruntConfig,
       "watch",
       "options",
-      {livereload: true},
+      getWatcherOptions(watchMode),
     );
   }
   let unnamedIndex = 0;
@@ -239,12 +250,13 @@ export const reactApp = (
   const mergedResults = mergeResults(tasksResults);
   createCopyTask(gruntConfig, targetName, mergedResults, options);
   // Add grunt-contrib-watch task
-  createWatchTasks(gruntConfig, mergedResults);
+  createWatchTasks(gruntConfig, mergedResults, options?.watch);
   return mergedResults.requiredTasks;
 };
 
 export interface HelperOptions {
   production?: boolean;
+  watch?: boolean | number;
 }
 
 /** Helper for common options shared across multiple tasks.
@@ -297,6 +309,9 @@ export const reactAppOptionsHelper = (
     "webpack.mode",
     helperOptions.production ? "production" : "development",
   );
+  if (helperOptions.watch !== undefined) {
+    result.watch = helperOptions.watch;
+  }
   return result;
 };
 
