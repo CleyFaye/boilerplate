@@ -1,6 +1,6 @@
 {
   "name": "@cley_faye/boilerplate",
-  "version": "1.8.2",
+  "version": "1.9.0",
   "description": "Boilerplate code generator for generic projects",
   "repository": {
     "type": "git",
@@ -55,26 +55,66 @@
     "express-winston": "4.x"
   },
   "peerDependenciesMeta": {
-    "esm": {"optional":true},
-    "grunt": {"optional":true},
-    "grunt-webpack": {"optional":true},
-    "node-sass": {"optional":true},
-    "grunt-sass": {"optional":true},
-    "grunt-contrib-watch": {"optional":true},
-    "grunt-contrib-copy": {"optional":true},
-    "grunt-contrib-pug": {"optional":true},
-    "grunt-contrib-imagemin": {"optional":true},
-    "@babel/plugin-transform-runtime": {"optional":true},
-    "core-js": {"optional":true},
-    "babel-plugin-transform-define": {"optional":true},
-    "@babel/preset-react": {"optional":true},
-    "@babel/preset-env": {"optional":true},
-    "@babel/core": {"optional":true},
-    "eslint-loader": {"optional":true},
-    "babel-loader": {"optional":true},
-    "express": {"optional":true},
-    "winston": {"optional":true},
-    "express-winston": {"optional":true}
+    "esm": {
+      "optional": true
+    },
+    "grunt": {
+      "optional": true
+    },
+    "grunt-webpack": {
+      "optional": true
+    },
+    "node-sass": {
+      "optional": true
+    },
+    "grunt-sass": {
+      "optional": true
+    },
+    "grunt-contrib-watch": {
+      "optional": true
+    },
+    "grunt-contrib-copy": {
+      "optional": true
+    },
+    "grunt-contrib-pug": {
+      "optional": true
+    },
+    "grunt-contrib-imagemin": {
+      "optional": true
+    },
+    "@babel/plugin-transform-runtime": {
+      "optional": true
+    },
+    "core-js": {
+      "optional": true
+    },
+    "babel-plugin-transform-define": {
+      "optional": true
+    },
+    "@babel/preset-react": {
+      "optional": true
+    },
+    "@babel/preset-env": {
+      "optional": true
+    },
+    "@babel/core": {
+      "optional": true
+    },
+    "eslint-loader": {
+      "optional": true
+    },
+    "babel-loader": {
+      "optional": true
+    },
+    "express": {
+      "optional": true
+    },
+    "winston": {
+      "optional": true
+    },
+    "express-winston": {
+      "optional": true
+    }
   },
   "dependencies": {},
   "files": [
