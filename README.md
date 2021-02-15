@@ -45,6 +45,8 @@ For express:
 - winston
 - express-winston
 
+Peer dependencies are used to limit major version mismatch.
+
 Webapp side
 -----------
 There's a set of functions that provide Grunt tasks for the following:
