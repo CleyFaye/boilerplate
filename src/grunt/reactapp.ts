@@ -154,7 +154,7 @@ const createWatchTasks = (
         ? watchTask.taskToRun.split(":").join("_")
         : `unnamed${unnamedIndex++}`,
       {
-        options: {livereload: true},
+        options: getWatcherOptions(watchMode),
         files: watchTask.filesToWatch.reduce<Array<string>>(
           (acc, cur) => {
             const prefix = watchTask.fromRoot
