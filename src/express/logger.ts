@@ -83,7 +83,7 @@ const customRouteFormat = (
         delete meta.res;
       }
     }
-    if (meta.responseTime) {
+    if ("responseTime" in meta) {
       delete meta.responseTime;
     }
     if (meta.req) {
