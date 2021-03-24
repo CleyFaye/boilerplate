@@ -50,7 +50,7 @@ export interface ReactAppOptions {
 
 export interface WatchTaskDef {
   filesToWatch: Array<string>;
-  taskToRun?: string;
+  taskToRun?: string | Array<string>;
   fromRoot?: boolean;
 }
 
@@ -129,6 +129,33 @@ const getWatcherOptions = (watchMode?: boolean | number): Record<string, unknown
   return {livereload: watchMode};
 };
 
+let unnamedIndex = 0;
+
+const getWatchTaskName = (watchTask: WatchTaskDef): string => {
+  if (!watchTask.taskToRun) {
+    return `unnamed${unnamedIndex++}`;
+  }
+  if (Array.isArray(watchTask.taskToRun)) {
+    return watchTask.taskToRun
+      .join("_")
+      .split(":")
+      .join("_");
+  }
+  return watchTask.taskToRun
+    .split(":")
+    .join("_");
+};
+
+const getEffectiveTasksToRun = (watchTask: WatchTaskDef): Array<string> | undefined => {
+  if (!watchTask.taskToRun) {
+    return;
+  }
+  if (Array.isArray(watchTask.taskToRun)) {
+    return watchTask.taskToRun;
+  }
+  return [watchTask.taskToRun];
+};
+
 const createWatchTasks = (
   gruntConfig: GruntConfig,
   mergedResults: HandlerFunctionResult,
@@ -145,14 +172,11 @@ const createWatchTasks = (
       getWatcherOptions(watchMode),
     );
   }
-  let unnamedIndex = 0;
   mergedResults.watchTasks.forEach(watchTask => {
     insertTask(
       gruntConfig,
       "watch",
-      watchTask.taskToRun
-        ? watchTask.taskToRun.split(":").join("_")
-        : `unnamed${unnamedIndex++}`,
+      getWatchTaskName(watchTask),
       {
         options: getWatcherOptions(watchMode),
         files: watchTask.filesToWatch.reduce<Array<string>>(
@@ -169,9 +193,7 @@ const createWatchTasks = (
           },
           [],
         ),
-        tasks: watchTask.taskToRun
-          ? [watchTask.taskToRun]
-          : undefined,
+        tasks: getEffectiveTasksToRun(watchTask),
       },
     );
   });

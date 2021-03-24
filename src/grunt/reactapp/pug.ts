@@ -107,12 +107,6 @@ export const handle = (
       newPugTask,
     ),
   ];
-  const watchTasks = [
-    {
-      filesToWatch: handledFiles,
-      taskToRun: requiredTasks[0],
-    },
-  ];
   createDynamicTask(
     gruntConfig,
     targetName,
@@ -120,6 +114,12 @@ export const handle = (
     newPugTask,
     requiredTasks,
   );
+  const watchTasks = [
+    {
+      filesToWatch: handledFiles,
+      taskToRun: requiredTasks,
+    },
+  ];
   return {
     requiredTasks,
     handledFiles,
