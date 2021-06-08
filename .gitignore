@@ -1,23 +1,5 @@
-# Coverage directory used by tools like istanbul
-/coverage
-
-# nyc test coverage
-/.nyc_output
-
-# Dependency directories
-/node_modules/
-
-# Optional npm cache directory
-/.npm
-
-# Optional eslint cache
-/.eslintcache
-
-# Optional REPL history
-/.node_repl_history
-
-# Output of 'npm pack'
+/node_modules
 /*.tgz
-
-/tsconfig.tsbuildinfo
+/.tsbuildinfo
+/.tscache
 /lib
