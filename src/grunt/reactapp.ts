@@ -309,7 +309,7 @@ export const reactAppOptionsHelper = (
   let result = deepSet(
     (options as GenericConfigObject),
     "sass.options.outputStyle",
-    helperOptions.production ? "compressed" : "nested",
+    helperOptions.production ? "compressed" : "expanded",
   );
   result = deepSet(
     result,
