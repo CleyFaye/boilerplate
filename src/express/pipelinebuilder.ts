@@ -10,7 +10,7 @@ import {
   registerErrorLogger,
   LoggerOptions,
   ErrorLoggerOptions,
-} from "./logger";
+} from "./logger.js";
 import winston from "winston";
 import createError from "http-errors";
 

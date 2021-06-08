@@ -1,8 +1,8 @@
 import {
   setRef,
   setSignalHandler,
-} from "./express/autoclose";
-import PipelineBuilder, {PipelineSettings, LogFunction} from "./express/pipelinebuilder";
+} from "./express/autoclose.js";
+import PipelineBuilder, {PipelineSettings, LogFunction} from "./express/pipelinebuilder.js";
 import express from "express";
 import winston from "winston";
 import {Server, AddressInfo} from "net";

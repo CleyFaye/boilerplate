@@ -1,29 +1,29 @@
-import {deepSet, BaseOptions, GenericConfigObject} from "./util";
+import {deepSet, BaseOptions, GenericConfigObject} from "./util.js";
 import {
   handle as handlePug,
   PugOptions,
-} from "./reactapp/pug";
+} from "./reactapp/pug.js";
 import {
   handle as handleImage,
   ImageOptions,
-} from "./reactapp/image";
+} from "./reactapp/image.js";
 import {
   handle as handleWebpack,
   WebpackOptions,
-} from "./reactapp/webpack";
+} from "./reactapp/webpack.js";
 import {
   handle as handleSass,
   SassOptions,
-} from "./reactapp/sass";
+} from "./reactapp/sass.js";
 import {
   handle as handleCopy,
   CopyOptions,
-} from "./reactapp/copy";
+} from "./reactapp/copy.js";
 import {
   GruntConfig,
   insertTask,
   dynamicKey,
-} from "./reactapp/util";
+} from "./reactapp/util.js";
 
 // eslint-disable-next-line no-shadow
 export enum HandlerType {

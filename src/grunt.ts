@@ -2,12 +2,12 @@ import {
   reactApp,
   reactAppOptionsHelper,
   reactAppDynamicTasks,
-} from "./grunt/reactapp";
+} from "./grunt/reactapp.js";
 
 import {
   getOptionsFromGruntCLI as getOpts,
   OptType,
-} from "./grunt/args";
+} from "./grunt/args.js";
 
 export {
   reactApp,

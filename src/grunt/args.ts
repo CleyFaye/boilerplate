@@ -1,4 +1,4 @@
-import {camelToKebab} from "../util";
+import {camelToKebab} from "../util.js";
 
 // eslint-disable-next-line no-shadow
 export enum OptType {

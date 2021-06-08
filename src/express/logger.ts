@@ -1,12 +1,12 @@
 import winston from "winston";
 import expressWinston from "express-winston";
-import {transports as baseTransports} from "../winston";
+import {transports as baseTransports} from "../winston.js";
 import {Router} from "express";
 import {
   Format,
   TransformableInfo,
 } from "logform";
-import {LogOptions} from "./pipelinebuilder";
+import {LogOptions} from "./pipelinebuilder.js";
 
 // High value because of colorize()
 const LOG_LEVEL_PADDING_SIZE = 19;

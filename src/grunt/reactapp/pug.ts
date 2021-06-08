@@ -1,7 +1,7 @@
 import {join} from "path";
-import {insertTask, GruntConfig, insertDynamicTask} from "./util";
-import {BaseOptions} from "../util";
-import {HandlerFunctionResult} from "../reactapp";
+import {insertTask, GruntConfig, insertDynamicTask} from "./util.js";
+import {BaseOptions} from "../util.js";
+import {HandlerFunctionResult} from "../reactapp.js";
 
 export type DynamicDataFunc = () => Promise<Record<string, unknown>>;
 

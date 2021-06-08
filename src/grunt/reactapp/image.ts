@@ -1,7 +1,7 @@
 import {join} from "path";
-import {insertTask, GruntConfig} from "./util";
-import {BaseOptions} from "../util";
-import {HandlerFunctionResult} from "../reactapp";
+import {insertTask, GruntConfig} from "./util.js";
+import {BaseOptions} from "../util.js";
+import {HandlerFunctionResult} from "../reactapp.js";
 
 export interface ImageOptions extends BaseOptions {
   options?: Record<string, unknown>;

@@ -1,7 +1,7 @@
 import {join, resolve} from "path";
-import {insertTask, GruntConfig} from "./util";
-import {BaseOptions} from "../util";
-import {HandlerFunctionResult, WatchTaskDef} from "../reactapp";
+import {insertTask, GruntConfig} from "./util.js";
+import {BaseOptions} from "../util.js";
+import {HandlerFunctionResult, WatchTaskDef} from "../reactapp.js";
 
 export interface WebpackLoadersOptions {
   development?: boolean;

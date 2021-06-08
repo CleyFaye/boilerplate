@@ -7,19 +7,17 @@
     "url": "git+https://github.com/CleyFaye/boilerplate.git"
   },
   "scripts": {
-    "prepack": "npx tsc"
+    "prepack": "npm exec tsc"
   },
+  "type": "module",
   "author": "Gabriel Paul \"Cley Faye\" Risterucci",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/CleyFaye/boilerplate/issues"
   },
-  "esm": {
-    "cache": false
-  },
   "homepage": "https://github.com/CleyFaye/boilerplate#readme",
   "devDependencies": {
-    "@cley_faye/eslint-config": "^1.1.0",
+    "@keeex/eslint-config": "^1.4.3",
     "@types/express": "^4.17.11",
     "@types/grunt": "^0.4.25",
     "@types/http-errors": "^1.8.0",
@@ -27,37 +25,33 @@
     "@typescript-eslint/eslint-plugin": "^4.15.0",
     "@typescript-eslint/parser": "^4.15.0",
     "eslint": "^7.20.0",
-    "eslint-plugin-promise": "^4.3.1",
+    "eslint-plugin-promise": "^5.1.0",
     "express-winston": "^4.0.5",
     "typescript": "^4.1.5",
     "winston": "^3.3.3"
   },
   "peerDependencies": {
-    "esm": "3.x",
+    "@babel/core": "7.x",
+    "@babel/plugin-transform-runtime": "7.x",
+    "@babel/preset-env": "7.x",
+    "@babel/preset-react": "7.x",
+    "babel-loader": "8.x",
+    "babel-plugin-transform-define": "2.x",
+    "core-js": "3.x",
+    "eslint-loader": "4.x",
+    "express": "4.x",
+    "express-winston": "4.x",
     "grunt": "1.x",
+    "grunt-contrib-copy": "1.x",
+    "grunt-contrib-imagemin": "4.x",
+    "grunt-contrib-pug": "3.x",
+    "grunt-contrib-watch": "1.x",
+    "grunt-sass": "3.x",
     "grunt-webpack": "4.x",
     "sass": "1.x",
-    "grunt-sass": "3.x",
-    "grunt-contrib-watch": "1.x",
-    "grunt-contrib-copy": "1.x",
-    "grunt-contrib-pug": "3.x",
-    "grunt-contrib-imagemin": "4.x",
-    "@babel/plugin-transform-runtime": "7.x",
-    "core-js": "3.x",
-    "babel-plugin-transform-define": "2.x",
-    "@babel/preset-react": "7.x",
-    "@babel/preset-env": "7.x",
-    "@babel/core": "7.x",
-    "eslint-loader": "4.x",
-    "babel-loader": "8.x",
-    "express": "4.x",
-    "winston": "3.x",
-    "express-winston": "4.x"
+    "winston": "3.x"
   },
   "peerDependenciesMeta": {
-    "esm": {
-      "optional": true
-    },
     "grunt": {
       "optional": true
     },
@@ -116,7 +110,6 @@
       "optional": true
     }
   },
-  "dependencies": {},
   "files": [
     "/lib/**/*.js",
     "/lib/**/*.d.ts",
