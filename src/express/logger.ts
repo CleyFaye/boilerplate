@@ -108,8 +108,9 @@ export const registerRouteLogger = (
     extraConfig = {};
   } else {
     extraConfig = {...route};
-    if (extraConfig.winstonInstance) {
-      delete extraConfig.winstonInstance;
+    const rec = extraConfig as Record<string, unknown>;
+    if (rec.winstonInstance) {
+      delete rec.winstonInstance;
     }
   }
   const baseConfig = {
