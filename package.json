@@ -7,7 +7,8 @@
     "url": "git+https://github.com/CleyFaye/boilerplate.git"
   },
   "scripts": {
-    "prepack": "npm exec tsc"
+    "prepack": "npm run grunt -- clean build",
+    "grunt": "npm exec grunt -- --gruntfile Gruntfile.cjs"
   },
   "type": "module",
   "author": "Gabriel Paul \"Cley Faye\" Risterucci",
@@ -27,6 +28,11 @@
     "eslint": "^7.20.0",
     "eslint-plugin-promise": "^5.1.0",
     "express-winston": "^4.0.5",
+    "grunt": "^1.4.1",
+    "grunt-banner": "^0.6.0",
+    "grunt-contrib-clean": "^2.0.0",
+    "grunt-ts": "^6.0.0-beta.22",
+    "load-grunt-tasks": "^5.1.0",
     "typescript": "^4.1.5",
     "winston": "^3.3.3"
   },
