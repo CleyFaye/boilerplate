@@ -35,7 +35,7 @@ export interface SassOptions extends BaseOptions {
  * Options to pass to grunt-sass.
  *
  * @param [sassOptions.options.implementation]
- * Implementation to use. Defaults to require("node-sass").
+ * Implementation to use. Defaults to require("sass").
  *
  * @param [sassOptions.sourcePath]
  * Path where the pug templates can be found. Subdirectories will be searched.
@@ -76,7 +76,7 @@ export const handle = (
   if ((sassTask.options as SassOptionsOptions).implementation === undefined) {
     // eslint-disable-next-line @typescript-eslint/no-require-imports, global-require, @typescript-eslint/no-var-requires
     (sassTask.options as SassOptionsOptions).implementation = require(
-      "node-sass",
+      "sass",
     ) as Record<string, unknown>;
   }
   const requiredTasks = [insertTask(gruntConfig, "sass", targetName, sassTask)];
