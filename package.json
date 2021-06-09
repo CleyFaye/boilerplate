@@ -10,7 +10,6 @@
     "prepack": "npm run grunt -- clean build",
     "grunt": "npm exec grunt -- --gruntfile Gruntfile.cjs"
   },
-  "type": "module",
   "author": "Gabriel Paul \"Cley Faye\" Risterucci",
   "license": "MIT",
   "bugs": {
