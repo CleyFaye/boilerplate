@@ -1,6 +1,6 @@
 import winston from "winston";
 import expressWinston from "express-winston";
-import consoleLogger from "../winston.js";
+import {transports} from "../winston.js";
 import {Router} from "express";
 import {
   Format,
@@ -127,13 +127,13 @@ export const registerRouteLogger = (
   };
   if (logger) {
     app.use(expressWinston.logger({
-      transports: logger.transports,
+      transports,
       ...baseConfig,
       ...extraConfig,
     }));
   } else {
     app.use(expressWinston.logger({
-      transports: consoleLogger.transports,
+      transports,
       ...baseConfig,
       ...extraConfig,
     }));
@@ -172,7 +172,7 @@ export const registerErrorLogger = (
     }));
   } else {
     app.use(expressWinston.errorLogger({
-      transports: consoleLogger.transports,
+      transports,
       format: winston.format.combine(
         winston.format.errors(),
         winston.format.colorize(),
