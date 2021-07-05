@@ -2,6 +2,7 @@ import {join, resolve} from "path";
 import {insertTask, GruntConfig} from "./util.js";
 import {BaseOptions} from "../util.js";
 import {HandlerFunctionResult, WatchTaskDef} from "../reactapp.js";
+import ESLintPlugin from "eslint-webpack-plugin";
 
 export interface WebpackLoadersOptions {
   development?: boolean;
@@ -15,15 +16,7 @@ export interface WebpackLoadersOptions {
 
 const defaultCoreJS = 3;
 
-const defaultLoadersEslint = {
-  test: /\.js$/u,
-  // eslint-disable-next-line prefer-named-capture-group
-  exclude: /node_modules|(\/|\\)build(\/|\\)/u,
-  use: {
-    loader: "eslint-loader",
-    options: {cache: true},
-  },
-};
+const eslintPlugin = () => new ESLintPlugin({cache: true});
 
 const defaultLoadersDefine = (options: WebpackLoadersOptions) => [
   "transform-define",
@@ -93,7 +86,6 @@ export const webpackLoadersDefault = (
       },
     },
   },
-  defaultLoadersEslint,
 ];
 
 export interface WebpackOptions extends BaseOptions {
@@ -273,7 +265,10 @@ export const handle = (
     output: webpackOutput,
     externals: webpackOptions.externals,
     module: {rules: webpackLoaders},
-    plugins: webpackOptions.plugins,
+    plugins: [
+      eslintPlugin(),
+      ...webpackOptions.plugins ?? [],
+    ],
   };
   // Special case: I'm not sure I can move options in the task-specific part of
   // the configuration, so I add it at the toplevel of the "webpack" task.

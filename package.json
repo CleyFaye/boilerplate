@@ -26,6 +26,7 @@
     "@typescript-eslint/parser": "^4.15.0",
     "eslint": "^7.20.0",
     "eslint-plugin-promise": "^5.1.0",
+    "eslint-webpack-plugin": "^2.5.4",
     "express-winston": "^4.0.5",
     "grunt": "^1.4.1",
     "grunt-banner": "^0.6.0",
@@ -43,7 +44,7 @@
     "babel-loader": "8.x",
     "babel-plugin-transform-define": "2.x",
     "core-js": "3.x",
-    "eslint-loader": "4.x",
+    "eslint-webpack-plugin": "2.x",
     "express": "4.x",
     "express-winston": "4.x",
     "grunt": "1.x",
@@ -99,7 +100,7 @@
     "@babel/core": {
       "optional": true
     },
-    "eslint-loader": {
+    "eslint-webpack-plugin": {
       "optional": true
     },
     "babel-loader": {
