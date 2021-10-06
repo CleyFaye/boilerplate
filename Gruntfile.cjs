@@ -24,12 +24,12 @@ module.exports = grunt => {
         "**/.cache",
       ],
     },
-    ts: {
-      build: {
-        tsconfig: {
-          tsconfig: "./",
-          passThrough: true,
-        },
+    run: {
+      ts_build: {
+        cmd: "npx",
+        args: [
+          "tsc",
+        ],
       },
     },
     usebanner: {
@@ -48,7 +48,7 @@ module.exports = grunt => {
     "build",
     "Build the library",
     [
-      "ts:build",
+      "run:ts_build",
       "usebanner:build",
     ],
   );
