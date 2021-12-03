@@ -28,10 +28,10 @@ const handledExtensions = [
  * Options for the image task configuration.
  *
  * @param [imageOptions.options]
- * Options to pass to grunt-contrib-imagemin.
+ * Options to pass to @cley_faye/imagemin-lite.
  *
  * @param [imageOptions.sourcePath]
- * Path where the pug templates can be found. Subdirectories will be searched.
+ * Path where the source images can be found. Subdirectories will be searched.
  * Default to "webres/<targetName>"
  *
  * @param [imageOptions.outputPath]
@@ -48,6 +48,7 @@ export const handle = (
   imageOptions: ImageOptions,
 ): HandlerFunctionResult => {
   const handledFiles = handledExtensions.map(ext => `**/*${ext}`);
+  // TODO use @cley_faye/imagemin-lite once it exists
   const newImageTask = {
     options: imageOptions.options,
     files: [
@@ -62,8 +63,8 @@ export const handle = (
   const requiredTasks = [
     insertTask(
       gruntConfig,
-      "imagemin",
-      targetName,
+      "copy",
+      `${targetName}_image`,
       newImageTask,
     ),
   ];

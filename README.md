@@ -27,7 +27,6 @@ For webapp building:
 - babel-plugin-transform-define
 - core-js
 - @babel/plugin-transform-runtime
-- @keeex/grunt-contrib-imagemin
 - grunt-contrib-pug
 - grunt-contrib-copy
 - grunt-contrib-watch

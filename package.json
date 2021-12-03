@@ -41,7 +41,6 @@
     "@babel/plugin-transform-runtime": "7.x",
     "@babel/preset-env": "7.x",
     "@babel/preset-react": "7.x",
-    "@keeex/grunt-contrib-imagemin": "4.x",
     "babel-loader": "8.x",
     "babel-plugin-transform-define": "2.x",
     "core-js": "3.x",
@@ -77,9 +76,6 @@
       "optional": true
     },
     "grunt-contrib-pug": {
-      "optional": true
-    },
-    "grunt-contrib-imagemin": {
       "optional": true
     },
     "@babel/plugin-transform-runtime": {
