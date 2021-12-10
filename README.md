@@ -31,7 +31,7 @@ For webapp building:
 - grunt-contrib-copy
 - grunt-contrib-watch
 - grunt-sass
-- node-sass
+- sass
 - grunt-webpack
 - grunt
 
