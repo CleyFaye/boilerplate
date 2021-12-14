@@ -101,6 +101,7 @@ export interface WebpackOptions extends BaseOptions {
   plugins?: Array<Record<string, unknown>>;
   babelPlugins?: Array<Record<string, unknown>>;
   defines?: Record<string, string>;
+  resolve?: unknown;
 }
 
 const computeWebpackOutput = (
@@ -258,7 +259,7 @@ export const handle = (
         babel: {plugins: webpackOptions.babelPlugins},
       },
     );
-  const webpackConfig = {
+  const webpackConfig: Record<string, unknown> = {
     mode: webpackOptions.mode,
     devtool: webpackOptions.mode === "development" ? "eval-source-map" : false,
     entry: webpackEntry,
@@ -269,6 +270,7 @@ export const handle = (
       eslintPlugin(),
       ...webpackOptions.plugins ?? [],
     ],
+    resolve: webpackOptions.resolve,
   };
   // Special case: I'm not sure I can move options in the task-specific part of
   // the configuration, so I add it at the toplevel of the "webpack" task.
