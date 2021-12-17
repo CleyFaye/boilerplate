@@ -3,6 +3,7 @@ import {insertTask, GruntConfig} from "./util.js";
 import {BaseOptions} from "../util.js";
 import {HandlerFunctionResult, WatchTaskDef} from "../reactapp.js";
 import ESLintPlugin from "eslint-webpack-plugin";
+import ResolveTypescriptPlugin from "resolve-typescript-plugin";
 
 export interface WebpackLoadersOptions {
   development?: boolean;
@@ -12,6 +13,7 @@ export interface WebpackLoadersOptions {
     targets?: string;
     plugins?: Array<Record<string, unknown>>;
   };
+  typescript?: boolean;
 }
 
 const defaultCoreJS = 3;
@@ -64,29 +66,45 @@ const defaultLoadersReact = (options: WebpackLoadersOptions) => [
  *
  * @param [options.babel.plugins]
  * Plugins to add to babel
+ *
+ * @param [options.typescript]
+ * Add support for importing .ts and .tsx files
  */
 export const webpackLoadersDefault = (
   options: WebpackLoadersOptions,
-): Array<Record<string, unknown>> => [
-  {
-    test: /.js$/u,
-    exclude: /node_modules/u,
-    use: {
-      loader: "babel-loader",
-      options: {
-        cacheDirectory: true,
-        presets: [
-          defaultLoadersPresetEnv(options),
-          defaultLoadersReact(options),
-        ],
-        plugins: [
-          defaultLoadersDefine(options),
-          ...(options.babel?.plugins ?? []),
-        ],
+): Array<Record<string, unknown>> => {
+  const allFilesCheck = options.typescript
+    ? /.(?:js|ts|tsx)$/u
+    : /.js$/u;
+  const res: Array<Record<string, unknown>> = [
+    {
+      test: allFilesCheck,
+      exclude: /node_modules/u,
+      use: {
+        loader: "babel-loader",
+        options: {
+          cacheDirectory: true,
+          presets: [
+            defaultLoadersPresetEnv(options),
+            defaultLoadersReact(options),
+          ],
+          plugins: [
+            defaultLoadersDefine(options),
+            ...(options.babel?.plugins ?? []),
+          ],
+        },
       },
     },
-  },
-];
+  ];
+  if (options.typescript) {
+    res.push({
+      test: /.(?:ts|tsx)$/u,
+      use: "ts-loader",
+      exclude: /node_modules/u,
+    });
+  }
+  return res;
+};
 
 export interface WebpackOptions extends BaseOptions {
   mode?: "development" | "production" | "none";
@@ -101,7 +119,8 @@ export interface WebpackOptions extends BaseOptions {
   plugins?: Array<Record<string, unknown>>;
   babelPlugins?: Array<Record<string, unknown>>;
   defines?: Record<string, string>;
-  resolve?: unknown;
+  resolve?: Record<string, unknown>;
+  typescript?: boolean;
 }
 
 const computeWebpackOutput = (
@@ -186,6 +205,19 @@ const registerTasks = (
   ];
 };
 
+const computeWebpackResolve = (
+  webpackOptions: WebpackOptions,
+): Record<string, unknown> => {
+  const res = {...webpackOptions.resolve};
+  if (webpackOptions.typescript) {
+    if (res.plugins === undefined) {
+      res.plugins = [];
+    }
+    (res.plugins as Array<unknown>).push(new ResolveTypescriptPlugin());
+  }
+  return res;
+};
+
 /** Add a webpack task for the reactApp recipe
  *
  * @param gruntConfig
@@ -237,6 +269,9 @@ const registerTasks = (
  * @param [webpackOptions.mode]
  * Build mode. "development", "production" or "none".
  * Defaults to "development"
+ * 
+ * @param [webpackOptions.typescript]
+ * Allow loading typescript source for webpack/babel.
  *
  * @return
  * List of tasks added.
@@ -257,8 +292,10 @@ export const handle = (
         development: webpackOptions.mode === "development",
         defines: webpackOptions.defines,
         babel: {plugins: webpackOptions.babelPlugins},
+        typescript: webpackOptions.typescript,
       },
     );
+  const resolve = computeWebpackResolve(webpackOptions);
   const webpackConfig: Record<string, unknown> = {
     mode: webpackOptions.mode,
     devtool: webpackOptions.mode === "development" ? "eval-source-map" : false,
@@ -270,7 +307,7 @@ export const handle = (
       eslintPlugin(),
       ...webpackOptions.plugins ?? [],
     ],
-    resolve: webpackOptions.resolve,
+    resolve,
   };
   // Special case: I'm not sure I can move options in the task-specific part of
   // the configuration, so I add it at the toplevel of the "webpack" task.

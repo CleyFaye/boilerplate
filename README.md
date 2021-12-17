@@ -19,6 +19,8 @@ required, and for what. It's up to the calling project to have the proper depend
 
 For webapp building:
 
+- resolve-typescript-plugin (due to the way webpack plugins are handled, this is mandatory for dev
+  install)
 - babel-loader
 - eslint-webpack-plugin
 - @babel/core
@@ -34,6 +36,7 @@ For webapp building:
 - sass
 - grunt-webpack
 - grunt
+- ts-loader (for supporting TypeScript import in webpack/babel)
 
 For express:
 
@@ -426,8 +429,10 @@ Typical use of TypeScript implies converting `.ts` file to `.js`.
 For a React app using webpack, there's two approach: either instruct webpack to accept `.ts` files
 (for example, using `ts-loader`) or have your entry point be a `.js` file that imports the generated
 output from TypeScript.
-Either way, watch mode will be capable of detecting change in the source material, as long as the
-TypeScript compiler is also running.
+If you reference the output of the TypeScript compiler, you can keep it updated using `npx tsc -w`.
+
+Using `ts-loader` can be done automatically by setting the `typescript` property in the webpack
+configuration to `true`.
 
 For Express app, there is no particular things to take care, except that if you use a facility like
 `nodemon` you have to watch the TypeScript output instead of the actual source files.

@@ -53,7 +53,9 @@
     "grunt-contrib-watch": "1.x",
     "grunt-sass": "3.x",
     "grunt-webpack": "5.x",
+    "resolve-typescript-plugin": "^1.1.1",
     "sass": "1.x",
+    "ts-loader": "^9.2.6",
     "winston": "3.x"
   },
   "peerDependenciesMeta": {
