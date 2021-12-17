@@ -200,7 +200,7 @@ module.exports = grunt => {
     )
   );
   grunt.initConfig(baseGruntConfig);
-  grunt.register(
+  grunt.registerTask(
     "myWebApp",
     "Build the webapp",
     requiredTasks
