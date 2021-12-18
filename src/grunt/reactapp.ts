@@ -164,14 +164,6 @@ const createWatchTasks = (
   if (watchMode === false) {
     return;
   }
-  if (mergedResults.watchTasks.length > 0) {
-    insertTask(
-      gruntConfig,
-      "watch",
-      "options",
-      getWatcherOptions(watchMode),
-    );
-  }
   mergedResults.watchTasks.forEach(watchTask => {
     insertTask(
       gruntConfig,
