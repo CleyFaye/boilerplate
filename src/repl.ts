@@ -42,13 +42,13 @@ const setupContext = (
         srv,
       },
     );
-  }
+  };
   doContextSetup();
   r.on(
     "reset",
     doContextSetup,
   );
-}
+};
 
 /** Configure action when the REPL is closed */
 const setupClose = (
@@ -68,7 +68,7 @@ const setupClose = (
       }
     },
   );
-}
+};
 
 /** Start the REPL prompt */
 export const startRepl = ({
@@ -86,5 +86,4 @@ export const startRepl = ({
   setupContext(r, db, srv, extraContext);
   setupClose(r, db, onClose);
   r.setupHistory(historyFile, () => {});
-}
-
+};

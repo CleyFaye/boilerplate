@@ -1,9 +1,9 @@
 import {join, resolve} from "path";
-import {insertTask, GruntConfig} from "./util.js";
-import {BaseOptions} from "../util.js";
-import {HandlerFunctionResult, WatchTaskDef} from "../reactapp.js";
 import ESLintPlugin from "eslint-webpack-plugin";
 import ResolveTypescriptPlugin from "resolve-typescript-plugin";
+import {BaseOptions} from "../util.js";
+import {HandlerFunctionResult, WatchTaskDef} from "../reactapp.js";
+import {insertTask, GruntConfig} from "./util.js";
 
 export interface WebpackLoadersOptions {
   development?: boolean;
@@ -269,7 +269,7 @@ const computeWebpackResolve = (
  * @param [webpackOptions.mode]
  * Build mode. "development", "production" or "none".
  * Defaults to "development"
- * 
+ *
  * @param [webpackOptions.typescript]
  * Allow loading typescript source for webpack/babel.
  *
@@ -295,7 +295,7 @@ export const handle = (
         typescript: webpackOptions.typescript,
       },
     );
-  const resolve = computeWebpackResolve(webpackOptions);
+  const webpackResolve = computeWebpackResolve(webpackOptions);
   const webpackConfig: Record<string, unknown> = {
     mode: webpackOptions.mode,
     devtool: webpackOptions.mode === "development" ? "eval-source-map" : false,
@@ -307,7 +307,7 @@ export const handle = (
       eslintPlugin(),
       ...webpackOptions.plugins ?? [],
     ],
-    resolve,
+    resolve: webpackResolve,
   };
   // Special case: I'm not sure I can move options in the task-specific part of
   // the configuration, so I add it at the toplevel of the "webpack" task.

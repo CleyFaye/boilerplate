@@ -1,11 +1,11 @@
 import winston from "winston";
 import expressWinston from "express-winston";
-import {transports} from "../winston.js";
 import {Router} from "express";
 import {
   Format,
   TransformableInfo,
 } from "logform";
+import {transports} from "../winston.js";
 import {LogOptions} from "./pipelinebuilder.js";
 
 // High value because of colorize()

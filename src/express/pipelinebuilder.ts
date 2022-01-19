@@ -5,14 +5,14 @@ import {
   OptionsText,
   Options as OptionsRaw,
 } from "body-parser";
+import winston from "winston";
+import createError from "http-errors";
 import {
   registerRouteLogger,
   registerErrorLogger,
   LoggerOptions,
   ErrorLoggerOptions,
 } from "./logger.js";
-import winston from "winston";
-import createError from "http-errors";
 
 const defaultErrorHandler = (
   err: createError.HttpError,
