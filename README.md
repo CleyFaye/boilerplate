@@ -79,7 +79,7 @@ example):
 const {
   reactApp,
   reactAppDynamicTasks,
-} = require("@cley_faye/boilerplate/grunt");
+} = require("@cley_faye/boilerplate/grunt.js");
 
 module.exports = grunt => {
   const baseGruntConfig = {};
@@ -181,7 +181,7 @@ The example from before can become:
 const {
   reactApp,
   reactAppOptionsHelper,
-} = require("@cley_faye/boilerplate/grunt");
+} = require("@cley_faye/boilerplate/grunt.js");
 
 module.exports = grunt => {
   const baseGruntConfig = {};
@@ -239,7 +239,7 @@ It provide basic type checking and inline help display for arguments passed to G
 Usage:
 
 ```JavaScript
-const {getOpts, OptType} = require("@cley_faye/boilerplate/grunt");
+const {getOpts, OptType} = require("@cley_faye/boilerplate/grunt.js");
 module.exports = grunt => {
   const opts = getOpts(
     grunt,
@@ -289,7 +289,7 @@ Quick sample:
 
 ```JavaScript
 import express from "express";
-import {createPipeline} from "@cley_faye/boilerplate/lib/express";
+import {createPipeline} from "@cley_faye/boilerplate/lib/express.js";
 
 const app = express();
 app.use(createPipeline({
@@ -371,7 +371,7 @@ root of the service, or an object with the following properties:
 #### Configuring the template engine
 
 ```JavaScript
-import {setViewEngine} from "@cley_faye/boilerplate/lib/express";
+import {setViewEngine} from "@cley_faye/boilerplate/lib/express.js";
 
 const app = express();
 setViewEngine(app, "pug", "webres/views", {});
@@ -385,9 +385,9 @@ Once the express application is defined, it need to be started to serve files an
 A helper is provided to do so, using the `appStart()` function.
 
 ```JavaScript
-import consoleLogger from "@cley_faye/boilerplate/lib/winston";
-import app from "./app";
-import {appStart} from "@cley_faye/boilerplate/lib/express";
+import {consoleLogger} from "@cley_faye/boilerplate/lib/winston.js";
+import app from "./app.js";
+import {appStart} from "@cley_faye/boilerplate/lib/express.js";
 
 appStart({
   app,
@@ -410,7 +410,7 @@ The function returns a promise that resolve with the actual port used for listen
 The server is automatically registered using the `autoclose` part to stop when a SIGINT signal is
 received.
 It is also possible to trigger a stop by calling the `closeServer()` function on
-`@cley_faye/boilerplate/lib/express/autoclose`.
+`@cley_faye/boilerplate/lib/express/autoclose.js`.
 This feature only supports one server at a time.
 
 Console logging
@@ -418,7 +418,7 @@ Console logging
 For convenience, a winston logger using console as output is provided:
 
 ```JavaScript
-import consoleLogger from "@cley_faye/boilerplate/lib/winston";
+import {consoleLogger} from "@cley_faye/boilerplate/lib/winston.js";
 
 consoleLogger.info("Log line");
 ```
