@@ -436,3 +436,11 @@ configuration to `true`.
 
 For Express app, there is no particular things to take care, except that if you use a facility like
 `nodemon` you have to watch the TypeScript output instead of the actual source files.
+
+REPL
+----
+This library provides a function to start a simple REPL instance (using node's built-in repl module)
+to provide access to JavaScript features.
+
+Basic usage includes predefined behavior for providing a database object and a list of services.
+The export is in `lib/repl.js`.
