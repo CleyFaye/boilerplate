@@ -52,11 +52,11 @@ const logConfig: LogConfig = {
 };
 
 const customFormat = winston.format.printf((info: TransformableInfo) => {
-  const errorStack = info.stack;
-  const filteredStack = logConfig.collapseNodeModules
-    ? [...filterNodeModules(errorStack)].join("\n")
-    : errorStack;
-  return prefixOutput(info.level, filteredStack, logConfig.timestamp);
+  const message = info.stack ?? info.message;
+  const filteredMessage = logConfig.collapseNodeModules
+    ? [...filterNodeModules(message)].join("\n")
+    : message;
+  return prefixOutput(info.level, filteredMessage, logConfig.timestamp);
 });
 
 /** Edit the configuration applied to consoleLogger */
