@@ -11,6 +11,7 @@ import {
   LoggerOptions,
   ErrorLoggerOptions,
 } from "./logger.js";
+import {setConfig} from "../winston.js";
 import winston from "winston";
 import createError from "http-errors";
 
@@ -163,6 +164,15 @@ export default class PipelineBuilder {
   }: PipelineSettings): express.Router {
     const {middleware, log, defaultErrorHandler: useDefaultErrorHandler} = options ?? {};
     this.internalLog("createPipeline()");
+    if (log) {
+      const errorConfig = typeof log.error === "boolean"
+        ? {}
+        : log.error ?? {};
+      setConfig({
+        timestamp: log.timestamp ?? false,
+        collapseNodeModules: errorConfig.collapseNodeModules ?? true,
+      });
+    }
     const router = express.Router();
     this.internalLog("setGenericMiddlewares()");
     this._setGenericMiddlewares(router, middleware);

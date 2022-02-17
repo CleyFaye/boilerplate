@@ -26,6 +26,9 @@ import {Server, AddressInfo} from "net";
  * If the request accepts json, a json object with the error is returned.
  * Otherwise text is returned.
  *
+ * For convenience, providing timestamp and collapseNodeModules here will automatically
+ * update the basic consoleLogger configuration.
+ *
  * @param settings
  *
  * @param [settings.topLevels]

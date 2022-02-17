@@ -1,15 +1,16 @@
 import winston from "winston";
 import expressWinston from "express-winston";
-import {transports} from "../winston.js";
+import {
+  transports,
+  filterNodeModules,
+  prefixOutput,
+} from "../winston.js";
 import {Router} from "express";
 import {
   Format,
   TransformableInfo,
 } from "logform";
 import {LogOptions} from "./pipelinebuilder.js";
-
-// High value because of colorize()
-const LOG_LEVEL_PADDING_SIZE = 19;
 
 export type LoggerOptions =
   expressWinston.LoggerOptions
@@ -22,43 +23,6 @@ interface ErrorLoggerConfiguration {
 export type ErrorLoggerOptions =
   ErrorLoggerConfiguration
   | boolean;
-
-/**
- * Collapse all lines containing /node_modules/ into an ellipsis
- */
-const filterNodeModules = function* (message: string): Generator<string> {
-  let inNodeModules = false;
-  const lines = message.split("\n");
-  for (const line of lines) {
-    if (/\/node_modules\//u.exec(line)) {
-      if (!inNodeModules) {
-        inNodeModules = true;
-        yield "[...]";
-      }
-    } else {
-      inNodeModules = false;
-      yield line;
-    }
-  }
-};
-
-/**
- * Prefix all lines with the level and the timestamp if needed
- */
-const prefixOutput = (
-  level: string,
-  message: string,
-  timestamp: boolean | undefined,
-): string => {
-  const timestampPrefix = timestamp
-    ? `${new Date().toISOString()} `
-    : "";
-  const levelPrefix = `${level.toString().padStart(LOG_LEVEL_PADDING_SIZE)}: `;
-  return message.split("\n").map(
-    line => `${timestampPrefix}${levelPrefix}${line}`,
-  )
-    .join("\n");
-};
 
 interface InfoMeta {
   res?: {
