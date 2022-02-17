@@ -1,11 +1,11 @@
+import {Server, AddressInfo} from "net";
+import express from "express";
+import winston from "winston";
 import {
   setRef,
   setSignalHandler,
 } from "./express/autoclose.js";
 import PipelineBuilder, {PipelineSettings, LogFunction} from "./express/pipelinebuilder.js";
-import express from "express";
-import winston from "winston";
-import {Server, AddressInfo} from "net";
 
 /** Create the full processing pipeline for an Express server
  *

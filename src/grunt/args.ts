@@ -195,7 +195,7 @@ const displayHelpForConfigKey = (
 /**
  * Display help to the user
  */
-const displayHelp = (
+export const displayHelp = (
   configDef: ConfigDefinition,
 ): void => {
   outputHelp("Accepted command line arguments:");

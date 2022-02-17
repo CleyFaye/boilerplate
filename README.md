@@ -19,6 +19,8 @@ required, and for what. It's up to the calling project to have the proper depend
 
 For webapp building:
 
+- resolve-typescript-plugin (due to the way webpack plugins are handled, this is mandatory for dev
+  install)
 - babel-loader
 - eslint-webpack-plugin
 - @babel/core
@@ -34,6 +36,7 @@ For webapp building:
 - sass
 - grunt-webpack
 - grunt
+- ts-loader (for supporting TypeScript import in webpack/babel)
 
 For express:
 
@@ -76,7 +79,7 @@ example):
 const {
   reactApp,
   reactAppDynamicTasks,
-} = require("@cley_faye/boilerplate/grunt");
+} = require("@cley_faye/boilerplate/grunt.js");
 
 module.exports = grunt => {
   const baseGruntConfig = {};
@@ -178,7 +181,7 @@ The example from before can become:
 const {
   reactApp,
   reactAppOptionsHelper,
-} = require("@cley_faye/boilerplate/grunt");
+} = require("@cley_faye/boilerplate/grunt.js");
 
 module.exports = grunt => {
   const baseGruntConfig = {};
@@ -200,7 +203,7 @@ module.exports = grunt => {
     )
   );
   grunt.initConfig(baseGruntConfig);
-  grunt.register(
+  grunt.registerTask(
     "myWebApp",
     "Build the webapp",
     requiredTasks
@@ -236,7 +239,7 @@ It provide basic type checking and inline help display for arguments passed to G
 Usage:
 
 ```JavaScript
-const {getOpts, OptType} = require("@cley_faye/boilerplate/grunt");
+const {getOpts, OptType} = require("@cley_faye/boilerplate/grunt.js");
 module.exports = grunt => {
   const opts = getOpts(
     grunt,
@@ -286,7 +289,7 @@ Quick sample:
 
 ```JavaScript
 import express from "express";
-import {createPipeline} from "@cley_faye/boilerplate/lib/express";
+import {createPipeline} from "@cley_faye/boilerplate/lib/express.js";
 
 const app = express();
 app.use(createPipeline({
@@ -368,7 +371,7 @@ root of the service, or an object with the following properties:
 #### Configuring the template engine
 
 ```JavaScript
-import {setViewEngine} from "@cley_faye/boilerplate/lib/express";
+import {setViewEngine} from "@cley_faye/boilerplate/lib/express.js";
 
 const app = express();
 setViewEngine(app, "pug", "webres/views", {});
@@ -382,9 +385,9 @@ Once the express application is defined, it need to be started to serve files an
 A helper is provided to do so, using the `appStart()` function.
 
 ```JavaScript
-import consoleLogger from "@cley_faye/boilerplate/lib/winston";
-import app from "./app";
-import {appStart} from "@cley_faye/boilerplate/lib/express";
+import {consoleLogger} from "@cley_faye/boilerplate/lib/winston.js";
+import app from "./app.js";
+import {appStart} from "@cley_faye/boilerplate/lib/express.js";
 
 appStart({
   app,
@@ -407,7 +410,7 @@ The function returns a promise that resolve with the actual port used for listen
 The server is automatically registered using the `autoclose` part to stop when a SIGINT signal is
 received.
 It is also possible to trigger a stop by calling the `closeServer()` function on
-`@cley_faye/boilerplate/lib/express/autoclose`.
+`@cley_faye/boilerplate/lib/express/autoclose.js`.
 This feature only supports one server at a time.
 
 Console logging
@@ -415,7 +418,7 @@ Console logging
 For convenience, a winston logger using console as output is provided:
 
 ```JavaScript
-import consoleLogger from "@cley_faye/boilerplate/lib/winston";
+import {consoleLogger} from "@cley_faye/boilerplate/lib/winston.js";
 
 consoleLogger.info("Log line");
 ```
@@ -426,8 +429,18 @@ Typical use of TypeScript implies converting `.ts` file to `.js`.
 For a React app using webpack, there's two approach: either instruct webpack to accept `.ts` files
 (for example, using `ts-loader`) or have your entry point be a `.js` file that imports the generated
 output from TypeScript.
-Either way, watch mode will be capable of detecting change in the source material, as long as the
-TypeScript compiler is also running.
+If you reference the output of the TypeScript compiler, you can keep it updated using `npx tsc -w`.
+
+Using `ts-loader` can be done automatically by setting the `typescript` property in the webpack
+configuration to `true`.
 
 For Express app, there is no particular things to take care, except that if you use a facility like
 `nodemon` you have to watch the TypeScript output instead of the actual source files.
+
+REPL
+----
+This library provides a function to start a simple REPL instance (using node's built-in repl module)
+to provide access to JavaScript features.
+
+Basic usage includes predefined behavior for providing a database object and a list of services.
+The export is in `lib/repl.js`.
