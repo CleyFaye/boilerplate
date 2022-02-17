@@ -1,15 +1,15 @@
 import winston from "winston";
 import expressWinston from "express-winston";
-import {
-  transports,
-  filterNodeModules,
-  prefixOutput,
-} from "../winston.js";
 import {Router} from "express";
 import {
   Format,
   TransformableInfo,
 } from "logform";
+import {
+  transports,
+  filterNodeModules,
+  prefixOutput,
+} from "../winston.js";
 import {LogOptions} from "./pipelinebuilder.js";
 
 export type LoggerOptions =

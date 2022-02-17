@@ -52,7 +52,7 @@ const logConfig: LogConfig = {
 };
 
 const customFormat = winston.format.printf((info: TransformableInfo) => {
-  const message = info.stack ?? info.message;
+  const message = ("stack" in info) ? (info.stack as string) : info.message;
   const filteredMessage = logConfig.collapseNodeModules
     ? [...filterNodeModules(message)].join("\n")
     : message;
@@ -62,7 +62,7 @@ const customFormat = winston.format.printf((info: TransformableInfo) => {
 /** Edit the configuration applied to consoleLogger */
 export const setConfig = (config: LogConfig): void => {
   Object.assign(logConfig, config);
-}
+};
 
 export const transports = [new winston.transports.Console()];
 
