@@ -15,36 +15,46 @@ import {
   ErrorLoggerOptions,
 } from "./logger.js";
 
-const defaultErrorHandler = (
+const defaultErrorHandler = (errorHandlerConfig: boolean | DefaultErrorHandlerConfig) => (
   err: createError.HttpError,
   req: express.Request,
   res: express.Response,
   next: express.NextFunction,
 ): void => {
-  if (!res.headersSent && err.statusCode) {
-    const message = err.expose
-      ? err.message
-      : undefined;
-    const accepted = req.accepts(
-      [
-        "text",
-        "html",
-        "json",
-      ],
-    );
-    if (accepted === "json") {
-      res.status(err.statusCode).send({
-        statusCode: err.statusCode,
-        message,
-      });
+  const noErrorFilter = typeof errorHandlerConfig === "boolean"
+    ? false
+    : Boolean(errorHandlerConfig.noErrorFilter);
+  if (!res.headersSent) {
+    if (err.statusCode) {
+      const message = err.expose
+        ? err.message
+        : undefined;
+      const accepted = req.accepts(
+        [
+          "text",
+          "html",
+          "json",
+        ],
+      );
+      if (accepted === "json") {
+        res.status(err.statusCode).send({
+          statusCode: err.statusCode,
+          message,
+        });
+        return;
+      }
+      if (message) {
+        res.status(err.statusCode).send(message);
+      } else {
+        res.sendStatus(err.statusCode);
+      }
       return;
     }
-    if (message) {
-      res.status(err.statusCode).send(message);
-    } else {
-      res.sendStatus(err.statusCode);
+    if (!noErrorFilter) {
+      // eslint-disable-next-line @typescript-eslint/no-magic-numbers
+      res.status(500).send("An unexpected error occured");
+      return;
     }
-    return;
   }
   next(err);
 };
@@ -96,6 +106,11 @@ export interface LogOptions {
   timestamp?: boolean;
 }
 
+export interface DefaultErrorHandlerConfig {
+  /** Set to true to allow server errors without a code to be sent as-is in the response */
+  noErrorFilter?: boolean;
+}
+
 export interface PipelineSettings {
   topLevels?: Array<RouterWithNullDef>;
   routes?: Array<RouterWithNullDef>;
@@ -105,7 +120,7 @@ export interface PipelineSettings {
   options?: {
     log?: LogOptions;
     middleware?: MiddlewareOptions;
-    defaultErrorHandler?: boolean;
+    defaultErrorHandler?: boolean | DefaultErrorHandlerConfig;
   };
 }
 
@@ -372,11 +387,11 @@ export default class PipelineBuilder {
 
   private _setDefaultErrorHandler(
     router: express.Router,
-    enableDefaultErrorHandler?: boolean,
+    defaultErrorHandlerConfig?: boolean | DefaultErrorHandlerConfig,
   ): void {
-    if (enableDefaultErrorHandler) {
+    if (defaultErrorHandlerConfig) {
       this.internalLog("Adding default error handler");
-      router.use(defaultErrorHandler);
+      router.use(defaultErrorHandler(defaultErrorHandlerConfig));
     }
   }
 }
