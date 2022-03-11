@@ -1,6 +1,6 @@
 import winston from "winston";
-import expressWinston from "express-winston";
-import {Router} from "express";
+import expressWinston, {BaseLoggerOptions} from "express-winston";
+import {Request, Router} from "express";
 import {
   Format,
   TransformableInfo,
@@ -10,7 +10,7 @@ import {
   filterNodeModules,
   prefixOutput,
 } from "../winston.js";
-import {LogOptions} from "./pipelinebuilder.js";
+import {LogOptions, UserFromReqFunc} from "./pipelinebuilder.js";
 
 export type LoggerOptions =
   expressWinston.LoggerOptions
@@ -57,19 +57,45 @@ const customRouteFormat = (
     }
     const metaString = JSON.stringify(info.meta);
     const finalMessage
-     = `${info.message} ${metaString === "{}" ? "" : metaString}`;
+      = `${info.message} ${metaString === "{}" ? "" : metaString}`;
     return prefixOutput(info.level, finalMessage, outputTimestamp);
   },
 );
+
+export interface LoggingData {
+  extraLoggingData?: Record<string, unknown>,
+}
+
+export interface RequestWithLoggingData extends Request {
+  _cleyfayeLogging?: LoggingData;
+  _routeWhitelists?: {
+    body?: Array<string>;
+  };
+}
+
+/** Return the default value for route logger is it is set as `true` */
+export const defaultRouteLoggerConfig = (
+  userFromReq?: UserFromReqFunc,
+): BaseLoggerOptions => ({
+  meta: true,
+  requestWhitelist: ["body"],
+  responseWhitelist: [],
+  dynamicMeta: (req: Request): Record<string, unknown> => {
+    const castReq = req as RequestWithLoggingData;
+    const data: Record<string, unknown> = {...castReq._cleyfayeLogging?.extraLoggingData};
+    if (userFromReq) data.user = userFromReq(req) ?? null;
+    return data;
+  },
+});
 
 export const registerRouteLogger = (
   app: Router,
   logOptions?: LogOptions,
 ): void => {
-  const {route, logger, timestamp} = logOptions ?? {};
+  const {route, timestamp, userFromReq} = logOptions ?? {};
   let extraConfig;
   if (typeof route === "boolean") {
-    extraConfig = {};
+    extraConfig = defaultRouteLoggerConfig(userFromReq);
   } else {
     extraConfig = {...route};
     const rec = extraConfig as Record<string, unknown>;

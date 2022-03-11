@@ -1,4 +1,4 @@
-import express from "express";
+import express, {Request} from "express";
 import {
   OptionsJson,
   OptionsUrlencoded,
@@ -99,11 +99,14 @@ export type StaticDefinition =
   ComplexStaticDefinition
   | string;
 
+export type UserFromReqFunc = (req: Request) => string | undefined;
+
 export interface LogOptions {
   route?: LoggerOptions;
   error?: ErrorLoggerOptions;
   logger?: winston.Logger;
   timestamp?: boolean;
+  userFromReq?: UserFromReqFunc;
 }
 
 export interface DefaultErrorHandlerConfig {

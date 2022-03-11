@@ -318,6 +318,7 @@ It supports the following properties:
 - route: log all route called. Can be either a boolean or an express-winston configuration.
   In the later case, all properties are accepted except the winston instance, which is set
   separately.
+  More details in the "custom logging" section below.
 - error: log all errors. Accept a boolean, or an object with the "collapseNodeModules" boolean
   property.
 - logger: an instance of a winston logger.
@@ -365,6 +366,40 @@ root of the service, or an object with the following properties:
 - root: The directory where the static files are
 - options: The options to pass to express static handler
 - route: The route under which the static files will be served
+
+### Custom logging
+The default configuration (by setting `options.log.route: true`) allows some level of customization
+of the actual logged data.
+If a custom object is passed instead of `true`, the following will not automatically apply.
+
+By default, all body content is logged.
+To finely tune what body elements are logged on each route the `bodyLogger()` middleware can be
+used.
+It takes two parameters, the first one is an array of properties that *should* be logged, the second
+one can be a custom object or a function returning a custom object with extra properties to log.
+
+For example, for a login route, you might want to hide the provided password but still get some info
+(note: this is an example, in practice you probably shouldn't care about this)
+
+```JavaScript
+router.post(
+  "/login",
+  bodyLogger(
+    ["login"],
+    req => ({
+      passwordLength: req.body.password.length,
+    }),
+  ),
+  processLogin,
+);
+```
+
+In addition to excluding properties from the body of a request and adding custom properties, it can
+be useful to always identify a request coming from a logged-in user.
+
+You can provide a `userFromReq` property to the `options.log` configuration.
+It should be a function that receive `req` as its argument and returns a string identifying the
+logged-in user.
 
 ### Configuring global aspects of an Express App
 
