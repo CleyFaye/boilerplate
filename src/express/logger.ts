@@ -89,19 +89,11 @@ export const registerRouteLogger = (
     colorize: true,
     msg: "{{req.method}} {{req.url}} {{res.statusCode}} {{res.responseTime}}ms",
   };
-  if (logger) {
-    app.use(expressWinston.logger({
-      transports,
-      ...baseConfig,
-      ...extraConfig,
-    }));
-  } else {
-    app.use(expressWinston.logger({
-      transports,
-      ...baseConfig,
-      ...extraConfig,
-    }));
-  }
+  app.use(expressWinston.logger({
+    transports,
+    ...baseConfig,
+    ...extraConfig,
+  }));
 };
 
 const customErrorFormat = (
