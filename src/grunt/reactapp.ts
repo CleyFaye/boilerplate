@@ -74,7 +74,7 @@ const gatherTasks = (
 ): Array<HandlerFunctionResult> => (Object.keys(handlers) as Array<HandlerType>)
   .reduce<Array<HandlerFunctionResult>>(
   (acc, cur) => acc.concat(
-    (options?.[cur] && (options[cur] ?? {}).disabled)
+    (options?.[cur] && options[cur]?.disabled)
       ? []
       : handlers[cur](
         gruntConfig,
