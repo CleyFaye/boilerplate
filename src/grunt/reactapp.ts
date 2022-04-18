@@ -262,7 +262,7 @@ export const reactApp = (
     options,
   );
   const mergedResults = mergeResults(tasksResults);
-  createCopyTask(gruntConfig, targetName, mergedResults, options);
+  if (!options?.copy?.disabled) createCopyTask(gruntConfig, targetName, mergedResults, options);
   // Add grunt-contrib-watch task
   createWatchTasks(gruntConfig, mergedResults, options?.watch);
   return mergedResults.requiredTasks;
