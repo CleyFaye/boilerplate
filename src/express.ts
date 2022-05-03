@@ -135,7 +135,16 @@ export const setViewEngine = (
 
 export interface StartDefinition {
   app: express.Application;
+  /** @deprecated use listenInterface instead */
   allowNonLocal?: boolean;
+  /**
+   * Which interface to listen on.
+   *
+   * Defaults to `false` which means listen only on localhost.
+   * Set to `true` to listen on all interfaces
+   * Set to an IP to bind on a specific interface.
+   */
+  listenInterface?: boolean | string;
   port?: number;
   shutdownFunction?: () => void;
   logger?: winston.Logger;
@@ -169,6 +178,7 @@ export interface StartResult {
 export const appStart = ({
   app,
   allowNonLocal,
+  listenInterface,
   port,
   shutdownFunction,
   logger,
@@ -189,9 +199,16 @@ export const appStart = ({
       server,
     });
   };
-  server = allowNonLocal
-    ? app.listen(port ?? 0, readyCallback)
-    : app.listen(port ?? 0, "localhost", readyCallback);
+  if (allowNonLocal !== undefined && listenInterface !== undefined) {
+    throw new Error("You can't specify both allowNonLocal and listenInterface at the same time");
+  }
+  if (allowNonLocal || listenInterface === true) {
+    server = app.listen(port ?? 0, readyCallback);
+  } else if (typeof listenInterface === "string") {
+    server = app.listen(port ?? 0, listenInterface, readyCallback);
+  } else {
+    server = app.listen(port ?? 0, "localhost", readyCallback);
+  }
   if (shutdownFunction) {
     server.on("close", shutdownFunction);
   }

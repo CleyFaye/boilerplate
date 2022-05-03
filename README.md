@@ -426,7 +426,7 @@ import {appStart} from "@cley_faye/boilerplate/lib/express.js";
 
 appStart({
   app,
-  allowNonLocal: false,
+  listenInterface: false,
   port: 3000,
   shutdownFunction: () => {;},
   logger: consoleLogger,
@@ -435,7 +435,8 @@ appStart({
 
 The settings are:
 
-- allowNonLocal: listen only to localhost or not
+- listenInterface: listen only to localhost or not. Can also be used to specify the address of an
+  interface to bind to.
 - port: port to listen to. Can be 0 to use a random available port
 - shutdownFunction: a function to call after the server stop listening
 - logger: a winston logger to log that the server started listening
