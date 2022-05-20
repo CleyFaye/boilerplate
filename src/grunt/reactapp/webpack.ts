@@ -34,7 +34,7 @@ const defaultLoadersDefine = (options: WebpackLoadersOptions) => [
 const defaultLoadersPresetEnv = (options: WebpackLoadersOptions) => [
   "@babel/preset-env",
   {
-    targets: (options.babel?.targets) ?? "last 1 version, > 2%, not dead",
+    targets: (options.babel?.targets) ?? "> 1%, last 1 safari version",
     useBuiltIns: "usage",
     corejs: (options.babel?.corejs) ?? defaultCoreJS,
     modules: false,
@@ -62,7 +62,7 @@ const defaultLoadersReact = (options: WebpackLoadersOptions) => [
  * Version of core-js to use (default to 3)
  *
  * @param [options.babel.targets]
- * Browser targets (default to "last 1 version, > 2%, not dead")
+ * Browser targets (default to " > 1%, last 1 safari version")
  *
  * @param [options.babel.plugins]
  * Plugins to add to babel
