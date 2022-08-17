@@ -13,7 +13,7 @@ import {
 import {LogOptions, UserFromReqFunc} from "./pipelinebuilder.js";
 
 export type LoggerOptions =
-  expressWinston.LoggerOptions
+  expressWinston.BaseLoggerOptions
   | boolean;
 
 interface ErrorLoggerConfiguration {
@@ -57,7 +57,7 @@ const customRouteFormat = (
     }
     const metaString = JSON.stringify(info.meta);
     const finalMessage
-      = `${info.message} ${metaString === "{}" ? "" : metaString}`;
+      = `${info.message as string} ${metaString === "{}" ? "" : metaString}`;
     return prefixOutput(info.level, finalMessage, outputTimestamp);
   },
 );
