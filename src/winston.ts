@@ -52,7 +52,7 @@ const logConfig: LogConfig = {
 };
 
 const customFormat = winston.format.printf((info: TransformableInfo) => {
-  const message = ("stack" in info) ? (info.stack as string) : info.message;
+  const message = (("stack" in info) ? info.stack : info.message) as string;
   const filteredMessage = logConfig.collapseNodeModules
     ? [...filterNodeModules(message)].join("\n")
     : message;
