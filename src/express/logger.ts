@@ -7,7 +7,7 @@ import {
 } from "logform";
 import {
   transports,
-  filterNodeModules,
+  filterStacktrace,
   prefixOutput,
 } from "../winston.js";
 import {LogOptions, UserFromReqFunc} from "./pipelinebuilder.js";
@@ -17,7 +17,9 @@ export type LoggerOptions =
   | boolean;
 
 interface ErrorLoggerConfiguration {
+  /** @deprecated Use collapseStacktrace */
   collapseNodeModules?: boolean;
+  collapseStacktrace?: boolean;
 }
 
 export type ErrorLoggerOptions =
@@ -57,7 +59,7 @@ const customRouteFormat = (
     }
     const metaString = JSON.stringify(info.meta);
     const finalMessage
-      = `${info.message as string} ${metaString === "{}" ? "" : metaString}`;
+      = `${info.message} ${metaString === "{}" ? "" : metaString}`;
     return prefixOutput(info.level, finalMessage, outputTimestamp);
   },
 );
@@ -131,7 +133,7 @@ const customErrorFormat = (
     (info: TransformableInfo) => {
       const meta: InfoMeta | undefined = info.meta as InfoMeta;
       const finalMessage = collapseNodeModules
-        ? [...filterNodeModules(meta.message)].join("\n")
+        ? [...filterStacktrace(meta.message)].join("\n")
         : meta.message;
       return prefixOutput(info.level, finalMessage, outputTimestamp);
     },

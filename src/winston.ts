@@ -2,22 +2,24 @@ import winston from "winston";
 import {TransformableInfo} from "logform";
 
 // High value because of colorize()
-const LOG_LEVEL_PADDING_SIZE = 19;
+const LOG_LEVEL_PADDING_SIZE = 10;
+
+const stackFilterRegex = /(?:at process|at runMicrotasks)/u;
 
 /**
- * Collapse all lines containing /node_modules/ into an ellipsis
+ * Collapse useless lines in stacktrace
  */
-export const filterNodeModules = function* (message: string): Generator<string> {
-  let inNodeModules = false;
+export const filterStacktrace = function* (message: string): Generator<string> {
+  let inCollapse = false;
   const lines = message.split("\n");
   for (const line of lines) {
-    if (/\/node_modules\//u.exec(line)) {
-      if (!inNodeModules) {
-        inNodeModules = true;
+    if (stackFilterRegex.exec(line)) {
+      if (!inCollapse) {
+        inCollapse = true;
         yield "[...]";
       }
     } else {
-      inNodeModules = false;
+      inCollapse = false;
       yield line;
     }
   }
@@ -35,28 +37,118 @@ export const prefixOutput = (
     ? `${new Date().toISOString()} `
     : "";
   const levelPrefix = `${level.toString().padStart(LOG_LEVEL_PADDING_SIZE)}: `;
+  const levelEmpty = `${" ".repeat(LOG_LEVEL_PADDING_SIZE)}  `;
   return message.split("\n").map(
-    line => `${timestampPrefix}${levelPrefix}${line}`,
+    (line, id) => `${timestampPrefix}${id === 0 ? levelPrefix : levelEmpty}${line}`,
   )
     .join("\n");
 };
 
 export interface LogConfig {
   timestamp: boolean;
+  /** @deprecated Use collapseStacktrace instead */
   collapseNodeModules: boolean;
+  collapseStacktrace: boolean;
 }
 
 const logConfig: LogConfig = {
   timestamp: true,
   collapseNodeModules: true,
+  collapseStacktrace: true,
+};
+
+const indent = (msg: string, indentLevel: number): string => {
+  if (indentLevel === 0) return msg;
+  const indentList: Array<string> = [];
+  for (let i = 0; i < indentLevel;) {
+    ++i;
+    indentList.push(`${i}|`);
+  }
+  const indentStr = indentList.join("");
+  return msg.split("\n")
+    .map(c => `${indentStr}${c.trimEnd()}`)
+    .join("\n");
+};
+
+interface ExtendedErrorFields {
+  cause?: Error;
+  response?: {
+    data?: string | Record<string, unknown>;
+  },
+  request?: {
+    _currentUrl?: string;
+  }
+  statusCode?: number;
+}
+
+type ExtendedError = Error & ExtendedErrorFields;
+
+/** Add context from axios */
+const addAxiosContent = (error: ExtendedError): string | undefined => {
+  const res: Array<string> = [];
+  if (error.request?._currentUrl) {
+    res.push(`HTTP Request URL: ${error.request._currentUrl}`);
+  }
+  if (error.response?.data) {
+    res.push("HTTP Response body:");
+    if (typeof error.response.data === "string") {
+      res.push(error.response.data);
+    } else {
+      try {
+        res.push(JSON.stringify(error.response.data));
+      } catch {
+        try {
+          res.push(error.response.data.toString());
+        } catch {
+          res.push("<cannot output body>");
+        }
+      }
+    }
+  }
+  if (res.length === 0) return;
+  return res.join("\n");
+};
+
+/** Add context from http-errors */
+const addHttpErrorContent = (error: ExtendedError): string | undefined => {
+  if (error.statusCode === undefined) return;
+  return `HttpError status: ${error.statusCode}`;
+};
+
+/** Return a string with the full error and stacktrace, including causes */
+const filterError = (error: ExtendedError, collapseStacktrace: boolean): string => {
+  const resultRows: Array<string> = [];
+  let cursor: ExtendedError | undefined = error;
+  let indentLevel = 0;
+  while (cursor) {
+    if (indentLevel === 0) {
+      resultRows.push(cursor.name);
+    } else {
+      resultRows.push(indent(`Caused by: ${cursor.name}`, indentLevel));
+    }
+    resultRows.push(indent(cursor.message, indentLevel));
+    if (cursor.stack) {
+      if (collapseStacktrace) {
+        resultRows.push(indent([...filterStacktrace(cursor.stack)].join("\n"), indentLevel));
+      } else {
+        resultRows.push(indent(cursor.stack, indentLevel));
+      }
+    }
+    const axiosContent = addAxiosContent(cursor);
+    if (axiosContent) resultRows.push(indent(axiosContent, indentLevel));
+    const httpErrorsContent = addHttpErrorContent(cursor);
+    if (httpErrorsContent) resultRows.push(indent(httpErrorsContent, indentLevel));
+    cursor = cursor.cause;
+    ++indentLevel;
+  }
+  return resultRows.join("\n");
 };
 
 const customFormat = winston.format.printf((info: TransformableInfo) => {
-  const message = (("stack" in info) ? info.stack : info.message) as string;
-  const filteredMessage = logConfig.collapseNodeModules
-    ? [...filterNodeModules(message)].join("\n")
-    : message;
-  return prefixOutput(info.level, filteredMessage, logConfig.timestamp);
+  const message = (info instanceof Error)
+    ? filterError(info, logConfig.collapseNodeModules || logConfig.collapseStacktrace)
+    : info.message;
+  return prefixOutput(info.level, message, logConfig.timestamp);
 });
 
 /** Edit the configuration applied to consoleLogger */
@@ -68,9 +160,6 @@ export const transports = [new winston.transports.Console()];
 
 export const consoleLogger = winston.createLogger({
   level: "info",
-  format: winston.format.combine(
-    winston.format.colorize(),
-    customFormat,
-  ),
+  format: customFormat,
   transports,
 });

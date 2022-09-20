@@ -189,6 +189,7 @@ export default class PipelineBuilder {
       setConfig({
         timestamp: log.timestamp ?? false,
         collapseNodeModules: errorConfig.collapseNodeModules ?? true,
+        collapseStacktrace: errorConfig.collapseStacktrace ?? true,
       });
     }
     const router = express.Router();
