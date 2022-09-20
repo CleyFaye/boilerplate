@@ -1,5 +1,5 @@
 import winston from "winston";
-import {TransformableInfo} from "logform";
+import {Format, TransformableInfo} from "logform";
 
 // High value because of colorize()
 const LOG_LEVEL_PADDING_SIZE = 10;
@@ -62,11 +62,16 @@ const indent = (msg: string, indentLevel: number): string => {
   const indentList: Array<string> = [];
   for (let i = 0; i < indentLevel;) {
     ++i;
-    indentList.push(`${i}|`);
+    const str = `${i}|`;
+    if (i < indentLevel) {
+      indentList.push(" ".repeat(str.length));
+    } else {
+      indentList.push(str);
+    }
   }
   const indentStr = indentList.join("");
   return msg.split("\n")
-    .map(c => `${indentStr}${c.trimEnd()}`)
+    .map(c => `${indentStr} ${c.trimEnd()}`)
     .join("\n");
 };
 
@@ -144,11 +149,27 @@ const filterError = (error: ExtendedError, collapseStacktrace: boolean): string 
   return resultRows.join("\n");
 };
 
-const customFormat = winston.format.printf((info: TransformableInfo) => {
-  const message = (info instanceof Error)
-    ? filterError(info, logConfig.collapseNodeModules || logConfig.collapseStacktrace)
-    : info.message;
-  return prefixOutput(info.level, message, logConfig.timestamp);
+const getErrorFromTransformable = (info: TransformableInfo): Error | undefined => {
+  if (info instanceof Error) return info;
+  if (info.meta) {
+    const meta = info.meta as Record<string, unknown>;
+    if (meta.error && meta.error instanceof Error) return meta.error;
+  }
+};
+
+export const customFormat = (
+  timestamp?: boolean,
+  collapseStacktrace?: boolean,
+): Format => winston.format.printf((info: TransformableInfo) => {
+  const effectiveTimestamp = timestamp === undefined
+    ? logConfig.timestamp
+    : timestamp;
+  const effectiveCollapse = collapseStacktrace === undefined
+    ? logConfig.collapseNodeModules || logConfig.collapseStacktrace
+    : collapseStacktrace;
+  const error = getErrorFromTransformable(info);
+  const message = error ? filterError(error, effectiveCollapse) : info.message;
+  return prefixOutput(info.level, message, effectiveTimestamp);
 });
 
 /** Edit the configuration applied to consoleLogger */
@@ -160,6 +181,6 @@ export const transports = [new winston.transports.Console()];
 
 export const consoleLogger = winston.createLogger({
   level: "info",
-  format: customFormat,
+  format: customFormat(),
   transports,
 });

@@ -7,8 +7,8 @@ import {
 } from "logform";
 import {
   transports,
-  filterStacktrace,
   prefixOutput,
+  customFormat,
 } from "../winston.js";
 import {LogOptions, UserFromReqFunc} from "./pipelinebuilder.js";
 
@@ -124,22 +124,6 @@ export const registerRouteLogger = (
   }));
 };
 
-const customErrorFormat = (
-  outputTimestamp: boolean | undefined,
-  config: ErrorLoggerConfiguration,
-): Format => {
-  const {collapseNodeModules} = config;
-  return winston.format.printf(
-    (info: TransformableInfo) => {
-      const meta: InfoMeta | undefined = info.meta as InfoMeta;
-      const finalMessage = collapseNodeModules
-        ? [...filterStacktrace(meta.message)].join("\n")
-        : meta.message;
-      return prefixOutput(info.level, finalMessage, outputTimestamp);
-    },
-  );
-};
-
 export const registerErrorLogger = (
   app: Router,
   logOptions?: LogOptions,
@@ -157,10 +141,9 @@ export const registerErrorLogger = (
   } else {
     app.use(expressWinston.errorLogger({
       transports,
-      format: winston.format.combine(
-        winston.format.errors(),
-        winston.format.colorize(),
-        customErrorFormat(timestamp, config),
+      format: customFormat(
+        timestamp,
+        config.collapseStacktrace ?? config.collapseNodeModules,
       ),
       meta: false,
     }));
