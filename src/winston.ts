@@ -121,7 +121,7 @@ const addHttpErrorContent = (error: ExtendedError): string | undefined => {
 };
 
 /** Return a string with the full error and stacktrace, including causes */
-const filterError = (error: ExtendedError, collapseStacktrace: boolean): string => {
+export const filterError = (error: ExtendedError, collapseStacktrace = true): string => {
   const resultRows: Array<string> = [];
   let cursor: ExtendedError | undefined = error;
   let indentLevel = 0;
@@ -168,7 +168,9 @@ export const customFormat = (
     ? logConfig.collapseNodeModules || logConfig.collapseStacktrace
     : collapseStacktrace;
   const error = getErrorFromTransformable(info);
-  const message = error ? filterError(error, effectiveCollapse) : info.message;
+  const message = error
+    ? filterError(error, effectiveCollapse)
+    : (info.message as string).toString();
   return prefixOutput(info.level, message, effectiveTimestamp);
 });
 

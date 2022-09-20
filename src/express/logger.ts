@@ -59,7 +59,7 @@ const customRouteFormat = (
     }
     const metaString = JSON.stringify(info.meta);
     const finalMessage
-      = `${info.message} ${metaString === "{}" ? "" : metaString}`;
+      = `${(info.message as string).toString()} ${metaString === "{}" ? "" : metaString}`;
     return prefixOutput(info.level, finalMessage, outputTimestamp);
   },
 );
