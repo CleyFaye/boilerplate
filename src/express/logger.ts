@@ -111,11 +111,7 @@ export const registerRouteLogger = (
     requestWhitelist: ["body"],
     bodyWhitelist: [],
     expressFormat: false,
-    format: winston.format.combine(
-      winston.format.colorize(),
-      customRouteFormat(timestamp),
-    ),
-    colorize: true,
+    format: customRouteFormat(timestamp),
     msg: "{{req.method}} {{req.url}} {{res.statusCode}} {{res.responseTime}}ms",
   };
   app.use(expressWinston.logger({

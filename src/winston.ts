@@ -1,7 +1,6 @@
 import winston from "winston";
 import {Format, TransformableInfo} from "logform";
 
-// High value because of colorize()
 const LOG_LEVEL_PADDING_SIZE = 10;
 
 const stackFilterRegex = /(?:at process|at runMicrotasks)/u;
