@@ -20,6 +20,7 @@ interface ErrorLoggerConfiguration {
   /** @deprecated Use collapseStacktrace */
   collapseNodeModules?: boolean;
   collapseStacktrace?: boolean;
+  extraFilter?: Array<RegExp> | RegExp;
 }
 
 export type ErrorLoggerOptions =
@@ -124,6 +125,15 @@ export const registerRouteLogger = (
   }));
 };
 
+const getExtraFilter = (
+  userExtraFilter: Array<RegExp> | RegExp | undefined,
+): Array<RegExp> | RegExp => {
+  const expressRegEx = /node_modules\/express/u;
+  if (!userExtraFilter) return expressRegEx;
+  if (Array.isArray(userExtraFilter)) return [expressRegEx, ...userExtraFilter];
+  return [expressRegEx, userExtraFilter];
+};
+
 export const registerErrorLogger = (
   app: Router,
   logOptions?: LogOptions,
@@ -144,6 +154,7 @@ export const registerErrorLogger = (
       format: customFormat(
         timestamp,
         config.collapseStacktrace ?? config.collapseNodeModules,
+        getExtraFilter(config.extraFilter),
       ),
       meta: false,
     }));

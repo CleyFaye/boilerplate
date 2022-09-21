@@ -6,14 +6,27 @@ const LOG_LEVEL_PADDING_SIZE = 10;
 
 const stackFilterRegex = /(?:at process|at runMicrotasks)/u;
 
+const isFiltered = (line: string, extraFilter: Array<RegExp> | RegExp | undefined): boolean => {
+  if (stackFilterRegex.exec(line)) return true;
+  if (extraFilter) {
+    for (const filter of Array.isArray(extraFilter) ? extraFilter : [extraFilter]) {
+      if (filter.exec(line)) return true;
+    }
+  }
+  return false;
+};
+
 /**
  * Collapse useless lines in stacktrace
  */
-export const filterStacktrace = function* (message: string): Generator<string> {
+export const filterStacktrace = function* (
+  message: string,
+  extraFilter?: Array<RegExp> | RegExp,
+): Generator<string> {
   let inCollapse = false;
   const lines = message.split("\n");
   for (const line of lines) {
-    if (stackFilterRegex.exec(line)) {
+    if (isFiltered(line, extraFilter)) {
       if (!inCollapse) {
         inCollapse = true;
         yield "[...]";
@@ -49,12 +62,14 @@ export interface LogConfig {
   /** @deprecated Use collapseStacktrace instead */
   collapseNodeModules: boolean;
   collapseStacktrace: boolean;
+  stacktraceFilter?: Array<RegExp> | RegExp;
 }
 
 const logConfig: LogConfig = {
   timestamp: true,
   collapseNodeModules: true,
   collapseStacktrace: true,
+  stacktraceFilter: undefined,
 };
 
 const indent = (msg: string, indentLevel: number): string => {
@@ -121,7 +136,11 @@ const addHttpErrorContent = (error: ExtendedError): string | undefined => {
 };
 
 /** Return a string with the full error and stacktrace, including causes */
-export const filterError = (error: ExtendedError, collapseStacktrace = true): string => {
+export const filterError = (
+  error: ExtendedError,
+  collapseStacktrace = true,
+  extraFilter?: Array<RegExp> | RegExp,
+): string => {
   const resultRows: Array<string> = [];
   let cursor: ExtendedError | undefined = error;
   let indentLevel = 0;
@@ -134,7 +153,7 @@ export const filterError = (error: ExtendedError, collapseStacktrace = true): st
     resultRows.push(indent(cursor.message, indentLevel));
     if (cursor.stack) {
       if (collapseStacktrace) {
-        resultRows.push(indent([...filterStacktrace(cursor.stack)].join("\n"), indentLevel));
+        resultRows.push(indent([...filterStacktrace(cursor.stack, extraFilter)].join("\n"), indentLevel));
       } else {
         resultRows.push(indent(cursor.stack, indentLevel));
       }
@@ -160,6 +179,7 @@ const getErrorFromTransformable = (info: TransformableInfo): Error | undefined =
 export const customFormat = (
   timestamp?: boolean,
   collapseStacktrace?: boolean,
+  stacktraceFilter?: Array<RegExp> | RegExp,
 ): Format => winston.format.printf((info: TransformableInfo) => {
   const effectiveTimestamp = timestamp === undefined
     ? logConfig.timestamp
@@ -167,9 +187,12 @@ export const customFormat = (
   const effectiveCollapse = collapseStacktrace === undefined
     ? logConfig.collapseNodeModules || logConfig.collapseStacktrace
     : collapseStacktrace;
+  const effectiveStacktraceFilter = stacktraceFilter === undefined
+    ? logConfig.stacktraceFilter
+    : stacktraceFilter;
   const error = getErrorFromTransformable(info);
   const message = error
-    ? filterError(error, effectiveCollapse)
+    ? filterError(error, effectiveCollapse, effectiveStacktraceFilter)
     : (info.message as string).toString();
   return prefixOutput(info.level, message, effectiveTimestamp);
 });

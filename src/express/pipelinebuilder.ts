@@ -106,6 +106,7 @@ export interface LogOptions {
   error?: ErrorLoggerOptions;
   logger?: winston.Logger;
   timestamp?: boolean;
+  extraStacktraceFilter?: Array<RegExp> | RegExp;
   userFromReq?: UserFromReqFunc;
 }
 
