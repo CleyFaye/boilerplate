@@ -157,12 +157,8 @@ const getOutputToWatch = (
   if (webpackOptions.output) {
     return null;
   }
-  const entries = webpackOptions.entry
-    ? Object.keys(webpackOptions.entry)
-    : [targetName];
-  return entries.map(
-    entryName => join("dist", targetName, "js", `${entryName}.js`),
-  );
+  // Watch all output directory, since webpack generate chunks
+  return [join("dist", targetName, "js", "*.js")];
 };
 
 const getWatchTasks = (
