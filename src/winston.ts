@@ -90,7 +90,7 @@ const indent = (msg: string, indentLevel: number): string => {
 };
 
 interface ExtendedErrorFields {
-  cause?: Error;
+  cause?: unknown;
   response?: {
     data?: string | Record<string, unknown>;
   },
@@ -134,6 +134,17 @@ const addHttpErrorContent = (error: ExtendedError): string | undefined => {
   return `HttpError status: ${error.statusCode}`;
 };
 
+const getCause = (error: ExtendedError): Error | undefined => {
+  const cause = error.cause;
+  if (cause === undefined) return;
+  if (cause instanceof Error) return cause;
+  try {
+    return new Error((cause as Record<string, unknown>).toString());
+  } catch {
+    return new Error("Unknown cause");
+  }
+};
+
 /** Return a string with the full error and stacktrace, including causes */
 export const filterError = (
   error: ExtendedError,
@@ -161,7 +172,7 @@ export const filterError = (
     if (axiosContent) resultRows.push(indent(axiosContent, indentLevel));
     const httpErrorsContent = addHttpErrorContent(cursor);
     if (httpErrorsContent) resultRows.push(indent(httpErrorsContent, indentLevel));
-    cursor = cursor.cause;
+    cursor = getCause(cursor);
     ++indentLevel;
   }
   return resultRows.join("\n");
