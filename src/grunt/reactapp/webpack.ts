@@ -129,9 +129,11 @@ const computeWebpackOutput = (
 ): {
   path?: string;
   filename?: string;
+  chunkFilename?: string;
 } => webpackOptions.output ?? {
   path: resolve("dist", targetName, "js"),
   filename: "[name].js",
+  chunkFilename: "[name]-[fullhash].js",
 };
 
 const lastNamePosition = 2;
