@@ -43,7 +43,7 @@
     "@babel/plugin-transform-runtime": "7.x",
     "@babel/preset-env": "7.x",
     "@babel/preset-react": "7.x",
-    "babel-loader": "8.x",
+    "babel-loader": "8.x||9.x",
     "babel-plugin-transform-define": "2.x",
     "core-js": "3.x",
     "eslint-webpack-plugin": "^3.0.1",
@@ -55,7 +55,7 @@
     "grunt-contrib-watch": "1.x",
     "grunt-sass": "3.x",
     "grunt-webpack": "5.x",
-    "resolve-typescript-plugin": "^1.2.0",
+    "resolve-typescript-plugin": "1.x||2.x",
     "sass": "1.x",
     "ts-loader": "^9.4.1",
     "winston": "3.x"
