@@ -138,21 +138,14 @@ export const registerErrorLogger = (
   const config = typeof error === "boolean"
     ? {}
     : error ?? {};
-  if (logger) {
-    app.use(expressWinston.errorLogger({
-      transports: logger.transports,
-      meta: false,
-      msg: "{{req.method}} {{req.url}}",
-    }));
-  } else {
-    app.use(expressWinston.errorLogger({
-      transports,
-      format: customFormat(
-        timestamp,
-        config.collapseStacktrace ?? config.collapseNodeModules,
-        getExtraFilter(config.extraFilter),
-      ),
-      meta: false,
-    }));
-  }
+  const activeTransports = logger ? logger.transports : transports;
+  app.use(expressWinston.errorLogger({
+    transports: activeTransports,
+    format: customFormat(
+      timestamp,
+      config.collapseStacktrace ?? config.collapseNodeModules,
+      getExtraFilter(config.extraFilter),
+    ),
+    meta: false,
+  }));
 };
