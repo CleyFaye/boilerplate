@@ -1,4 +1,5 @@
 import {join, resolve} from "path";
+import {existsSync} from "node:fs";
 import ESLintPlugin from "eslint-webpack-plugin";
 import ResolveTypescriptPlugin from "resolve-typescript-plugin";
 import {BaseOptions} from "../util.js";
@@ -97,9 +98,16 @@ export const webpackLoadersDefault = (
     },
   ];
   if (options.typescript) {
+    const alternativeConfig = "tsconfig-tsloader.json";
+    const tsLoader = existsSync(alternativeConfig)
+      ? [{
+        loader: "ts-loader",
+        options: {configFile: alternativeConfig},
+      }]
+      : "ts-loader";
     res.push({
       test: /.(?:ts|tsx)$/u,
-      use: "ts-loader",
+      use: tsLoader,
       exclude: /node_modules/u,
     });
   }

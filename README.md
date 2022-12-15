@@ -479,6 +479,8 @@ If you reference the output of the TypeScript compiler, you can keep it updated 
 
 Using `ts-loader` can be done automatically by setting the `typescript` property in the webpack
 configuration to `true`.
+If a `tsconfig-tsloader.json` file exists at the root of the project, it will be used instead of
+`tsconfig.json`.
 
 For Express app, there is no particular things to take care, except that if you use a facility like
 `nodemon` you have to watch the TypeScript output instead of the actual source files.
