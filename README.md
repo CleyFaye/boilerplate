@@ -8,6 +8,16 @@ to transpile a webapp so it can work in most browsers.
 These tools allows some level of configuration, but most default options expects a specific
 directory layout for your project.
 
+This is not a "starter project" but an actual dependency to keep in your project.
+
+Install it using
+
+```shell
+npm install @cley_faye/boilerplate
+// alternatively, if you don't run an express server and only build a webapp offline
+npm install -D @cley_faye/boilerplate
+```
+
 Managing dependencies
 ---------------------
 This project does not "really" depend on anything, since all parts are optional.
@@ -160,8 +170,8 @@ The webpack options support a host of properties:
 - resolve: a custom "resolve" object for webpack config
 
 ### SASS
-All `.sass` and `.scss` files in the webapp directory will be processed as `.css` files in the
-output directory, except for files named `.inc.*`.
+All `.sass` and `.scss` files in the `webres` directory will be processed as `.css` files
+in the output directory, except for files named `.inc.*`.
 
 ### Copy task
 It is possible to move other file types into the output directory using the copy task.
