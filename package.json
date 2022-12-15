@@ -61,19 +61,37 @@
     "winston": "3.x"
   },
   "peerDependenciesMeta": {
+    "@babel/core": {
+      "optional": true
+    },
+    "@babel/plugin-transform-runtime": {
+      "optional": true
+    },
+    "@babel/preset-env": {
+      "optional": true
+    },
+    "@babel/preset-react": {
+      "optional": true
+    },
+    "babel-loader": {
+      "optional": true
+    },
+    "babel-plugin-transform-define": {
+      "optional": true
+    },
+    "core-js": {
+      "optional": true
+    },
+    "eslint-webpack-plugin": {
+      "optional": true
+    },
+    "express": {
+      "optional": true
+    },
+    "express-winston": {
+      "optional": true
+    },
     "grunt": {
-      "optional": true
-    },
-    "grunt-webpack": {
-      "optional": true
-    },
-    "sass": {
-      "optional": true
-    },
-    "grunt-sass": {
-      "optional": true
-    },
-    "grunt-contrib-watch": {
       "optional": true
     },
     "grunt-contrib-copy": {
@@ -82,37 +100,25 @@
     "grunt-contrib-pug": {
       "optional": true
     },
-    "@babel/plugin-transform-runtime": {
+    "grunt-contrib-watch": {
       "optional": true
     },
-    "core-js": {
+    "grunt-sass": {
       "optional": true
     },
-    "babel-plugin-transform-define": {
+    "grunt-webpack": {
       "optional": true
     },
-    "@babel/preset-react": {
+    "resolve-typescript-plugin": {
       "optional": true
     },
-    "@babel/preset-env": {
+    "sass": {
       "optional": true
     },
-    "@babel/core": {
-      "optional": true
-    },
-    "eslint-webpack-plugin": {
-      "optional": true
-    },
-    "babel-loader": {
-      "optional": true
-    },
-    "express": {
+    "ts-loader": {
       "optional": true
     },
     "winston": {
-      "optional": true
-    },
-    "express-winston": {
       "optional": true
     }
   },
