@@ -110,7 +110,7 @@
       "optional": true
     },
     "resolve-typescript-plugin": {
-      "optional": true
+      "optional": false
     },
     "sass": {
       "optional": true
