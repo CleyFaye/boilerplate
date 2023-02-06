@@ -177,7 +177,7 @@ const createWatchTasks = (
               ? ""
               : "webres/";
             if (cur.startsWith("!")) {
-              acc.push(`!${prefix}${cur.substr(1)}`);
+              acc.push(`!${prefix}${cur.substring(1)}`);
             } else {
               acc.push(`${prefix}${cur}`);
             }

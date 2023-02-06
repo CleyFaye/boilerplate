@@ -10,15 +10,15 @@ const trimWordEnd = 3;
  */
 export const camelToKebab = (camel: string): string => camel.length === 0
   ? ""
-  : `${camel[0].toUpperCase()}${camel.substr(1)}`
+  : `${camel[0].toUpperCase()}${camel.substring(1)}`
     .replace(
       /[A-Z][A-Z0-9]+[a-z0-9]/ug,
       value => value[0]
-        + value.substr(1, value.length - trimWordEnd).toLowerCase()
-        + value.substr(value.length - trimWordStart),
+        + value.substring(1, value.length - trimWordEnd + 1).toLowerCase()
+        + value.substring(value.length - trimWordStart),
     ).replace(
       /[A-Z][A-Z]+$/u,
-      value => value[0] + value.substr(1).toLowerCase(),
+      value => value[0] + value.substring(1).toLowerCase(),
     )
     .split(/(?=[A-Z])/u)
     .map(word => word.toLowerCase())
