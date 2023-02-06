@@ -99,7 +99,7 @@ export type StaticDefinition =
   ComplexStaticDefinition
   | string;
 
-export type UserFromReqFunc = (req: Request) => string | undefined;
+export type UserFromReqFunc = (req: Request) => string | Record<string, unknown> | undefined;
 
 export interface LogOptions {
   route?: LoggerOptions;
@@ -107,7 +107,9 @@ export interface LogOptions {
   logger?: winston.Logger;
   timestamp?: boolean;
   extraStacktraceFilter?: Array<RegExp> | RegExp;
+  /** @deprecated Use `authFromReq` instead */
   userFromReq?: UserFromReqFunc;
+  authFromReq?: UserFromReqFunc;
 }
 
 export interface DefaultErrorHandlerConfig {

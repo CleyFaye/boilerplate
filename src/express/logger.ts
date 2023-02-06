@@ -78,7 +78,7 @@ export interface RequestWithLoggingData extends Request {
 
 /** Return the default value for route logger is it is set as `true` */
 export const defaultRouteLoggerConfig = (
-  userFromReq?: UserFromReqFunc,
+  authFromReq?: UserFromReqFunc,
 ): BaseLoggerOptions => ({
   meta: true,
   requestWhitelist: ["body"],
@@ -86,7 +86,16 @@ export const defaultRouteLoggerConfig = (
   dynamicMeta: (req: Request): Record<string, unknown> => {
     const castReq = req as RequestWithLoggingData;
     const data: Record<string, unknown> = {...castReq._cleyfayeLogging?.extraLoggingData};
-    if (userFromReq) data.user = userFromReq(req) ?? null;
+    if (authFromReq) {
+      const value = authFromReq(req);
+      if (!value) {
+        data.auth = null;
+      } else if (typeof value === "string") {
+        data.auth = value;
+      } else {
+        Object.assign(data, value);
+      }
+    }
     return data;
   },
 });
@@ -95,10 +104,10 @@ export const registerRouteLogger = (
   app: Router,
   logOptions?: LogOptions,
 ): void => {
-  const {route, timestamp, userFromReq} = logOptions ?? {};
+  const {route, timestamp, userFromReq, authFromReq} = logOptions ?? {};
   let extraConfig;
   if (typeof route === "boolean") {
-    extraConfig = defaultRouteLoggerConfig(userFromReq);
+    extraConfig = defaultRouteLoggerConfig(authFromReq ?? userFromReq);
   } else {
     extraConfig = {...route};
     const rec = extraConfig as Record<string, unknown>;

@@ -407,9 +407,11 @@ router.post(
 In addition to excluding properties from the body of a request and adding custom properties, it can
 be useful to always identify a request coming from a logged-in user.
 
-You can provide a `userFromReq` property to the `options.log` configuration.
+You can provide a `authFromReq` property to the `options.log` configuration.
 It should be a function that receive `req` as its argument and returns a string identifying the
 logged-in user.
+(this only work with the default log handler; if you define anything in `route` you can set this in
+`dynamicMeta()`)
 
 ### Configuring global aspects of an Express App
 
