@@ -8,6 +8,7 @@
   },
   "scripts": {
     "prepack": "npm run grunt -- clean build",
+    "check": "tsc --noEmit && eslint .",
     "grunt": "npx grunt --gruntfile Gruntfile.cjs"
   },
   "author": "Gabriel Paul \"Cley Faye\" Risterucci",
@@ -25,6 +26,7 @@
     "@typescript-eslint/eslint-plugin": "^5.50.0",
     "@typescript-eslint/parser": "^5.50.0",
     "eslint": "^8.33.0",
+    "eslint-plugin-deprecation": "^1.3.3",
     "eslint-plugin-import": "^2.27.5",
     "eslint-plugin-promise": "^6.1.1",
     "eslint-webpack-plugin": "^3.2.0",
