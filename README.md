@@ -333,6 +333,9 @@ It supports the following properties:
   property.
 - logger: an instance of a winston logger.
 - timestamp: set to true to prepend a timestamp to each log line
+- ignoredRoutes: array of path to not log
+
+Note that if `route` is a full object, some of the other proprties might be ignored.
 
 The middleware options allow enabling/disabling common middlewares.
 Currently only support a few builtin middlewares from express:

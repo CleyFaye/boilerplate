@@ -107,6 +107,7 @@ export interface LogOptions {
   logger?: winston.Logger;
   timestamp?: boolean;
   extraStacktraceFilter?: Array<RegExp> | RegExp;
+  ignoredRoutes?: Array<string>;
   /** @deprecated Use `authFromReq` instead */
   userFromReq?: UserFromReqFunc;
   authFromReq?: UserFromReqFunc;

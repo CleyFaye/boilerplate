@@ -104,7 +104,7 @@ export const registerRouteLogger = (
   app: Router,
   logOptions?: LogOptions,
 ): void => {
-  const {route, timestamp, userFromReq, authFromReq} = logOptions ?? {};
+  const {route, timestamp, userFromReq, authFromReq, ignoredRoutes} = logOptions ?? {};
   let extraConfig;
   if (typeof route === "boolean") {
     extraConfig = defaultRouteLoggerConfig(authFromReq ?? userFromReq);
@@ -122,6 +122,7 @@ export const registerRouteLogger = (
     expressFormat: false,
     format: customRouteFormat(timestamp),
     msg: "{{req.method}} {{req.url}} {{res.statusCode}} {{res.responseTime}}ms",
+    ignoredRoutes,
   };
   app.use(expressWinston.logger({
     transports,
