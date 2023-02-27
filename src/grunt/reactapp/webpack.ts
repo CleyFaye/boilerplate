@@ -219,8 +219,8 @@ const computeWebpackResolve = (
     if (res.extensionAlias === undefined) {
       res.extensionAlias = {};
     }
-    res.extensionAlias[".js"] = [".ts", ".js"];
-    res.extensionAlias[".mjs"] = [".mts", ".mjs"];
+    res.extensionAlias[".js"] = [".ts", ".tsx", ".js", ".jsx"];
+    res.extensionAlias[".mjs"] = [".mts", ".mtsx", ".mjs", ".mjsx"];
   }
   return res;
 };
