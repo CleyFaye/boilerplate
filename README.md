@@ -29,8 +29,6 @@ required, and for what. It's up to the calling project to have the proper depend
 
 For webapp building:
 
-- resolve-typescript-plugin (due to the way webpack plugins are handled, this is mandatory for dev
-  install)
 - babel-loader
 - eslint-webpack-plugin
 - @babel/core
