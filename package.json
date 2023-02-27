@@ -57,7 +57,6 @@
     "grunt-contrib-watch": "1.x",
     "grunt-sass": "3.x",
     "grunt-webpack": "5.x",
-    "resolve-typescript-plugin": "^2.0.0",
     "sass": "1.x",
     "ts-loader": "^9.4.1",
     "winston": "3.x"
@@ -110,9 +109,6 @@
     },
     "grunt-webpack": {
       "optional": true
-    },
-    "resolve-typescript-plugin": {
-      "optional": false
     },
     "sass": {
       "optional": true

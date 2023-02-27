@@ -1,7 +1,6 @@
 import {join, resolve} from "path";
 import {existsSync} from "node:fs";
 import ESLintPlugin from "eslint-webpack-plugin";
-import ResolveTypescriptPlugin from "resolve-typescript-plugin";
 import {BaseOptions} from "../util.js";
 import {HandlerFunctionResult, WatchTaskDef} from "../reactapp.js";
 import {insertTask, GruntConfig} from "./util.js";
@@ -216,10 +215,13 @@ const computeWebpackResolve = (
 ): Record<string, unknown> => {
   const res = {...webpackOptions.resolve};
   if (webpackOptions.typescript) {
-    if (res.plugins === undefined) {
-      res.plugins = [];
+    if (res.extensionAlias === undefined) {
+      const extensionAlias: Record<string, unknown> = {};
+      res.extensionAlias = extensionAlias;
     }
-    (res.plugins as Array<unknown>).push(new ResolveTypescriptPlugin());
+    const extensionAlias = res.extensionAlias as Record<string, unknown>;
+    extensionAlias[".js"] = [".ts", ".js"];
+    extensionAlias[".mjs"] = [".mts", ".mjs"];
   }
   return res;
 };
