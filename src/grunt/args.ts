@@ -140,9 +140,9 @@ const handleOptionDef = (
     return optionDef.defaultValue;
   }
   switch (optionDef.type) {
-    case OptType.STRING: return handleOptionString(rawValue);
-    case OptType.NUMBER: return handleOptionNumber(rawValue);
-    case OptType.BOOLEAN: return handleOptionBoolean(rawValue);
+  case OptType.STRING: return handleOptionString(rawValue);
+  case OptType.NUMBER: return handleOptionNumber(rawValue);
+  case OptType.BOOLEAN: return handleOptionBoolean(rawValue);
   }
 };
 
@@ -165,9 +165,9 @@ const getTypeInfoString = (
   kebabName: string,
 ): string => {
   switch (optionType) {
-    case OptType.STRING: return "=<string value>";
-    case OptType.NUMBER: return "=<numeric value>";
-    case OptType.BOOLEAN: return ` (use --no-${kebabName} to disable)`;
+  case OptType.STRING: return "=<string value>";
+  case OptType.NUMBER: return "=<numeric value>";
+  case OptType.BOOLEAN: return ` (use --no-${kebabName} to disable)`;
   }
 };
 
