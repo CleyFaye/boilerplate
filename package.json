@@ -38,6 +38,7 @@
     "load-grunt-tasks": "^5.1.0",
     "logform": "^2.5.1",
     "typescript": "^4.9.5",
+    "webpack": "^5.75.0",
     "winston": "^3.8.2"
   },
   "peerDependencies": {
