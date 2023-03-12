@@ -462,6 +462,30 @@ It is also possible to trigger a stop by calling the `closeServer()` function on
 `@cley_faye/boilerplate/lib/express/autoclose.js`.
 This feature only supports one server at a time.
 
+Extra middleware
+----------------
+
+### singlepageapp
+If you want to serve a statically built webapp based on a single html entrypoint, you can use the
+middleware provided in `/lib/express/middlewares/singlepageapp.js`.
+
+Basic usage:
+
+```JavaScript
+import express from "express";
+import {singlePageApp} from "@cley_faye/boilerplate/lib/express/middlewares/singlepageapp.js";
+
+const someRouter = express.Router();
+someRouter.use("/app", singlePageApp({rootDir: "dist/webapp"});
+```
+
+Available config options are:
+
+- `rootDir`: mandatory, root directory containing the SPA
+- `htmlFile`: optional, name of the HTML file to serve (defaults to "index.html")
+- `staticRootDirectories`: optional, name of directories (in the above root directory) to serve as
+  static files. Defaults to `["js", "css", "img"]`.
+
 Console logging
 ---------------
 For convenience, a winston logger using console as output is provided:
