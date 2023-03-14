@@ -7,13 +7,27 @@ import {
 } from "body-parser";
 import winston from "winston";
 import createError from "http-errors";
-import {setConfig} from "../winston.js";
+import {ExtendedError, setConfig} from "../winston.js";
 import {
   registerRouteLogger,
   registerErrorLogger,
   LoggerOptions,
   ErrorLoggerOptions,
 } from "./logger.js";
+import {get422Fields} from "./unprocessableentityerror.js";
+
+const getErrorData = (
+  error: ExtendedError,
+): {message?: string, extraFields?: Record<string, unknown>} => {
+  const unprocessable = get422Fields(error);
+  if (unprocessable) {
+    return {
+      message: unprocessable.message,
+      extraFields: {fields: unprocessable.fields, errors: unprocessable.errors},
+    };
+  }
+  return error.expose ? {message: error.message} : {};
+};
 
 const defaultErrorHandler = (errorHandlerConfig: boolean | DefaultErrorHandlerConfig) => (
   err: createError.HttpError,
@@ -26,9 +40,7 @@ const defaultErrorHandler = (errorHandlerConfig: boolean | DefaultErrorHandlerCo
     : Boolean(errorHandlerConfig.noErrorFilter);
   if (!res.headersSent) {
     if (err.statusCode) {
-      const message = err.expose
-        ? err.message
-        : undefined;
+      const errorData = getErrorData(err);
       const accepted = req.accepts(
         [
           "text",
@@ -39,12 +51,13 @@ const defaultErrorHandler = (errorHandlerConfig: boolean | DefaultErrorHandlerCo
       if (accepted === "json") {
         res.status(err.statusCode).send({
           statusCode: err.statusCode,
-          message,
+          message: errorData.message,
+          ...errorData.extraFields,
         });
         return;
       }
-      if (message) {
-        res.status(err.statusCode).send(message);
+      if (errorData.message) {
+        res.status(err.statusCode).send(errorData.message);
       } else {
         res.sendStatus(err.statusCode);
       }

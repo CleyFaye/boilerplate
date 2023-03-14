@@ -1,5 +1,6 @@
 import winston from "winston";
 import {Format, TransformableInfo} from "logform";
+import {get422Fields} from "./express/unprocessableentityerror.js";
 
 const LOG_LEVEL_PADDING_SIZE = 10;
 
@@ -97,10 +98,12 @@ interface ExtendedErrorFields {
   request?: {
     _currentUrl?: string;
   }
+  fields?: Set<string>;
   statusCode?: number;
+  expose?: boolean;
 }
 
-type ExtendedError = Error & ExtendedErrorFields;
+export type ExtendedError = Error & ExtendedErrorFields;
 
 /** Add context from axios */
 const addAxiosContent = (error: ExtendedError): string | undefined => {
@@ -145,6 +148,16 @@ const getCause = (error: ExtendedError): Error | undefined => {
   }
 };
 
+/** Handle 422
+ *
+ * If return a string, do not process the error normally.
+ */
+const process422Error = (error: ExtendedError): string | undefined => {
+  const errorInfo = get422Fields(error);
+  if (!errorInfo) return;
+  return `${errorInfo.message}: fields=${JSON.stringify(errorInfo.fields)}, errors=${JSON.stringify(errorInfo.errors.map(c => c.message))}`;
+};
+
 /** Return a string with the full error and stacktrace, including causes */
 export const filterError = (
   error: ExtendedError,
@@ -152,6 +165,8 @@ export const filterError = (
   extraFilter?: Array<RegExp> | RegExp,
 ): string => {
   const resultRows: Array<string> = [];
+  const unprocessableCheck = process422Error(error);
+  if (unprocessableCheck) return unprocessableCheck;
   let cursor: ExtendedError | undefined = error;
   let indentLevel = 0;
   while (cursor) {
