@@ -125,8 +125,5 @@
     "/lib/**/*.js",
     "/lib/**/*.d.ts",
     "/grunt.js"
-  ],
-  "dependencies": {
-    "@cley_faye/http-codes-consts": "^2.0.0"
-  }
+  ]
 }

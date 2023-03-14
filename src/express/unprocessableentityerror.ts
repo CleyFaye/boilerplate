@@ -1,26 +1,36 @@
-import HttpCodes from "@cley_faye/http-codes-consts";
 import {ExtendedError} from "../winston.js";
 
 interface Error422Fields {
   message: string;
   fields: Array<string>;
-  errors: Array<Error>;
+  errors: Array<unknown>;
 }
+
+const UNPROCESSABLE_ENTITY = 422;
 
 export const get422Fields = (error: ExtendedError): Error422Fields | undefined => {
   const {statusCode, cause, fields} = error;
   if (
-    statusCode !== HttpCodes.UnprocessableEntity
+    statusCode !== UNPROCESSABLE_ENTITY
     || !cause
     || !Array.isArray(cause)
     || !fields
-    || !(fields instanceof Set)
+    || !Array.isArray(fields)
   ) {
     return;
   }
-  const fieldsList: Array<string> = Array.from(fields).filter(c => typeof c === "string");
-  const errors: Array<Error> = cause.filter<Error>((c: unknown): c is Error => c instanceof Error);
-  // eslint-disable-next-line max-len
-  const message = `${error.message}: fields=${JSON.stringify(fieldsList)}, errors=${JSON.stringify(errors.map(c => c.message))}`;
-  return {message, fields: fieldsList, errors};
+  let fieldsStr: string;
+  try {
+    fieldsStr = JSON.stringify(fields);
+  } catch {
+    fieldsStr = "<error>";
+  }
+  let errorsStr: string;
+  try {
+    errorsStr = JSON.stringify(cause);
+  } catch {
+    errorsStr = "<error>";
+  }
+  const message = `${error.message}: fields=${fieldsStr}, errors=${errorsStr}`;
+  return {message, fields, errors: cause};
 };

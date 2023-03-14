@@ -154,8 +154,7 @@ const getCause = (error: ExtendedError): Error | undefined => {
  */
 const process422Error = (error: ExtendedError): string | undefined => {
   const errorInfo = get422Fields(error);
-  if (!errorInfo) return;
-  return `${errorInfo.message}: fields=${JSON.stringify(errorInfo.fields)}, errors=${JSON.stringify(errorInfo.errors.map(c => c.message))}`;
+  return errorInfo?.message;
 };
 
 /** Return a string with the full error and stacktrace, including causes */
