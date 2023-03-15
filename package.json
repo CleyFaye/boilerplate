@@ -6,6 +6,9 @@
     "type": "git",
     "url": "git+https://github.com/CleyFaye/boilerplate.git"
   },
+  "bin": {
+    "serve_spa": "bin/serve_spa.js"
+  },
   "scripts": {
     "prepack": "npm run grunt -- clean build",
     "check": "tsc --noEmit && eslint .",
@@ -22,6 +25,7 @@
     "@types/express": "^4.17.17",
     "@types/grunt": "^0.4.27",
     "@types/http-errors": "^2.0.1",
+    "@types/minimist": "^1.2.2",
     "@types/node": "^18.14.2",
     "@typescript-eslint/eslint-plugin": "^5.53.0",
     "@typescript-eslint/parser": "^5.53.0",
@@ -58,6 +62,7 @@
     "grunt-contrib-watch": "1.x",
     "grunt-sass": "3.x",
     "grunt-webpack": "5.x",
+    "minimist": "^1.2.8",
     "sass": "1.x",
     "ts-loader": "^9.4.1",
     "winston": "3.x"
@@ -109,6 +114,9 @@
       "optional": true
     },
     "grunt-webpack": {
+      "optional": true
+    },
+    "minimist": {
       "optional": true
     },
     "sass": {

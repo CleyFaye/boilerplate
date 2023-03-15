@@ -486,6 +486,10 @@ Available config options are:
 - `staticRootDirectories`: optional, name of directories (in the above root directory) to serve as
   static files. Defaults to `["js", "css", "img"]`.
 
+A convenience command is available as "serve_spa" to be called from the command line.
+It is possible to pass it some parameters; run it with `--help` for more informations.
+To use this tool, `minimist` must be installed in addition to express dependencies.
+
 Console logging
 ---------------
 For convenience, a winston logger using console as output is provided:
