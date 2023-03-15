@@ -51,7 +51,9 @@ export const singlePageApp = (config: SinglePageAppConfig): Array<RequestHandler
   const staticDirs = (config.staticRootDirectories ?? ["js", "css", "img"]).map(c => `/${c}`);
   const appRoute = (req: Request, res: Response, next: NextFunction) => {
     for (const candidates of staticDirs) if (req.url.startsWith(candidates)) return next();
-    res.sendFile(htmlFile, {root: rootDir}, (err: Error) => next(err));
+    res.sendFile(htmlFile, {root: rootDir}, (err: Error | undefined) => {
+      if (err) return next(err);
+    });
   };
   const staticRoute = express.static(rootDir);
   return [appRoute, staticRoute];
