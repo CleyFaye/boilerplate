@@ -59,6 +59,7 @@ export const handle = (
 ): HandlerFunctionResult => {
   const handledFiles = [
     ...handledExtensions.map(ext => `**/*${ext}`),
+    ...handledExtensions.map(ext => `!**/_*${ext}`),
     ...handledExtensions.map(ext => `!**/*.inc${ext}`),
   ];
   const sassTask = {
