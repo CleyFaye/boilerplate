@@ -135,9 +135,9 @@ export const setViewEngine = (
 
 /**
  * Function to call when the server stops.
- * 
+ *
  * This is usually triggered by a SIGTERM.
- * 
+ *
  * If the function returns "true", it prevent the process from stopping.
  * Otherwise `process.exit()` is called.
  */
@@ -168,14 +168,16 @@ export interface StartResult {
 
 const handleShutdown = (logger?: winston.Logger, shutdownFunction?: ShutdownFunction) => () => {
   const fn = async () => {
-    const noExit = shutdownFunction ? !!(await shutdownFunction()) : false;
+    const noExit = shutdownFunction ? Boolean(await shutdownFunction()) : false;
     if (noExit) return;
+    // We *want* to exit on server shutdown
+    // eslint-disable-next-line no-process-exit
     process.exit();
   };
   fn().catch(err => {
     logger?.error(err);
   });
-}
+};
 
 /** Start the server and register signal for automatic closing.
  *
@@ -226,7 +228,7 @@ export const appStart = ({
   if (allowNonLocal !== undefined && listenInterface !== undefined) {
     throw new Error("You can't specify both allowNonLocal and listenInterface at the same time");
   }
-  if (allowNonLocal || listenInterface === true) {
+  if (allowNonLocal ?? listenInterface === true) {
     server = app.listen(port ?? 0, readyCallback);
   } else if (typeof listenInterface === "string") {
     server = app.listen(port ?? 0, listenInterface, readyCallback);

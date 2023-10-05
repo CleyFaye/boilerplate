@@ -18,7 +18,7 @@ import {get422Fields} from "./unprocessableentityerror.js";
 
 const getErrorData = (
   error: ExtendedError,
-): {message?: string, extraFields?: Record<string, unknown>} => {
+): {message?: string; extraFields?: Record<string, unknown>} => {
   const unprocessable = get422Fields(error);
   if (unprocessable) {
     return {

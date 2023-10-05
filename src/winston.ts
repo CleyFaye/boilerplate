@@ -94,10 +94,10 @@ interface ExtendedErrorFields {
   cause?: unknown;
   response?: {
     data?: string | Record<string, unknown>;
-  },
+  };
   request?: {
     _currentUrl?: string;
-  }
+  };
   fields?: Set<string>;
   statusCode?: number;
   expose?: boolean;
@@ -119,11 +119,7 @@ const addAxiosContent = (error: ExtendedError): string | undefined => {
       try {
         res.push(JSON.stringify(error.response.data));
       } catch {
-        try {
-          res.push(error.response.data.toString());
-        } catch {
-          res.push("<cannot output body>");
-        }
+        res.push("<cannot output body>");
       }
     }
   }
@@ -142,7 +138,7 @@ const getCause = (error: ExtendedError): Error | undefined => {
   if (cause === undefined) return;
   if (cause instanceof Error) return cause;
   try {
-    return new Error((cause as Record<string, unknown>).toString());
+    return new Error(JSON.stringify(cause));
   } catch {
     return new Error("Unknown cause");
   }
@@ -205,15 +201,10 @@ export const customFormat = (
   collapseStacktrace?: boolean,
   stacktraceFilter?: Array<RegExp> | RegExp,
 ): Format => winston.format.printf((info: TransformableInfo) => {
-  const effectiveTimestamp = timestamp === undefined
-    ? logConfig.timestamp
-    : timestamp;
-  const effectiveCollapse = collapseStacktrace === undefined
-    ? logConfig.collapseNodeModules || logConfig.collapseStacktrace
-    : collapseStacktrace;
-  const effectiveStacktraceFilter = stacktraceFilter === undefined
-    ? logConfig.stacktraceFilter
-    : stacktraceFilter;
+  const effectiveTimestamp = timestamp ?? logConfig.timestamp;
+  const effectiveCollapse = collapseStacktrace
+    ?? (logConfig.collapseNodeModules || logConfig.collapseStacktrace);
+  const effectiveStacktraceFilter = stacktraceFilter ?? logConfig.stacktraceFilter;
   const error = getErrorFromTransformable(info);
   const message = error
     ? filterError(error, effectiveCollapse, effectiveStacktraceFilter)

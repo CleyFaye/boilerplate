@@ -29,7 +29,7 @@ export type ErrorLoggerOptions =
 
 interface InfoMeta {
   res?: {
-    statusCode?: number
+    statusCode?: number;
   };
   responseTime?: number;
   req?: Record<string, string>;
@@ -66,7 +66,7 @@ const customRouteFormat = (
 );
 
 export interface LoggingData {
-  extraLoggingData?: Record<string, unknown>,
+  extraLoggingData?: Record<string, unknown>;
 }
 
 export interface RequestWithLoggingData extends Request {

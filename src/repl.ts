@@ -9,7 +9,7 @@ interface DBLikeObject {
   sequelize?: {
     /** Sequelize instance should have a close() method */
     close?: () => void;
-  }
+  };
 }
 
 interface ReplArgs {
@@ -23,8 +23,8 @@ interface ReplArgs {
   srv?: Record<string, unknown>;
   /** Extra properties to attach to the REPL context */
   extraContext?: Record<string, unknown>;
-  onClose?: ReplCloseFunc,
-  historyFile?: string,
+  onClose?: ReplCloseFunc;
+  historyFile?: string;
 }
 
 const setupContext = (
