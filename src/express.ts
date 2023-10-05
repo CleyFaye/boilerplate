@@ -133,6 +133,16 @@ export const setViewEngine = (
   }
 };
 
+/**
+ * Function to call when the server stops.
+ * 
+ * This is usually triggered by a SIGTERM.
+ * 
+ * If the function returns "true", it prevent the process from stopping.
+ * Otherwise `process.exit()` is called.
+ */
+type ShutdownFunction = () => Promise<boolean> | boolean | undefined;
+
 export interface StartDefinition {
   app: express.Application;
   /** @deprecated use listenInterface instead */
@@ -146,13 +156,25 @@ export interface StartDefinition {
    */
   listenInterface?: boolean | string;
   port?: number;
-  shutdownFunction?: () => void;
+  shutdownFunction?: ShutdownFunction;
   logger?: winston.Logger;
+  noReady?: boolean;
 }
 
 export interface StartResult {
   port: number;
   server: Server;
+}
+
+const handleShutdown = (logger?: winston.Logger, shutdownFunction?: ShutdownFunction) => () => {
+  const fn = async () => {
+    const noExit = shutdownFunction ? !!(await shutdownFunction()) : false;
+    if (noExit) return;
+    process.exit();
+  };
+  fn().catch(err => {
+    logger?.error(err);
+  });
 }
 
 /** Start the server and register signal for automatic closing.
@@ -182,6 +204,7 @@ export const appStart = ({
   port,
   shutdownFunction,
   logger,
+  noReady,
 }: StartDefinition): Promise<StartResult> => new Promise(resolve => {
   let server: Server | null = null;
   const readyCallback = (): void => {
@@ -198,6 +221,7 @@ export const appStart = ({
       port: effectivePort,
       server,
     });
+    if (!noReady && process.send) process.send("ready");
   };
   if (allowNonLocal !== undefined && listenInterface !== undefined) {
     throw new Error("You can't specify both allowNonLocal and listenInterface at the same time");
@@ -209,7 +233,5 @@ export const appStart = ({
   } else {
     server = app.listen(port ?? 0, "localhost", readyCallback);
   }
-  if (shutdownFunction) {
-    server.on("close", shutdownFunction);
-  }
+  server.on("close", handleShutdown(logger, shutdownFunction));
 });
