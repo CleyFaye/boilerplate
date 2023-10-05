@@ -46,7 +46,7 @@ export const prefixOutput = (
   message: string,
   timestamp: boolean | undefined,
 ): string => {
-  const timestampPrefix = timestamp
+  const timestampPrefix = (timestamp ?? (level.toLowerCase() === "error"))
     ? `${new Date().toISOString()} `
     : "";
   const levelPrefix = `${level.toString().padStart(LOG_LEVEL_PADDING_SIZE)}: `;
