@@ -443,6 +443,7 @@ appStart({
   port: 3000,
   shutdownFunction: () => {;},
   logger: consoleLogger,
+  noReady: false,
 }).then(({port, server}) => {;});
 ```
 
@@ -453,8 +454,14 @@ The settings are:
 - port: port to listen to. Can be 0 to use a random available port
 - shutdownFunction: a function to call after the server stop listening
 - logger: a winston logger to log that the server started listening
+- noReady: if true, does not call `process.send("ready");` (used by PM2)
 
-The function returns a promise that resolve with the actual port used for listening when the server is started.
+The shutdown function can return a promise, and if it returns/resolve with `true` the process is
+left alive.
+Otherwise `process.exit()` is called after `shutdownFunction()` resolves/returns.
+
+The `appStart()` function returns a promise that resolve with the actual port used for listening
+when the server is started.
 
 The server is automatically registered using the `autoclose` part to stop when a SIGINT signal is
 received.
