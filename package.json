@@ -127,6 +127,9 @@
     "ts-loader": {
       "optional": true
     },
+    "webpack-bundle-analyzer": {
+      "optional": true
+    },
     "winston": {
       "optional": true
     }
