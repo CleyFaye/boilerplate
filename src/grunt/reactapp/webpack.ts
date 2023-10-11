@@ -1,6 +1,7 @@
 import {join, resolve} from "path";
 import {existsSync} from "node:fs";
 import ESLintPlugin from "eslint-webpack-plugin";
+import {BundleAnalyzerPlugin} from "webpack-bundle-analyzer";
 import {ResolveOptions} from "webpack";
 import {BaseOptions} from "../util.js";
 import {HandlerFunctionResult, WatchTaskDef} from "../reactapp.js";
@@ -129,6 +130,7 @@ export interface WebpackOptions extends BaseOptions {
   babelPlugins?: Array<Record<string, unknown>>;
   defines?: Record<string, string>;
   resolve?: ResolveOptions;
+  generateReport?: boolean;
   typescript?: boolean;
 }
 
@@ -226,6 +228,21 @@ const computeWebpackResolve = (
   return res;
 };
 
+const getWebpackPlugins = (webpackOptions: WebpackOptions): Array<unknown> => {
+  const plugins: Array<unknown> = [
+    eslintPlugin(),
+    ...webpackOptions.plugins ?? [],
+  ];
+  if (webpackOptions.generateReport) {
+    plugins.push(new BundleAnalyzerPlugin({
+      analyzerMode: "static",
+      reportFilename: join(process.cwd(), "bundle_report.html"),
+      openAnalyzer: false,
+    }));
+  }
+  return plugins;
+};
+
 /** Add a webpack task for the reactApp recipe
  *
  * @param gruntConfig
@@ -278,6 +295,9 @@ const computeWebpackResolve = (
  * Build mode. "development", "production" or "none".
  * Defaults to "development"
  *
+ * @param [webpackOptions.generateReport]
+ * Generate a bundle report HTML file.
+ *
  * @param [webpackOptions.typescript]
  * Allow loading typescript source for webpack/babel.
  *
@@ -311,10 +331,7 @@ export const handle = (
     output: webpackOutput,
     externals: webpackOptions.externals,
     module: {rules: webpackLoaders},
-    plugins: [
-      eslintPlugin(),
-      ...webpackOptions.plugins ?? [],
-    ],
+    plugins: getWebpackPlugins(webpackOptions),
     resolve: webpackResolve,
   };
   // Special case: I'm not sure I can move options in the task-specific part of

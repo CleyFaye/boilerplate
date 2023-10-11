@@ -166,6 +166,7 @@ The webpack options support a host of properties:
 - mode: The build mode. "development", "production" or "none"
 - defines: a record of value to define using Babel transform-define
 - resolve: a custom "resolve" object for webpack config
+- generateReport: a boolean, set to true to generate a bundle size report HTML file
 
 ### SASS
 All `.sass` and `.scss` files in the `webres` directory will be processed as `.css` files
