@@ -141,7 +141,7 @@ export const setViewEngine = (
  * If the function returns "true", it prevent the process from stopping.
  * Otherwise `process.exit()` is called.
  */
-type ShutdownFunction = () => Promise<boolean> | boolean | undefined;
+type ShutdownFunction = () => Promise<boolean | undefined> | boolean | undefined;
 
 export interface StartDefinition {
   app: express.Application;
