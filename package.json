@@ -34,7 +34,6 @@
     "eslint-plugin-deprecation": "^2.0.0",
     "eslint-plugin-import": "^2.28.1",
     "eslint-plugin-promise": "^6.1.1",
-    "eslint-webpack-plugin": "^4.0.1",
     "express-winston": "^4.2.0",
     "grunt": "^1.6.1",
     "grunt-banner": "^0.6.0",
@@ -54,7 +53,6 @@
     "babel-loader": "9.x",
     "babel-plugin-transform-define": "2.x",
     "core-js": "3.x",
-    "eslint-webpack-plugin": "^4.0.0",
     "express": "4.x",
     "express-winston": "4.x",
     "grunt": "1.x",
@@ -89,9 +87,6 @@
       "optional": true
     },
     "core-js": {
-      "optional": true
-    },
-    "eslint-webpack-plugin": {
       "optional": true
     },
     "express": {

@@ -1,6 +1,5 @@
 import {join, resolve} from "path";
 import {existsSync} from "node:fs";
-import ESLintPlugin from "eslint-webpack-plugin";
 import {BundleAnalyzerPlugin} from "webpack-bundle-analyzer";
 import {ResolveOptions} from "webpack";
 import {BaseOptions} from "../util.js";
@@ -19,8 +18,6 @@ export interface WebpackLoadersOptions {
 }
 
 const defaultCoreJS = 3;
-
-const eslintPlugin = () => new ESLintPlugin({cache: true});
 
 const defaultLoadersDefine = (options: WebpackLoadersOptions) => [
   "transform-define",
@@ -50,7 +47,7 @@ const defaultLoadersReact = (options: WebpackLoadersOptions) => [
 
 /** Build the default webpack loaders list.
  *
- * Uses babel and eslint. Some options can be customized here.
+ * Uses babel. Some options can be customized here.
  *
  * @param [options]
  * @param [options.development]
@@ -230,7 +227,6 @@ const computeWebpackResolve = (
 
 const getWebpackPlugins = (webpackOptions: WebpackOptions): Array<unknown> => {
   const plugins: Array<unknown> = [
-    eslintPlugin(),
     ...webpackOptions.plugins ?? [],
   ];
   if (webpackOptions.generateReport) {
@@ -281,7 +277,7 @@ const getWebpackPlugins = (webpackOptions: WebpackOptions): Array<unknown> => {
  *
  * @param [webpackOptions.loaders]
  * Configuration for webpack loaders. See webpack doc about module.rules.
- * Defaults to using babel with React configuration and eslint.
+ * Defaults to using babel with React configuration.
  * To customize the default behavior build an object with
  * webpackLoadersDefault().
  *

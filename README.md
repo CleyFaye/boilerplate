@@ -30,7 +30,6 @@ required, and for what. It's up to the calling project to have the proper depend
 For webapp building:
 
 - babel-loader
-- eslint-webpack-plugin
 - @babel/core
 - @babel/preset-env
 - @babel/preset-react
