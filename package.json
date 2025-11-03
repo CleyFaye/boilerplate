@@ -6,6 +6,7 @@
     "type": "git",
     "url": "git+https://github.com/CleyFaye/boilerplate.git"
   },
+  "type": "module",
   "bin": {
     "serve_spa": "bin/serve_spa.js"
   },
@@ -21,51 +22,50 @@
   },
   "homepage": "https://github.com/CleyFaye/boilerplate#readme",
   "devDependencies": {
-    "@keeex/eslint-config": "^1.12.6",
-    "@types/express": "^4.17.21",
-    "@types/grunt": "^0.4.31",
-    "@types/http-errors": "^2.0.4",
+    "@eslint/js": "^9.39.0",
+    "@keeex/eslint-config": "^2.6.0",
+    "@types/express": "^5.0.5",
+    "@types/grunt": "^0.4.32",
+    "@types/http-errors": "^2.0.5",
     "@types/minimist": "^1.2.5",
-    "@types/node": "^18.19.55",
+    "@types/node": "^24.10.0",
     "@types/webpack-bundle-analyzer": "^4.7.0",
-    "@typescript-eslint/eslint-plugin": "^6.21.0",
-    "@typescript-eslint/parser": "^6.21.0",
-    "eslint": "^8.57.1",
-    "eslint-plugin-deprecation": "^2.0.0",
-    "eslint-plugin-i": "^2.29.1",
-    "eslint-plugin-promise": "^6.6.0",
-    "express-winston": "^4.2.0",
+    "eslint": "9.38",
+    "eslint-import-resolver-typescript": "^4.4.4",
+    "eslint-plugin-import-x": "^4.16.1",
+    "eslint-plugin-promise": "^7.2.1",
+    "eslint-plugin-tsdoc": "^0.4.0",
+    "globals": "^16.5.0",
     "grunt": "^1.6.1",
     "grunt-banner": "^0.6.0",
     "grunt-contrib-clean": "^2.0.1",
     "grunt-run": "^0.8.1",
     "load-grunt-tasks": "^5.1.0",
-    "logform": "^2.6.1",
-    "typescript": "^5.6.3",
-    "webpack": "^5.95.0",
-    "winston": "^3.15.0"
+    "logform": "^2.7.0",
+    "prettier": "^3.6.2",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.46.2",
+    "webpack": "^5.102.1"
   },
   "peerDependencies": {
     "@babel/core": "7.x",
     "@babel/plugin-transform-runtime": "7.x",
     "@babel/preset-env": "7.x",
     "@babel/preset-react": "7.x",
-    "babel-loader": "9.x",
+    "babel-loader": "9.x || 10.x",
     "babel-plugin-transform-define": "2.x",
     "core-js": "3.x",
-    "express": "4.x",
-    "express-winston": "4.x",
+    "express": "4.x || 5.x",
     "grunt": "1.x",
     "grunt-contrib-copy": "1.x",
     "grunt-contrib-pug": "3.x",
     "grunt-contrib-watch": "1.x",
     "grunt-sass": "3.x",
-    "grunt-webpack": "5.x||6.x",
+    "grunt-webpack": "5.x||6.x||7.x",
     "minimist": "^1.2.8",
     "sass": "1.x",
     "ts-loader": "^9.4.1",
-    "webpack-bundle-analyzer": "^4.9.1",
-    "winston": "3.x"
+    "webpack-bundle-analyzer": "^4.9.1"
   },
   "peerDependenciesMeta": {
     "@babel/core": {
@@ -90,9 +90,6 @@
       "optional": true
     },
     "express": {
-      "optional": true
-    },
-    "express-winston": {
       "optional": true
     },
     "grunt": {
@@ -123,9 +120,6 @@
       "optional": true
     },
     "webpack-bundle-analyzer": {
-      "optional": true
-    },
-    "winston": {
       "optional": true
     }
   },
