@@ -1,13 +1,9 @@
 import * as path from "node:path";
-import {existsSync, readFileSync} from "node:fs";
+import * as fs from "node:fs";
 import express from "express";
 import minimist from "minimist";
 import {singlePageApp} from "../express/middlewares/singlepageapp.js";
-import {
-  appStart,
-  createPipeline,
-} from "../express.js";
-import {consoleLogger} from "../winston.js";
+import type {Server} from "node:net";
 
 const ARGV_START_OFFSET = 2;
 
@@ -29,7 +25,7 @@ const DEFAULT_STATICFILE = "spa_static.config";
 const DEFAULT_STATIC = ["js", "css", "img"];
 
 if (help) {
-  consoleLogger.info(`
+  console.log(`
 Usage:
 
 serve_spa \\
@@ -56,9 +52,9 @@ const getStatic = (): Array<string> | undefined => {
   if (staticDirs) result.push(...(Array.isArray(staticDirs) ? staticDirs : [staticDirs]));
   if (staticlist) {
     for (const staticsrc of (Array.isArray(staticlist) ? staticlist : [staticlist])) {
-      if (!existsSync(staticsrc)) continue;
+      if (!fs.existsSync(staticsrc)) continue;
       result.push(
-        ...readFileSync(staticsrc, "utf8")
+        ...fs.readFileSync(staticsrc, "utf8")
           .split("\n")
           .filter(c => c),
       );
@@ -68,27 +64,48 @@ const getStatic = (): Array<string> | undefined => {
 };
 
 const app = express();
-app.use(createPipeline({
-  routes: singlePageApp({
-    rootDir: root ?? "dist/webapp",
-    htmlFile: index,
-    staticRootDirectories: getStatic(),
-  }),
-  options: {
-    defaultErrorHandler: true,
-    log: {
-      route: true,
-      error: true,
-      logger: consoleLogger,
-    },
-  },
+app.use((req, res, next) => {
+  console.log(`${Date.now()} - ${req.method} ${req.url}`);
+  next();
+});
+app.use(singlePageApp({
+  rootDir: root ?? "dist/webapp",
+  htmlFile: index,
+  staticRootDirectories: getStatic(),
 }));
 
-appStart({
-  app,
-  port: getPort(),
-  logger: consoleLogger,
-}).then(({port: activePort}) => {
-  consoleLogger.info(`SPA served on port ${activePort}`);
-})
-  .catch(consoleLogger.error);
+let server: null | Server = null;
+const maxSignals = 5;
+let signalsReceived = 0;
+
+const signalHandler = (signal: string): void => {
+  if (!server) {
+    console.log(`Received ${signal}, but server not started; exiting`);
+    process.exit(1);
+  }
+  if (signalsReceived === 0) {
+    signalsReceived = 1;
+    console.log(`Received ${signal}, stopping server`);
+    server?.close();
+    return;
+  }
+  if (signalsReceived < maxSignals) {
+    ++signalsReceived;
+    console.log(`Received ${signal}, ${signalsReceived} / ${maxSignals}`);
+  } else {
+    console.log(`Received final ${signal}, exiting`);
+    process.exit(2);
+  }
+}
+
+process.on("SIGINT", () => {
+  signalHandler("SIGINT");
+});
+
+process.on("SIGTERM", () => {
+  signalHandler("SIGTERM");
+});
+
+server = app.listen(port, () => {
+  console.log(`Server listening on port ${port}`);
+});

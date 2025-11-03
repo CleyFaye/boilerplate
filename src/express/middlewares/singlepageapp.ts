@@ -1,10 +1,5 @@
 import * as path from "node:path";
-import express, {
-  Request,
-  Response,
-  NextFunction,
-  RequestHandler,
-} from "express";
+import * as express from "express";
 
 interface SinglePageAppConfig {
   /** Path to the file to serve for the whole application
@@ -45,11 +40,11 @@ interface SinglePageAppConfig {
  * someRouter.use("/app", singlePageApp({rootDir: "dist/webapp"});
  * ```
  */
-export const singlePageApp = (config: SinglePageAppConfig): Array<RequestHandler> => {
+export const singlePageApp = (config: SinglePageAppConfig): Array<express.RequestHandler> => {
   const rootDir = path.resolve(config.rootDir);
   const htmlFile = config.htmlFile ?? "index.html";
   const staticDirs = (config.staticRootDirectories ?? ["js", "css", "img"]).map(c => `/${c}`);
-  const appRoute = (req: Request, res: Response, next: NextFunction) => {
+  const appRoute = (req: express.Request, res: express.Response, next: express.NextFunction) => {
     for (const candidates of staticDirs) if (req.url.startsWith(candidates)) return next();
     res.sendFile(htmlFile, {root: rootDir}, (err: Error | undefined) => {
       if (err) return next(err);
