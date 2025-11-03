@@ -59,7 +59,7 @@
     "grunt-contrib-copy": "1.x",
     "grunt-contrib-pug": "3.x",
     "grunt-contrib-watch": "1.x",
-    "grunt-sass": "3.x",
+    "grunt-sass": "3.x||4.x",
     "grunt-webpack": "5.x||6.x||7.x",
     "minimist": "^1.2.8",
     "sass": "1.x",
