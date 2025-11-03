@@ -1,15 +1,24 @@
-import * as path from "node:path";
+/* eslint-disable no-console */
 import * as fs from "node:fs";
+import * as path from "node:path";
+
 import express from "express";
 import minimist from "minimist";
+
 import {singlePageApp} from "../express/middlewares/singlepageapp.js";
+
 import type {Server} from "node:net";
 
 const ARGV_START_OFFSET = 2;
 
-const {port, root, index, help, staticlist, static: staticDirs} = minimist(
-  process.argv.slice(ARGV_START_OFFSET),
-) as {
+const {
+  port,
+  root,
+  index,
+  help,
+  staticlist,
+  static: staticDirs,
+} = minimist(process.argv.slice(ARGV_START_OFFSET)) as {
   port?: number;
   root?: string;
   index?: string;
@@ -25,7 +34,8 @@ const DEFAULT_STATICFILE = "spa_static.config";
 const DEFAULT_STATIC = ["js", "css", "img"];
 
 if (help) {
-  console.log(`
+  console.log(
+    `
 Usage:
 
 serve_spa \\
@@ -41,8 +51,9 @@ It defaults to ${JSON.stringify(DEFAULT_STATIC)}.
 
 The staticfile value is a text file with one static directory line.
 If present, they are merged with the CLI arguments.
-`.trim());
-  // eslint-disable-next-line no-process-exit
+`.trim(),
+  );
+
   process.exit(0);
 }
 
@@ -51,12 +62,13 @@ const getStatic = (): Array<string> | undefined => {
   const result: Array<string> = [];
   if (staticDirs) result.push(...(Array.isArray(staticDirs) ? staticDirs : [staticDirs]));
   if (staticlist) {
-    for (const staticsrc of (Array.isArray(staticlist) ? staticlist : [staticlist])) {
+    for (const staticsrc of Array.isArray(staticlist) ? staticlist : [staticlist]) {
       if (!fs.existsSync(staticsrc)) continue;
       result.push(
-        ...fs.readFileSync(staticsrc, "utf8")
+        ...fs
+          .readFileSync(staticsrc, "utf8")
           .split("\n")
-          .filter(c => c),
+          .filter((c) => c),
       );
     }
   }
@@ -68,11 +80,13 @@ app.use((req, res, next) => {
   console.log(`${Date.now()} - ${req.method} ${req.url}`);
   next();
 });
-app.use(singlePageApp({
-  rootDir: root ?? "dist/webapp",
-  htmlFile: index,
-  staticRootDirectories: getStatic(),
-}));
+app.use(
+  singlePageApp({
+    htmlFile: index,
+    rootDir: root ?? "dist/webapp",
+    staticRootDirectories: getStatic(),
+  }),
+);
 
 let server: null | Server = null;
 const maxSignals = 5;
@@ -86,7 +100,7 @@ const signalHandler = (signal: string): void => {
   if (signalsReceived === 0) {
     signalsReceived = 1;
     console.log(`Received ${signal}, stopping server`);
-    server?.close();
+    server.close();
     return;
   }
   if (signalsReceived < maxSignals) {
@@ -94,9 +108,10 @@ const signalHandler = (signal: string): void => {
     console.log(`Received ${signal}, ${signalsReceived} / ${maxSignals}`);
   } else {
     console.log(`Received final ${signal}, exiting`);
+    // eslint-disable-next-line @typescript-eslint/no-magic-numbers
     process.exit(2);
   }
-}
+};
 
 process.on("SIGINT", () => {
   signalHandler("SIGINT");
@@ -106,6 +121,6 @@ process.on("SIGTERM", () => {
   signalHandler("SIGTERM");
 });
 
-server = app.listen(port, () => {
+server = app.listen(getPort(), () => {
   console.log(`Server listening on port ${port}`);
 });

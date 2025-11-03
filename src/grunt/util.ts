@@ -10,16 +10,13 @@ export type GenericConfigObject = Record<string, ConfigValue>;
  * This will set, for example, sourceObject.foo.bar = value by making copies of
  * all intermediate objects.
  *
- * @param sourceObject
- * Object to copy/update
+ * @param sourceObject - Object to copy/update
  *
- * @param path
- * Properties path (for the example above: "foo.bar")
+ * @param path - Properties path (for the example above: "foo.bar")
  *
- * @param value
- * The value to set
+ * @param value - The value to set
  *
- * @return
+ * @returns
  * A copy of sourceObject with the property set
  */
 export const deepSet = (
@@ -30,7 +27,7 @@ export const deepSet = (
   const result = {...sourceObject};
   const pathElements = path.split(".");
   let cursor = result;
-  pathElements.slice(0, -1).forEach(pathElement => {
+  pathElements.slice(0, -1).forEach((pathElement) => {
     cursor[pathElement] = {...(cursor[pathElement] as Record<string, unknown>)};
     cursor = cursor[pathElement] as GenericConfigObject;
   });

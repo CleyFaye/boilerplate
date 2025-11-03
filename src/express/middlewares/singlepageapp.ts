@@ -1,4 +1,5 @@
 import * as path from "node:path";
+
 import * as express from "express";
 
 interface SinglePageAppConfig {
@@ -43,8 +44,12 @@ interface SinglePageAppConfig {
 export const singlePageApp = (config: SinglePageAppConfig): Array<express.RequestHandler> => {
   const rootDir = path.resolve(config.rootDir);
   const htmlFile = config.htmlFile ?? "index.html";
-  const staticDirs = (config.staticRootDirectories ?? ["js", "css", "img"]).map(c => `/${c}`);
-  const appRoute = (req: express.Request, res: express.Response, next: express.NextFunction) => {
+  const staticDirs = (config.staticRootDirectories ?? ["js", "css", "img"]).map((c) => `/${c}`);
+  const appRoute = (
+    req: express.Request,
+    res: express.Response,
+    next: express.NextFunction,
+  ): void => {
     for (const candidates of staticDirs) if (req.url.startsWith(candidates)) return next();
     res.sendFile(htmlFile, {root: rootDir}, (err: Error | undefined) => {
       if (err) return next(err);
