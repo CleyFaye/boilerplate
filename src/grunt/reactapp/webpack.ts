@@ -248,11 +248,6 @@ export const handle = (
     mode: webpackOptions.mode,
     module: {
       rules: webpackLoaders,
-      parser: {
-        javascript: {
-          importMeta: false,
-        },
-      },
     },
     output: webpackOutput,
     plugins: getWebpackPlugins(webpackOptions),
