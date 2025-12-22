@@ -100,6 +100,7 @@ export interface WebpackOptions extends BaseOptions {
   mode?: "development" | "production" | "none";
   options?: Record<string, unknown>;
   entry?: Record<string, string>;
+  worker?: Record<string, string>;
   externals?: Record<string, string>;
   output?: {
     path?: string;
@@ -120,27 +121,37 @@ const computeWebpackOutput = (
 ): {
   path?: string;
   filename?: string;
-  module?: boolean;
   chunkFilename?: string;
-  chunkFormat?: string;
 } =>
   webpackOptions.output ?? {
     chunkFilename: "[name]-[fullhash].js",
-    chunkFormat: "module",
     filename: "[name].js",
-    module: true,
     path: resolve("dist", targetName, "js"),
   };
 
 const lastNamePosition = 2;
 
-const getHandledFiles = (webpackEntry: Record<string, string>): Array<string> =>
+interface LiteEntryDescriptor {
+  import: string;
+  chunkLoading?: string | boolean;
+}
+
+const getHandledFiles = (
+  webpackEntry: Record<string, LiteEntryDescriptor | string>,
+): Array<string> =>
   Object.keys(webpackEntry).reduce<Array<string>>((acc, cur) => {
-    if (webpackEntry[cur].startsWith("webres")) {
-      const split = webpackEntry[cur].split("/");
+    const value = webpackEntry[cur];
+    const importName = typeof value === "string" ? value : value.import;
+    if (importName.startsWith("webres")) {
+      const split = importName.split("/");
       acc.push(split.slice(lastNamePosition).join("/"));
     }
-    webpackEntry[cur] = resolve(webpackEntry[cur]);
+    const goodPath = resolve(importName);
+    if (typeof webpackEntry[cur] === "string") {
+      webpackEntry[cur] = goodPath;
+    } else {
+      webpackEntry[cur].import = goodPath;
+    }
     return acc;
   }, []);
 
@@ -207,6 +218,27 @@ const getWebpackPlugins = (webpackOptions: WebpackOptions): Array<unknown> => {
   return plugins;
 };
 
+const getWebpackEntry = (
+  targetName: string,
+  entries: WebpackOptions["entry"],
+  workers: WebpackOptions["worker"],
+): Record<string, string | LiteEntryDescriptor> => {
+  if (!entries && !workers) return {[targetName]: join("webres", targetName, "js", "loader.js")};
+  const res: Record<string, string | LiteEntryDescriptor> = {};
+  if (entries) {
+    for (const [key, value] of Object.entries(entries)) res[key] = value;
+  }
+  if (workers) {
+    for (const [key, value] of Object.entries(workers)) {
+      res[key] = {
+        import: value,
+        chunkLoading: "import-scripts",
+      };
+    }
+  }
+  return res;
+};
+
 /** Add a webpack task for the reactApp recipe
  *
  * @param gruntConfig - Grunt configuration to add the task to
@@ -224,9 +256,7 @@ export const handle = (
   targetName: string,
   webpackOptions: WebpackOptions,
 ): reactApp.HandlerFunctionResult => {
-  const webpackEntry = webpackOptions.entry ?? {
-    [targetName]: join("webres", targetName, "js", "loader.js"),
-  };
+  const webpackEntry = getWebpackEntry(targetName, webpackOptions.entry, webpackOptions.worker);
   const handledFiles = getHandledFiles(webpackEntry);
   const webpackOutput = computeWebpackOutput(webpackOptions, targetName);
   const webpackLoaders =
@@ -241,9 +271,6 @@ export const handle = (
   const webpackConfig: Record<string, unknown> = {
     devtool: webpackOptions.mode === "development" ? "eval-source-map" : false,
     entry: webpackEntry,
-    experiments: {
-      outputModule: true,
-    },
     externals: webpackOptions.externals,
     mode: webpackOptions.mode,
     module: {

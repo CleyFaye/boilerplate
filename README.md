@@ -148,6 +148,7 @@ The webpack options support a host of properties:
 - options: passed as-is to grunt-webpack
 - entry: list of entrypoints. Defaults to using a single entrypoint named
   `webres/<targetname>/js/loader.js`.
+- worker: list of worker entrypoints.
 - externals: record describing external dependencies (dependencies that will not be bundled in the
   bundle).
   Key are the "require" name, value is the  variable that will have to exist at runtime.
