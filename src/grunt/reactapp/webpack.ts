@@ -65,7 +65,13 @@ export const webpackLoadersDefault = (
         loader: "babel-loader",
         options: {
           cacheDirectory: true,
-          plugins: [defaultLoadersDefine(options), ...(options.babel?.plugins ?? [])],
+          plugins: [
+            defaultLoadersDefine(options),
+            ...(options.babel?.plugins ?? [
+              "@babel/plugin-syntax-import-attributes",
+              "@babel/plugin-transform-runtime",
+            ]),
+          ],
           presets: [defaultLoadersPresetEnv(options), defaultLoadersReact(options)],
         },
       },
@@ -114,11 +120,15 @@ const computeWebpackOutput = (
 ): {
   path?: string;
   filename?: string;
+  module?: boolean;
   chunkFilename?: string;
+  chunkFormat?: string;
 } =>
   webpackOptions.output ?? {
     chunkFilename: "[name]-[fullhash].js",
+    chunkFormat: "module",
     filename: "[name].js",
+    module: true,
     path: resolve("dist", targetName, "js"),
   };
 
@@ -145,7 +155,10 @@ const getOutputToWatch = (
   return [join("dist", targetName, "js", "*.js")];
 };
 
-const getWatchTasks = (webpackOptions: WebpackOptions, targetName: string): Array<reactApp.WatchTaskDef> => {
+const getWatchTasks = (
+  webpackOptions: WebpackOptions,
+  targetName: string,
+): Array<reactApp.WatchTaskDef> => {
   const outputToWatch = getOutputToWatch(webpackOptions, targetName);
   if (outputToWatch) {
     return [
@@ -228,12 +241,23 @@ export const handle = (
   const webpackConfig: Record<string, unknown> = {
     devtool: webpackOptions.mode === "development" ? "eval-source-map" : false,
     entry: webpackEntry,
+    experiments: {
+      outputModule: true,
+    },
     externals: webpackOptions.externals,
     mode: webpackOptions.mode,
-    module: {rules: webpackLoaders},
+    module: {
+      rules: webpackLoaders,
+      parser: {
+        javascript: {
+          importMeta: false,
+        },
+      },
+    },
     output: webpackOutput,
     plugins: getWebpackPlugins(webpackOptions),
     resolve: webpackResolve,
+    target: "web",
   };
   // Special case: I'm not sure I can move options in the task-specific part of
   // the configuration, so I add it at the toplevel of the "webpack" task.
@@ -242,5 +266,5 @@ export const handle = (
   }
   const requiredTasks = registerTasks(gruntConfig, targetName, webpackConfig);
   const watchTasks = getWatchTasks(webpackOptions, targetName);
-  return { handledFiles, requiredTasks, watchTasks, };
+  return {handledFiles, requiredTasks, watchTasks};
 };
