@@ -10,8 +10,8 @@
     "tsBuildInfoFile": "./.tsbuildinfo",
     "removeComments": false,
     "strict": true,
-    "moduleResolution": "node",
     "esModuleInterop": true,
+    "types": ["grunt"]
   },
   "include": [
     "src/**/*.ts"

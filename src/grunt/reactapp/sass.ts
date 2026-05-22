@@ -52,13 +52,11 @@ export const handle = (
       },
     ],
   };
-  if ((sassTask.options as SassOptionsOptions).implementation === undefined) {
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    (sassTask.options as SassOptionsOptions).implementation = require("sass") as Record<
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  sassTask.options.implementation ??= require("sass") as Record<
       string,
       unknown
     >;
-  }
   const requiredTasks = [util.insertTask(gruntConfig, "sass", targetName, sassTask)];
   const watchTasks = [
     {
