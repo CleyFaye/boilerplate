@@ -157,7 +157,7 @@ export const getOptionsFromGruntCLI = (
         getFromOptionProvider(keyName, optionProvider),
       );
     } catch (error) {
-      throw new Error(`CLI Argument "${camelToKebab(keyName)}": ${error as string}`);
+      throw new Error(`CLI Argument "${camelToKebab(keyName)}": ${error as string}`, {cause: error});
     }
   });
   return result;
