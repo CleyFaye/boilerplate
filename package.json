@@ -143,5 +143,10 @@
     "/lib/**/*.js",
     "/lib/**/*.d.ts",
     "/grunt.js"
-  ]
+  ],
+  "allowScripts": {
+    "@parcel/watcher": false,
+    "core-js": false,
+    "unrs-resolver": false
+  }
 }
